@@ -7,19 +7,19 @@ export interface CompressionResult {
     fileSize: number
     width?: number
     height?: number
-    path: string
+    path?: string  // 兼容旧数据
+    url?: string   // R2 URL
   }
   compressed: {
     fileSize: number
     width?: number
     height?: number
-    path: string
+    path?: string  // 兼容旧数据
+    url?: string   // R2 URL
   }
   compressionRatio: number
   processingTime: number
-  // 添加下载URL属性以支持批量下载
-  url?: string
-  compressedSize?: number
+  expiresAt?: string // 过期时间
 }
 
 export async function compressImage(

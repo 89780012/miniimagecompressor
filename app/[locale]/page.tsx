@@ -113,7 +113,7 @@ export default function HomePage() {
             progress: 100,
             result: {
               ...result,
-              url: result.compressed.path // 设置下载URL
+              url: result.compressed.url || result.compressed.path // 设置下载URL，优先使用R2 URL
             }
           } : img
         ))

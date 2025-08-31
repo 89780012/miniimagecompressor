@@ -178,7 +178,7 @@ export function BatchComparisonView({
                   {/* 图片预览 */}
                   <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
                     <Image
-                      src={isShowingOriginal ? image.preview : (image.result.url || image.result.compressed.path)}
+                      src={isShowingOriginal ? image.preview : (image.result.compressed.url || image.result.compressed.path || '')}
                       alt={image.file.name}
                       fill
                       className="object-cover"
@@ -302,7 +302,7 @@ export function BatchComparisonView({
                   {/* 图片展示 */}
                   <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
                     <Image
-                      src={isShowingOriginal ? currentImage.preview : (currentImage.result.url || currentImage.result.compressed.path)}
+                      src={isShowingOriginal ? currentImage.preview : (currentImage.result.compressed.url || currentImage.result.compressed.path || '')}
                       alt={currentImage.file.name}
                       fill
                       className="object-contain"

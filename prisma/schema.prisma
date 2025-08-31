@@ -23,7 +23,9 @@ model ImageCompression {
   originalMimeType  String
   originalWidth     Int?
   originalHeight    Int?
-  originalPath      String   // 存储路径
+  originalPath      String?  // 旧的本地路径，保持兼容性
+  originalR2Key     String?  // R2存储键名
+  originalR2Url     String?  // R2公开访问URL
   
   // 压缩配置
   targetSizeKb      Int?     // 目标大小(KB)
@@ -34,7 +36,9 @@ model ImageCompression {
   compressedFileSize Int?    // bytes
   compressedWidth    Int?
   compressedHeight   Int?
-  compressedPath     String?
+  compressedPath     String? // 旧的本地路径，保持兼容性
+  compressedR2Key    String? // 压缩文件R2存储键名
+  compressedR2Url    String? // 压缩文件R2公开访问URL
   compressionRatio   Float?  // 压缩比例
   
   // 元数据
@@ -43,6 +47,7 @@ model ImageCompression {
   errorMessage      String?
   createdAt         DateTime          @default(now())
   updatedAt         DateTime          @updatedAt
+  expiresAt         DateTime?         // 过期时间（R2文件）
   
   @@map("image_compressions")
 }

@@ -5,7 +5,7 @@ import { useLocale } from 'next-intl'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { ChevronDown, Check } from 'lucide-react'
-import { locales, DEFAULT_LOCALE, getLocaleConfig } from '@/lib/locales'
+import { locales, getLocaleConfig } from '@/lib/locales'
 
 export function LanguageSwitcher() {
   const [isOpen, setIsOpen] = useState(false)
@@ -21,11 +21,9 @@ export function LanguageSwitcher() {
   const getPathWithoutLocale = (path: string): string => {
     // 检查路径是否以任何非默认语言开头
     for (const loc of locales) {
-      if (loc.code !== DEFAULT_LOCALE) {
-        const prefix = `/${loc.code}`
-        if (path === prefix) return '/'
-        if (path.startsWith(`${prefix}/`)) return path.slice(prefix.length)
-      }
+      const prefix = `/${loc.code}`
+      if (path === prefix) return '/'
+      if (path.startsWith(`${prefix}/`)) return path.slice(prefix.length)
     }
     return path
   }
@@ -37,10 +35,6 @@ export function LanguageSwitcher() {
    * @returns 完整的目标路径
    */
   const buildLocalizedPath = (targetLocale: string, basePath: string): string => {
-    // 默认语言不需要前缀
-    if (targetLocale === DEFAULT_LOCALE) {
-      return basePath
-    }
     
     // 其他语言添加前缀
     return `/${targetLocale}${basePath === '/' ? '' : basePath}`

@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { prisma } from '@/lib/prisma'
-import { writeFile, mkdir } from 'fs/promises'
-import path from 'path'
+import { uploadToR2, generateR2Key } from '@/lib/r2'
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,35 +24,36 @@ export async function POST(request: NextRequest) {
     const metadata = await sharp(buffer).metadata()
     const originalFileSize = buffer.length
 
-    // 创建上传目录
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
-    await mkdir(uploadDir, { recursive: true })
-
-    // 生成唯一文件名
-    const timestamp = Date.now()
-    const originalFileName = file.name
-    const fileExtension = path.extname(originalFileName)
-    const baseName = path.basename(originalFileName, fileExtension)
+    // 生成R2存储键名
+    const originalR2Key = generateR2Key(file.name, 'original')
     
-    const originalPath = `/uploads/${baseName}_${timestamp}_original${fileExtension}`
-    const originalFullPath = path.join(process.cwd(), 'public', originalPath)
-
-    // 保存原始文件
-    await writeFile(originalFullPath, buffer)
+    // 上传原始文件到R2
+    const originalUploadResult = await uploadToR2(originalR2Key, buffer, file.type)
+    if (!originalUploadResult.success) {
+      return NextResponse.json({ 
+        error: '原始文件上传失败', 
+        details: originalUploadResult.error 
+      }, { status: 500 })
+    }
 
     // 创建数据库记录
+    const expiresAt = new Date()
+    expiresAt.setHours(expiresAt.getHours() + 24) // 24小时后过期
+
     const compression = await prisma.imageCompression.create({
       data: {
-        originalFileName: originalFileName,
+        originalFileName: file.name,
         originalFileSize: originalFileSize,
         originalMimeType: file.type,
         originalWidth: metadata.width,
         originalHeight: metadata.height,
-        originalPath: originalPath,
+        originalR2Key: originalR2Key,
+        originalR2Url: originalUploadResult.url,
         targetSizeKb: targetSizeKb ? parseInt(targetSizeKb) : null,
         quality: quality ? parseInt(quality) : null,
         format: format || 'jpeg',
-        status: 'PROCESSING'
+        status: 'PROCESSING',
+        expiresAt: expiresAt
       }
     })
 
@@ -149,10 +149,21 @@ export async function POST(request: NextRequest) {
 
       compressedMetadata = await sharp(compressedBuffer).metadata()
 
-      // 保存压缩后的文件
-      const compressedPath = `/uploads/${baseName}_${timestamp}_compressed.${format}`
-      const compressedFullPath = path.join(process.cwd(), 'public', compressedPath)
-      await writeFile(compressedFullPath, compressedBuffer)
+      // 生成压缩文件的R2键名
+      const compressedFileName = `${file.name.replace(/\.[^/.]+$/, '')}.${format}`
+      const compressedR2Key = generateR2Key(compressedFileName, 'compressed')
+      
+      // 上传压缩文件到R2
+      const compressedMimeType = `image/${format === 'jpg' ? 'jpeg' : format}`
+      const compressedUploadResult = await uploadToR2(
+        compressedR2Key, 
+        compressedBuffer, 
+        compressedMimeType
+      )
+      
+      if (!compressedUploadResult.success) {
+        throw new Error(`压缩文件上传失败: ${compressedUploadResult.error}`)
+      }
 
       const processingTime = Date.now() - startTime
       const compressionRatio = (1 - compressedBuffer.length / originalFileSize) * 100
@@ -164,7 +175,8 @@ export async function POST(request: NextRequest) {
           compressedFileSize: compressedBuffer.length,
           compressedWidth: compressedMetadata.width,
           compressedHeight: compressedMetadata.height,
-          compressedPath: compressedPath,
+          compressedR2Key: compressedR2Key,
+          compressedR2Url: compressedUploadResult.url,
           compressionRatio: compressionRatio,
           status: 'COMPLETED',
           processingTime: processingTime
@@ -174,20 +186,21 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         id: compression.id,
         original: {
-          fileName: originalFileName,
+          fileName: file.name,
           fileSize: originalFileSize,
           width: metadata.width,
           height: metadata.height,
-          path: originalPath
+          url: originalUploadResult.url
         },
         compressed: {
           fileSize: compressedBuffer.length,
           width: compressedMetadata.width,
           height: compressedMetadata.height,
-          path: compressedPath
+          url: compressedUploadResult.url
         },
         compressionRatio: Math.round(compressionRatio * 100) / 100,
-        processingTime
+        processingTime,
+        expiresAt: expiresAt.toISOString()
       })
 
     } catch (compressionError) {

@@ -85,7 +85,7 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
           
           <div className="aspect-video relative bg-gray-100">
             <Image
-              src={result.original.path}
+              src={result.original.url || result.original.path || ''}
               alt="原始图片"
               fill
               className="object-contain"
@@ -131,7 +131,7 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
           
           <div className="aspect-video relative bg-gray-100">
             <Image
-              src={result.compressed.path}
+              src={result.compressed.url || result.compressed.path || ''}
               alt="压缩后图片"
               fill
               className="object-contain"
@@ -169,7 +169,7 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
             <Separator />
             
             <Button 
-              onClick={() => downloadImage(result.compressed.path, `compressed_${result.original.fileName}`)}
+              onClick={() => downloadImage(result.compressed.url || result.compressed.path || '', `compressed_${result.original.fileName}`)}
               className="w-full"
             >
               <Download className="w-4 h-4 mr-2" />
