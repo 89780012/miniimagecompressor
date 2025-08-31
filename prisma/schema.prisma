@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model ImageCompression {
+  id                String   @id @default(cuid())
+  
+  // 原始图片信息
+  originalFileName  String
+  originalFileSize  Int      // bytes
+  originalMimeType  String
+  originalWidth     Int?
+  originalHeight    Int?
+  originalPath      String   // 存储路径
+  
+  // 压缩配置
+  targetSizeKb      Int?     // 目标大小(KB)
+  quality           Int?     // 压缩质量 (1-100)
+  format            String?  // 输出格式 (jpeg, png, webp)
+  
+  // 压缩结果
+  compressedFileSize Int?    // bytes
+  compressedWidth    Int?
+  compressedHeight   Int?
+  compressedPath     String?
+  compressionRatio   Float?  // 压缩比例
+  
+  // 元数据
+  status            CompressionStatus @default(PENDING)
+  processingTime    Int?              // 处理时间(毫秒)
+  errorMessage      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  
+  @@map("image_compressions")
+}
+
+enum CompressionStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
