@@ -166,9 +166,9 @@ export default function HomePage() {
     const completedImages = images.filter(img => img.status === 'completed' && img.result)
     
     completedImages.forEach(img => {
-      if (img.result?.url) {
+      if (img.result?.compressed?.url) {
         const link = document.createElement('a')
-        link.href = img.result.url
+        link.href = img.result.compressed.url
         link.download = `compressed_${img.file.name}`
         document.body.appendChild(link)
         link.click()
@@ -180,9 +180,9 @@ export default function HomePage() {
   // 下载单个图片
   const handleDownloadSingle = useCallback((imageId: string) => {
     const image = images.find(img => img.id === imageId)
-    if (image?.result?.url) {
+    if (image?.result?.compressed?.url) {
       const link = document.createElement('a')
-      link.href = image.result.url
+      link.href = image.result.compressed.url
       link.download = `compressed_${image.file.name}`
       document.body.appendChild(link)
       link.click()
@@ -193,8 +193,8 @@ export default function HomePage() {
   // 预览图片
   const handlePreview = useCallback((imageId: string) => {
     const image = images.find(img => img.id === imageId)
-    if (image?.result?.url) {
-      window.open(image.result.url, '_blank')
+    if (image?.result?.compressed?.url) {
+      window.open(image.result.compressed.url, '_blank')
     }
   }, [images])
 
