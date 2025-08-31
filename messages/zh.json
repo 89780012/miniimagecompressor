@@ -1,0 +1,94 @@
+{
+  "common": {
+    "title": "图片压缩工具",
+    "subtitle": "快速、高效的在线图片压缩服务",
+    "loading": "加载中...",
+    "error": "错误",
+    "success": "成功",
+    "reset": "重置",
+    "download": "下载",
+    "close": "关闭"
+  },
+  "upload": {
+    "title": "步骤 1: 上传图片",
+    "dragText": "拖拽图片到这里",
+    "clickText": "或点击选择文件",
+    "processing": "正在处理图片...",
+    "release": "释放以上传图片",
+    "selectedImage": "已选择的图片",
+    "remove": "移除",
+    "supportedFormats": "支持 JPEG, PNG, WebP, BMP, GIF 格式",
+    "tips": {
+      "title": "提示",
+      "format": "• 支持 JPEG, PNG, WebP, BMP, GIF 格式",
+      "size": "• 建议上传大小不超过 10MB 的图片",
+      "ratio": "• 压缩后的图片将保持原有的长宽比"
+    }
+  },
+  "compression": {
+    "title": "步骤 2: 设置压缩参数",
+    "modeSize": "按文件大小",
+    "modeQuality": "按质量",
+    "targetSize": "目标大小 (KB)",
+    "targetSizePlaceholder": "输入目标大小",
+    "quality": "压缩质量",
+    "format": "输出格式",
+    "compress": "开始压缩",
+    "compressing": "正在压缩...",
+    "quickSelect": "快速选择:",
+    "qualityGuide": {
+      "title": "质量指南:",
+      "high": "• 85-95%: 高质量，文件较大",
+      "balanced": "• 75-85%: 平衡质量和大小", 
+      "medium": "• 60-75%: 中等质量，文件较小",
+      "low": "• 30-60%: 低质量，最小文件"
+    },
+    "formatHints": "JPEG: 最小文件大小 | PNG: 支持透明度 | WebP: 现代浏览器的最佳选择",
+    "enableMessage": "请先上传图片以启用压缩设置"
+  },
+  "comparison": {
+    "compressionRatio": "压缩率",
+    "spaceSaved": "节省空间",
+    "processingTime": "处理时间",
+    "recompress": "重新压缩",
+    "original": "原始图片",
+    "compressed": "压缩后图片",
+    "originalTag": "原图",
+    "compressedTag": "压缩后",
+    "downloadCompressed": "下载压缩后图片",
+    "details": "详细对比",
+    "originalSize": "原始大小",
+    "compressedSize": "压缩后大小",
+    "savedSize": "节省大小",
+    "fileName": "文件名",
+    "fileSize": "文件大小",
+    "width": "宽度",
+    "height": "高度",
+    "compressionRate": "压缩比"
+  },
+  "features": {
+    "title": "为什么选择我们的压缩工具？",
+    "subtitle": "专业的图片压缩技术，为您提供最佳的体验",
+    "fast": {
+      "title": "快速压缩",
+      "description": "采用先进的压缩算法，几秒钟内完成图片压缩处理"
+    },
+    "quality": {
+      "title": "高质量保证", 
+      "description": "智能压缩算法确保在减小文件大小的同时保持图片质量"
+    },
+    "secure": {
+      "title": "安全可靠",
+      "description": "所有处理均在本地完成，确保您的图片隐私安全"
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 图片压缩工具. 为您提供专业的图片优化服务."
+  },
+  "errors": {
+    "compressionFailed": "压缩失败",
+    "unknownError": "未知错误",
+    "noFileUploaded": "没有文件上传",
+    "downloadFailed": "下载失败"
+  }
+}

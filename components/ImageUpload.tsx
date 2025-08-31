@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Upload, X, Image as ImageIcon } from 'lucide-react'
@@ -20,6 +21,7 @@ interface ImageUploadProps {
 }
 
 export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) {
+  const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -29,6 +31,12 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
     setIsLoading(true)
 
     try {
+      // 确保在浏览器环境中
+      if (typeof window === 'undefined') {
+        setIsLoading(false)
+        return
+      }
+      
       // 创建预览 URL
       const preview = URL.createObjectURL(file)
       
@@ -52,10 +60,21 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
 
   // 获取图片尺寸
   const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
-    return new Promise((resolve) => {
-      const img = new Image()
+    return new Promise((resolve, reject) => {
+      // 确保在浏览器环境中
+      if (typeof window === 'undefined') {
+        resolve({ width: 0, height: 0 })
+        return
+      }
+      
+      const img = new window.Image()
       img.onload = () => {
         resolve({ width: img.naturalWidth, height: img.naturalHeight })
+        URL.revokeObjectURL(img.src)
+      }
+      img.onerror = () => {
+        reject(new Error('Failed to load image'))
+        URL.revokeObjectURL(img.src)
       }
       img.src = URL.createObjectURL(file)
     })
@@ -71,10 +90,10 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
   })
 
   const removeImage = () => {
-    if (selectedImage?.preview) {
+    if (selectedImage?.preview && typeof window !== 'undefined') {
       URL.revokeObjectURL(selectedImage.preview)
     }
-    onImageSelect(null as any)
+    onImageSelect(null)
   }
 
   const formatFileSize = (bytes: number): string => {
@@ -90,7 +109,7 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
       <Card className="p-6">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-medium">已选择的图片</h3>
+            <h3 className="text-lg font-medium">{t('upload.selectedImage')}</h3>
             <Button
               variant="outline"
               size="sm"
@@ -98,14 +117,14 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
               className="text-red-500 hover:text-red-700"
             >
               <X className="h-4 w-4 mr-2" />
-              移除
+              {t('upload.remove')}
             </Button>
           </div>
           
           <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
             <Image
               src={selectedImage.preview}
-              alt="预览图片"
+              alt={t('upload.selectedImage')}
               fill
               className="object-contain"
             />
@@ -113,18 +132,18 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
           
           <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
             <div>
-              <span className="font-medium">文件名:</span> {selectedImage.file.name}
+              <span className="font-medium">{t('comparison.fileName')}:</span> {selectedImage.file.name}
             </div>
             <div>
-              <span className="font-medium">大小:</span> {formatFileSize(selectedImage.size)}
+              <span className="font-medium">{t('comparison.fileSize')}:</span> {formatFileSize(selectedImage.size)}
             </div>
             {selectedImage.dimensions && (
               <>
                 <div>
-                  <span className="font-medium">宽度:</span> {selectedImage.dimensions.width}px
+                  <span className="font-medium">{t('comparison.width')}:</span> {selectedImage.dimensions.width}px
                 </div>
                 <div>
-                  <span className="font-medium">高度:</span> {selectedImage.dimensions.height}px
+                  <span className="font-medium">{t('comparison.height')}:</span> {selectedImage.dimensions.height}px
                 </div>
               </>
             )}
@@ -159,14 +178,14 @@ export function ImageUpload({ onImageSelect, selectedImage }: ImageUploadProps) 
           
           <div>
             <p className="text-lg font-medium text-gray-700">
-              {isLoading ? '正在处理图片...' : 
-               isDragActive ? '释放以上传图片' : '拖拽图片到这里'}
+              {isLoading ? t('upload.processing') : 
+               isDragActive ? t('upload.release') : t('upload.dragText')}
             </p>
             <p className="text-sm text-gray-500 mt-1">
-              或 <span className="text-blue-600 font-medium">点击选择文件</span>
+              {t('upload.clickText')}
             </p>
             <p className="text-xs text-gray-400 mt-2">
-              支持 JPEG, PNG, WebP, BMP, GIF 格式
+              {t('upload.supportedFormats')}
             </p>
           </div>
         </div>

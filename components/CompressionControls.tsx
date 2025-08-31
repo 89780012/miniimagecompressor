@@ -146,7 +146,7 @@ export function CompressionControls({
                 key={format.value}
                 variant="outline"
                 size="sm"
-                onClick={() => updateSettings({ format: format.value as any })}
+                onClick={() => updateSettings({ format: format.value as CompressionSettings['format'] })}
                 disabled={disabled}
                 className={localSettings.format === format.value ? 'border-blue-500 text-blue-600' : ''}
               >

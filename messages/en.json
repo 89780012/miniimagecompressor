@@ -1,0 +1,94 @@
+{
+  "common": {
+    "title": "Image Compressor",
+    "subtitle": "Fast and efficient online image compression service",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success", 
+    "reset": "Reset",
+    "download": "Download",
+    "close": "Close"
+  },
+  "upload": {
+    "title": "Step 1: Upload Image",
+    "dragText": "Drag image here",
+    "clickText": "or click to select file",
+    "processing": "Processing image...",
+    "release": "Release to upload image",
+    "selectedImage": "Selected Image",
+    "remove": "Remove",
+    "supportedFormats": "Supports JPEG, PNG, WebP, BMP, GIF formats",
+    "tips": {
+      "title": "Tips",
+      "format": "• Supports JPEG, PNG, WebP, BMP, GIF formats",
+      "size": "• Recommended file size under 10MB",
+      "ratio": "• Compressed images maintain original aspect ratio"
+    }
+  },
+  "compression": {
+    "title": "Step 2: Compression Settings",
+    "modeSize": "By File Size",
+    "modeQuality": "By Quality",
+    "targetSize": "Target Size (KB)",
+    "targetSizePlaceholder": "Enter target size",
+    "quality": "Compression Quality",
+    "format": "Output Format",
+    "compress": "Start Compression",
+    "compressing": "Compressing...",
+    "quickSelect": "Quick Select:",
+    "qualityGuide": {
+      "title": "Quality Guide:",
+      "high": "• 85-95%: High quality, larger files",
+      "balanced": "• 75-85%: Balanced quality and size",
+      "medium": "• 60-75%: Medium quality, smaller files", 
+      "low": "• 30-60%: Low quality, minimum files"
+    },
+    "formatHints": "JPEG: Smallest file size | PNG: Supports transparency | WebP: Best for modern browsers",
+    "enableMessage": "Please upload an image first to enable compression settings"
+  },
+  "comparison": {
+    "compressionRatio": "Compression Ratio",
+    "spaceSaved": "Space Saved",
+    "processingTime": "Processing Time",
+    "recompress": "Recompress",
+    "original": "Original Image",
+    "compressed": "Compressed Image", 
+    "originalTag": "Original",
+    "compressedTag": "Compressed",
+    "downloadCompressed": "Download Compressed Image",
+    "details": "Detailed Comparison",
+    "originalSize": "Original Size",
+    "compressedSize": "Compressed Size",
+    "savedSize": "Saved Size",
+    "fileName": "File Name",
+    "fileSize": "File Size",
+    "width": "Width",
+    "height": "Height",
+    "compressionRate": "Compression Rate"
+  },
+  "features": {
+    "title": "Why Choose Our Compression Tool?",
+    "subtitle": "Professional image compression technology for the best experience",
+    "fast": {
+      "title": "Fast Compression",
+      "description": "Advanced compression algorithms complete image processing in seconds"
+    },
+    "quality": {
+      "title": "Quality Assurance",
+      "description": "Smart compression algorithms ensure file size reduction while maintaining image quality"
+    },
+    "secure": {
+      "title": "Safe & Secure",
+      "description": "All processing is done locally to ensure your image privacy and security"
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 Image Compressor. Professional image optimization service."
+  },
+  "errors": {
+    "compressionFailed": "Compression failed",
+    "unknownError": "Unknown error",
+    "noFileUploaded": "No file uploaded",
+    "downloadFailed": "Download failed"
+  }
+}
