@@ -34,7 +34,6 @@ export function initCleanupScheduler() {
       console.error('定时清理任务执行失败:', error)
     }
   }, {
-    scheduled: true,
     timezone: process.env.TZ || 'Asia/Shanghai' // 默认使用上海时区
   })
 
