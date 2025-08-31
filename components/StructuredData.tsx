@@ -9,7 +9,7 @@ export function StructuredData({ breadcrumbs }: StructuredDataProps) {
   const locale = useLocale()
   
   const websiteSchema = generateWebsiteSchema(locale)
-  const breadcrumbSchema = breadcrumbs ? generateBreadcrumbSchema(breadcrumbs, locale) : null
+  const breadcrumbSchema = breadcrumbs ? generateBreadcrumbSchema(breadcrumbs) : null
 
   return (
     <>

@@ -1,52 +1,212 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useTranslations } from 'next-intl'
-import { ImageUpload } from '@/components/ImageUpload'
-import { CompressionControls, CompressionSettings } from '@/components/CompressionControls'
-import { ComparisonView } from '@/components/ComparisonView'
+import { BatchImageUpload } from '@/components/BatchImageUpload'
+import { BatchCompressionControls } from '@/components/BatchCompressionControls'
+import { BatchProgressDisplay } from '@/components/BatchProgressDisplay'
+import { BatchComparisonView } from '@/components/BatchComparisonView'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { StructuredData } from '@/components/StructuredData'
 import { compressImage, CompressionResult } from '@/lib/compression'
+import { CompressionSettings } from '@/components/CompressionControls'
 
 interface ImageFile {
+  id: string
   file: File
   preview: string
   size: number
   dimensions?: { width: number; height: number }
+  settings?: CompressionSettings
+  progress: number
+  status: 'pending' | 'compressing' | 'completed' | 'error'
+  result?: CompressionResult
+  error?: string
+}
+
+interface BatchProgress {
+  completed: number
+  total: number
+  isRunning: boolean
 }
 
 export default function HomePage() {
   const t = useTranslations()
-  const [selectedImage, setSelectedImage] = useState<ImageFile | null>(null)
-  const [compressionResult, setCompressionResult] = useState<CompressionResult | null>(null)
-  const [isCompressing, setIsCompressing] = useState(false)
-  const [settings, setSettings] = useState<CompressionSettings>({
+  const [images, setImages] = useState<ImageFile[]>([])
+  const [currentView, setCurrentView] = useState<'upload' | 'comparison'>('upload')
+  const [batchProgress, setBatchProgress] = useState<BatchProgress>({
+    completed: 0,
+    total: 0,
+    isRunning: false
+  })
+  const [defaultSettings, setDefaultSettings] = useState<CompressionSettings>({
     mode: 'quality',
     quality: 80,
     format: 'jpeg'
   })
-
-  const handleCompress = async () => {
-    if (!selectedImage) return
-
-    setIsCompressing(true)
-    try {
-      const result = await compressImage(selectedImage.file, settings)
-      setCompressionResult(result)
-    } catch (error) {
-      console.error(t('errors.compressionFailed'), error)
-      alert(t('errors.compressionFailed') + ': ' + (error instanceof Error ? error.message : t('errors.unknownError')))
-    } finally {
-      setIsCompressing(false)
+  
+  // 添加图片到批量列表
+  const handleImagesAdd = useCallback((newImages: ImageFile[]) => {
+    setImages(prev => [...prev, ...newImages])
+  }, [])
+  
+  // 移除单个图片
+  const handleImageRemove = useCallback((id: string) => {
+    setImages(prev => prev.filter(img => img.id !== id))
+  }, [])
+  
+  // 清空所有图片
+  const handleImagesClear = useCallback(() => {
+    // 清理预览URL
+    images.forEach(img => {
+      if (img.preview && typeof window !== 'undefined') {
+        URL.revokeObjectURL(img.preview)
+      }
+    })
+    setImages([])
+    setBatchProgress({ completed: 0, total: 0, isRunning: false })
+  }, [images])
+  
+  // 更新图片列表
+  const handleImagesUpdate = useCallback((updatedImages: ImageFile[]) => {
+    setImages(updatedImages)
+  }, [])
+  
+  // 开始批量压缩
+  const handleStartBatch = useCallback(async () => {
+    const pendingImages = images.filter(img => img.status === 'pending')
+    if (pendingImages.length === 0) return
+    
+    setBatchProgress(prev => ({ ...prev, isRunning: true, total: pendingImages.length }))
+    
+    let completed = 0
+    for (const image of pendingImages) {
+      // 内联压缩逻辑以避免依赖问题
+      const settings = image.settings || defaultSettings
+      
+      // 更新状态为压缩中
+      setImages(prev => prev.map(img => 
+        img.id === image.id 
+          ? { ...img, status: 'compressing' as const, progress: 0 } 
+          : img
+      ))
+      
+      try {
+        // 模拟进度更新
+        const progressInterval = setInterval(() => {
+          setImages(prev => prev.map(img => 
+            img.id === image.id 
+              ? { ...img, progress: Math.min(img.progress + 10, 90) } 
+              : img
+          ))
+        }, 200)
+        
+        const result = await compressImage(image.file, settings)
+        
+        clearInterval(progressInterval)
+        
+        // 更新为完成状态
+        setImages(prev => prev.map(img => 
+          img.id === image.id ? {
+            ...img,
+            status: 'completed' as const,
+            progress: 100,
+            result: {
+              ...result,
+              url: result.compressed.path // 设置下载URL
+            }
+          } : img
+        ))
+      } catch (error) {
+        // 更新为错误状态
+        const errorMessage = error instanceof Error ? error.message : t('errors.unknownError')
+        setImages(prev => prev.map(img => 
+          img.id === image.id ? {
+            ...img,
+            status: 'error' as const,
+            progress: 0,
+            error: errorMessage
+          } : img
+        ))
+      }
+      
+      completed++
+      setBatchProgress(prev => ({ ...prev, completed }))
     }
-  }
+    
+    setBatchProgress(prev => ({ ...prev, isRunning: false }))
+    
+    // 如果有成功压缩的图片，自动切换到对比视图
+    const hasCompletedImages = pendingImages.length > 0 && completed === pendingImages.length
+    if (hasCompletedImages) {
+      // 延迟一下让用户看到完成状态
+      setTimeout(() => setCurrentView('comparison'), 1000)
+    }
+  }, [images, defaultSettings, t])
+  
+  // 暂停批量压缩
+  const handlePauseBatch = useCallback(() => {
+    setBatchProgress(prev => ({ ...prev, isRunning: false }))
+  }, [])
+  
+  // 重置批量压缩
+  const handleResetBatch = useCallback(() => {
+    setImages(prev => prev.map(img => ({
+      ...img,
+      status: 'pending' as const,
+      progress: 0,
+      result: undefined,
+      error: undefined
+    })))
+    setBatchProgress({ completed: 0, total: 0, isRunning: false })
+  }, [])
+  
+  // 下载所有完成的图片
+  const handleDownloadAll = useCallback(() => {
+    const completedImages = images.filter(img => img.status === 'completed' && img.result)
+    
+    completedImages.forEach(img => {
+      if (img.result?.url) {
+        const link = document.createElement('a')
+        link.href = img.result.url
+        link.download = `compressed_${img.file.name}`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      }
+    })
+  }, [images])
+  
+  // 下载单个图片
+  const handleDownloadSingle = useCallback((imageId: string) => {
+    const image = images.find(img => img.id === imageId)
+    if (image?.result?.url) {
+      const link = document.createElement('a')
+      link.href = image.result.url
+      link.download = `compressed_${image.file.name}`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+    }
+  }, [images])
+  
+  // 预览图片
+  const handlePreview = useCallback((imageId: string) => {
+    const image = images.find(img => img.id === imageId)
+    if (image?.result?.url) {
+      window.open(image.result.url, '_blank')
+    }
+  }, [images])
 
-  const handleReset = () => {
-    setSelectedImage(null)
-    setCompressionResult(null)
-    setIsCompressing(false)
-  }
+  // 回到上传界面
+  const handleBackToUpload = useCallback(() => {
+    setCurrentView('upload')
+  }, [])
+
+  // 查看压缩结果
+  const handleViewResults = useCallback(() => {
+    setCurrentView('comparison')
+  }, [])
 
   return (
     <>
@@ -66,56 +226,81 @@ export default function HomePage() {
         </header>
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {compressionResult ? (
-            <ComparisonView
-              result={compressionResult}
-              onReset={handleReset}
+          {currentView === 'comparison' ? (
+            // 批量对比视图
+            <BatchComparisonView
+              images={images}
+              onBack={handleBackToUpload}
+              onDownloadAll={handleDownloadAll}
+              onDownloadSingle={handleDownloadSingle}
+              onReset={handleImagesClear}
             />
           ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            // 上传和压缩界面
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* 左侧：图片上传 */}
-              <div className="space-y-6">
+              <div className="lg:col-span-2 space-y-6">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                    {t('upload.title')}
+                    {t('upload.batchTitle')}
                   </h2>
-                  <ImageUpload
-                    selectedImage={selectedImage}
-                    onImageSelect={setSelectedImage}
+                  <BatchImageUpload
+                    images={images}
+                    onImagesAdd={handleImagesAdd}
+                    onImageRemove={handleImageRemove}
+                    onImagesClear={handleImagesClear}
+                    maxFiles={10}
+                    disabled={batchProgress.isRunning}
                   />
                 </div>
                 
-                {selectedImage && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h3 className="font-medium text-blue-900 mb-2">{t('upload.tips.title')}</h3>
-                    <ul className="text-sm text-blue-800 space-y-1">
-                      <li>{t('upload.tips.format')}</li>
-                      <li>{t('upload.tips.size')}</li>
-                      <li>{t('upload.tips.ratio')}</li>
-                    </ul>
+                {/* 进度显示 */}
+                {images.length > 0 && (
+                  <BatchProgressDisplay
+                    images={images}
+                    batchProgress={batchProgress}
+                    onDownloadAll={handleDownloadAll}
+                    onDownloadSingle={handleDownloadSingle}
+                    onPreview={handlePreview}
+                  />
+                )}
+
+                {/* 查看结果按钮 */}
+                {images.some(img => img.status === 'completed') && (
+                  <div className="text-center">
+                    <button
+                      onClick={handleViewResults}
+                      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+                    >
+                      {t('comparison.viewResults')}
+                    </button>
                   </div>
                 )}
               </div>
 
-              {/* 右侧：压缩设置 */}
+              {/* 右侧：压缩控制 */}
               <div className="space-y-6">
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-4">
                     {t('compression.title')}
                   </h2>
-                  <CompressionControls
-                    settings={settings}
-                    onSettingsChange={setSettings}
-                    onCompress={handleCompress}
-                    isCompressing={isCompressing}
-                    disabled={!selectedImage}
+                  <BatchCompressionControls
+                    images={images}
+                    onImagesUpdate={handleImagesUpdate}
+                    onStartBatch={handleStartBatch}
+                    onPauseBatch={handlePauseBatch}
+                    onResetBatch={handleResetBatch}
+                    batchProgress={batchProgress}
+                    defaultSettings={defaultSettings}
+                    onDefaultSettingsChange={setDefaultSettings}
+                    disabled={batchProgress.isRunning}
                   />
                 </div>
 
-                {!selectedImage && (
+                {images.length === 0 && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                     <p className="text-sm text-gray-600 text-center">
-                      {t('compression.enableMessage')}
+                      {t('compression.batchEnableMessage')}
                     </p>
                   </div>
                 )}
@@ -124,7 +309,7 @@ export default function HomePage() {
           )}
 
           {/* Features */}
-          {!compressionResult && (
+          {currentView === 'upload' && images.length === 0 && (
             <div className="mt-16">
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-gray-900">{t('features.title')}</h2>

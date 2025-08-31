@@ -17,6 +17,9 @@ export interface CompressionResult {
   }
   compressionRatio: number
   processingTime: number
+  // 添加下载URL属性以支持批量下载
+  url?: string
+  compressedSize?: number
 }
 
 export async function compressImage(

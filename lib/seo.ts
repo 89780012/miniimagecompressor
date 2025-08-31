@@ -87,9 +87,9 @@ export async function generateSEOMetadata({
       google: process.env.GOOGLE_SITE_VERIFICATION,
       yandex: process.env.YANDEX_VERIFICATION,
       yahoo: process.env.YAHOO_SITE_VERIFICATION,
-      other: {
+      other: process.env.BAIDU_SITE_VERIFICATION ? {
         'baidu-site-verification': process.env.BAIDU_SITE_VERIFICATION,
-      },
+      } : {},
     },
     
     // Additional metadata
