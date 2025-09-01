@@ -197,5 +197,38 @@
     "qualityDescription": "调整图片质量（推荐80%）",
     "targetSizeDescription": "设置目标文件大小（KB）",
     "formatDescription": "选择输出图片格式"
+  },
+  "resize": {
+    "title": "图片尺寸调整",
+    "subtitle": "智能调整图片尺寸，支持多种模式",
+    "uploadTitle": "步骤 1: 上传图片",
+    "controlsTitle": "步骤 2: 调整设置",
+    "clickOrDrag": "点击选择文件或拖拽上传",
+    "dropHere": "释放图片到这里上传",
+    "selectedImages": "已选择的图片 ({count})",
+    "uploadMessage": "请先上传图片再进行尺寸调整设置",
+    "viewPreview": "查看预览结果",
+    "featuresTitle": "尺寸调整特色功能",
+    "featuresSubtitle": "专业的图片尺寸调整工具，满足各种需求",
+    "features": {
+      "precise": {
+        "title": "精确控制",
+        "description": "像素级精确控制，支持自定义宽度和高度"
+      },
+      "ratio": {
+        "title": "宽高比保护",
+        "description": "智能保持原始宽高比，避免图片变形"
+      },
+      "formats": {
+        "title": "多格式支持",
+        "description": "支持 JPEG、PNG、WebP、GIF、BMP 等主流格式"
+      }
+    },
+    "status": {
+      "pending": "等待中",
+      "compressing": "调整中...",
+      "completed": "已完成",
+      "error": "错误"
+    }
   }
 }

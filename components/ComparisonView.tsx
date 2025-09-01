@@ -16,7 +16,7 @@ interface ComparisonViewProps {
 
 export function ComparisonView({ result, onReset }: ComparisonViewProps) {
   const t = useTranslations()
-  const savings = calculateSavings(result.original.fileSize, result.compressed.fileSize)
+  const savings = calculateSavings(result.original.fileSize || 0, result.compressed.fileSize || 0)
 
   const downloadImage = async (path: string, filename: string) => {
     try {
@@ -102,7 +102,7 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
               </div>
               <div>
                 <span className="font-medium text-gray-600">文件大小:</span>
-                <p>{formatFileSize(result.original.fileSize)}</p>
+                <p>{formatFileSize(result.original.fileSize || 0)}</p>
               </div>
               {result.original.width && result.original.height && (
                 <>
@@ -145,7 +145,7 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
               <div>
                 <span className="font-medium text-gray-600">文件大小:</span>
                 <p className="font-semibold text-green-600">
-                  {formatFileSize(result.compressed.fileSize)}
+                  {formatFileSize(result.compressed.fileSize || 0)}
                 </p>
               </div>
               <div>
@@ -187,11 +187,11 @@ export function ComparisonView({ result, onReset }: ComparisonViewProps) {
         <div className="space-y-3">
           <div className="flex justify-between items-center py-2 border-b">
             <span className="font-medium">原始大小</span>
-            <span>{formatFileSize(result.original.fileSize)}</span>
+            <span>{formatFileSize(result.original.fileSize || 0)}</span>
           </div>
           <div className="flex justify-between items-center py-2 border-b">
             <span className="font-medium">压缩后大小</span>
-            <span className="text-green-600">{formatFileSize(result.compressed.fileSize)}</span>
+            <span className="text-green-600">{formatFileSize(result.compressed.fileSize || 0)}</span>
           </div>
           <div className="flex justify-between items-center py-2 border-b">
             <span className="font-medium">节省大小</span>

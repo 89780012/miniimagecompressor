@@ -4,21 +4,41 @@ export interface CompressionResult {
   id: string
   original: {
     fileName: string
-    fileSize: number
+    fileSize?: number
+    size?: number  // 支持两种命名方式
     width?: number
     height?: number
+    dimensions?: {
+      width: number
+      height: number
+    }
     path?: string  // 兼容旧数据
     url?: string   // R2 URL
+    mimeType?: string
   }
   compressed: {
-    fileSize: number
+    fileSize?: number
+    size?: number  // 支持两种命名方式
     width?: number
     height?: number
+    dimensions?: {
+      width: number
+      height: number
+    }
     path?: string  // 兼容旧数据
     url?: string   // R2 URL
+    mimeType?: string
   }
-  compressionRatio: number
-  processingTime: number
+  stats?: {
+    originalSize: number
+    compressedSize: number
+    compressionRatio: string
+    originalDimensions: string
+    compressedDimensions: string
+    sizeChange?: string
+  }
+  compressionRatio?: number
+  processingTime?: number
   expiresAt?: string // 过期时间
 }
 

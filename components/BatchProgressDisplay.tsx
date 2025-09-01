@@ -274,8 +274,8 @@ export function BatchProgressDisplay({
                       <span>{formatFileSize(image.size)}</span>
                       {image.result && (
                         <span className="text-green-600">
-                          {formatFileSize(image.result.compressed.fileSize)} 
-                          (-{(((image.size - image.result.compressed.fileSize) / image.size) * 100).toFixed(1)}%)
+                          {formatFileSize(image.result.compressed.fileSize || 0)} 
+                          (-{(((image.size - (image.result.compressed.fileSize || 0)) / image.size) * 100).toFixed(1)}%)
                         </span>
                       )}
                     </div>

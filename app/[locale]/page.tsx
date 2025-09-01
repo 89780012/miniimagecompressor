@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import Link from 'next/link'
 import { BatchImageUpload } from '@/components/BatchImageUpload'
 import { BatchCompressionControls } from '@/components/BatchCompressionControls'
 import { BatchProgressDisplay } from '@/components/BatchProgressDisplay'
@@ -24,6 +25,7 @@ import { ImageFile, BatchProgress } from '@/types/image'
 
 export default function HomePage() {
   const t = useTranslations()
+  const locale = useLocale()
   const [images, setImages] = useState<ImageFile[]>([])
   const [currentView, setCurrentView] = useState<'upload' | 'comparison' | 'history'>('upload')
   const [historyItems, setHistoryItems] = useState<HistoryItem[]>([])
@@ -278,6 +280,16 @@ export default function HomePage() {
                 <p className="text-sm text-gray-600">{t('common.subtitle')}</p>
               </div>
               <div className="flex items-center gap-4">
+                {/* 图片调整尺寸按钮 */}
+                <Link
+                  href={`/${locale}/resize`}
+                  className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 h-8 transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8V4a1 1 0 011-1h4m0 0L9 9V8a1 1 0 011-1h4l1 1v1M7 8v8a1 1 0 001 1h8a1 1 0 001-1V8M7 8l8 8m0-8l-8 8" />
+                  </svg>
+                  {t('resize.title')}
+                </Link>
                 {/* 历史记录按钮 */}
                 {historyItems.filter(item => !item.isExpired).length > 0 && (
                   <button

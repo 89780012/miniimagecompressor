@@ -124,11 +124,11 @@ export function getHistoryStats(): HistoryStats {
   }
   
   const totalOriginalSize = validHistory.reduce(
-    (sum, item) => sum + item.compressionResult.original.fileSize, 0
+    (sum, item) => sum + (item.compressionResult.original.fileSize || 0), 0
   )
   
   const totalCompressedSize = validHistory.reduce(
-    (sum, item) => sum + item.compressionResult.compressed.fileSize, 0
+    (sum, item) => sum + (item.compressionResult.compressed.fileSize || 0), 0
   )
   
   const totalSaved = totalOriginalSize - totalCompressedSize

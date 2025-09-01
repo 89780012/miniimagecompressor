@@ -197,5 +197,38 @@
     "qualityDescription": "Adjust image quality (80% recommended)",
     "targetSizeDescription": "Set target file size (KB)",
     "formatDescription": "Select output image format"
+  },
+  "resize": {
+    "title": "Image Resize",
+    "subtitle": "Smart image resizing with multiple modes",
+    "uploadTitle": "Step 1: Upload Images",
+    "controlsTitle": "Step 2: Resize Settings",
+    "clickOrDrag": "Click to select files or drag and drop",
+    "dropHere": "Drop images here to upload",
+    "selectedImages": "Selected Images ({count})",
+    "uploadMessage": "Please upload images first to configure resize settings",
+    "viewPreview": "View Preview Results",
+    "featuresTitle": "Resize Features",
+    "featuresSubtitle": "Professional image resizing tool for all your needs",
+    "features": {
+      "precise": {
+        "title": "Precise Control",
+        "description": "Pixel-level precision control with custom width and height settings"
+      },
+      "ratio": {
+        "title": "Aspect Ratio Protection",
+        "description": "Smart preservation of original aspect ratio to prevent image distortion"
+      },
+      "formats": {
+        "title": "Multiple Format Support",
+        "description": "Supports JPEG, PNG, WebP, GIF, BMP and other mainstream formats"
+      }
+    },
+    "status": {
+      "pending": "Pending",
+      "compressing": "Resizing...",
+      "completed": "Completed",
+      "error": "Error"
+    }
   }
 }

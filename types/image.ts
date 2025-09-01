@@ -1,6 +1,13 @@
 import { CompressionResult } from '@/lib/compression'
 import { CompressionSettings } from '@/components/CompressionControls'
 
+export interface ResizeSettings {
+  width: number
+  height: number
+  maintainAspectRatio: boolean
+  resizeMode: 'fit' | 'fill' | 'cover'
+}
+
 export interface ImageFile {
   id: string
   file: File
@@ -8,6 +15,7 @@ export interface ImageFile {
   size: number
   dimensions?: { width: number; height: number }
   settings?: CompressionSettings
+  resizeSettings?: ResizeSettings
   progress: number
   status: 'pending' | 'compressing' | 'completed' | 'error'
   result?: CompressionResult

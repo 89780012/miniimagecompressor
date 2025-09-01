@@ -229,7 +229,7 @@ export function BatchComparisonView({
           {completedImages.map((image, index) => {
             if (!image.result) return null
             
-            const savings = calculateSavings(image.size, image.result.compressed.fileSize)
+            const savings = calculateSavings(image.size, image.result.compressed.fileSize || 0)
             const isShowingOriginal = showOriginal[image.id]
             
             return (
@@ -279,7 +279,7 @@ export function BatchComparisonView({
                       <div>
                         <p className="text-gray-500">{t('comparison.compressed')}</p>
                         <p className="font-medium text-green-600">
-                          {formatFileSize(image.result.compressed.fileSize)}
+                          {formatFileSize(image.result.compressed.fileSize || 0)}
                         </p>
                       </div>
                     </div>
@@ -326,7 +326,7 @@ export function BatchComparisonView({
           const currentImage = completedImages[currentImageIndex]
           if (!currentImage?.result) return null
 
-          const savings = calculateSavings(currentImage.size, currentImage.result.compressed.fileSize)
+          const savings = calculateSavings(currentImage.size, currentImage.result.compressed.fileSize || 0)
           const isShowingOriginal = showOriginal[currentImage.id]
 
           return (
@@ -413,7 +413,7 @@ export function BatchComparisonView({
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">{t('comparison.fileSize')}</span>
-                          <span className="text-green-600">{formatFileSize(currentImage.result.compressed.fileSize)}</span>
+                          <span className="text-green-600">{formatFileSize(currentImage.result.compressed.fileSize || 0)}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">{t('comparison.dimensions')}</span>

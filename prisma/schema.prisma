@@ -58,3 +58,47 @@ enum CompressionStatus {
   COMPLETED
   FAILED
 }
+
+model ImageResize {
+  id                String   @id @default(cuid())
+  
+  // 原始图片信息
+  originalFileName  String
+  originalFileSize  Int      // bytes
+  originalMimeType  String
+  originalWidth     Int?
+  originalHeight    Int?
+  originalPath      String?  // 旧的本地路径，保持兼容性
+  originalR2Key     String?  // R2存储键名
+  originalR2Url     String?  // R2公开访问URL
+  
+  // 调整配置
+  targetWidth       Int      // 目标宽度
+  targetHeight      Int      // 目标高度
+  maintainAspectRatio Boolean @default(true) // 是否保持宽高比
+  resizeMode        ResizeMode @default(FIT)  // 调整模式
+  
+  // 调整结果
+  resizedFileSize   Int?     // bytes
+  resizedWidth      Int?     // 实际调整后的宽度
+  resizedHeight     Int?     // 实际调整后的高度
+  resizedPath       String?  // 旧的本地路径，保持兼容性
+  resizedR2Key      String?  // 调整后文件R2存储键名
+  resizedR2Url      String?  // 调整后文件R2公开访问URL
+  
+  // 元数据
+  status            CompressionStatus @default(PENDING) // 复用现有状态枚举
+  processingTime    Int?              // 处理时间(毫秒)
+  errorMessage      String?
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  expiresAt         DateTime?         // 过期时间（R2文件）
+  
+  @@map("image_resizes")
+}
+
+enum ResizeMode {
+  FIT    // 适应：图片完全显示在指定尺寸内
+  FILL   // 填充：填满指定尺寸，可能会裁剪
+  COVER  // 覆盖：图片覆盖整个区域
+}

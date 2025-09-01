@@ -168,7 +168,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
       ) : (
         <div className="space-y-4">
           {validItems.map(item => {
-            const compressionRatio = Math.round((1 - item.compressionResult.compressed.fileSize / item.compressionResult.original.fileSize) * 100)
+            const compressionRatio = Math.round((1 - (item.compressionResult.compressed.fileSize || 0) / (item.compressionResult.original.fileSize || 1)) * 100)
             const isExpiringSoon = item.compressionResult.expiresAt && 
               new Date(item.compressionResult.expiresAt).getTime() - Date.now() < 2 * 60 * 60 * 1000 // 2小时内过期
             
@@ -251,7 +251,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
                   <div className="text-center">
                     <p className="text-sm text-gray-600">{t('comparison.original')}</p>
-                    <p className="font-medium text-lg">{formatFileSize(item.compressionResult.original.fileSize)}</p>
+                    <p className="font-medium text-lg">{formatFileSize(item.compressionResult.original.fileSize || 0)}</p>
                     {item.compressionResult.original.width && item.compressionResult.original.height && (
                       <p className="text-xs text-gray-500">
                         {item.compressionResult.original.width} × {item.compressionResult.original.height}
@@ -261,7 +261,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                   
                   <div className="text-center">
                     <p className="text-sm text-gray-600">{t('comparison.compressed')}</p>
-                    <p className="font-medium text-lg">{formatFileSize(item.compressionResult.compressed.fileSize)}</p>
+                    <p className="font-medium text-lg">{formatFileSize(item.compressionResult.compressed.fileSize || 0)}</p>
                     {item.compressionResult.compressed.width && item.compressionResult.compressed.height && (
                       <p className="text-xs text-gray-500">
                         {item.compressionResult.compressed.width} × {item.compressionResult.compressed.height}
@@ -275,7 +275,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                       {compressionRatio > 0 ? '-' : '+'}{Math.abs(compressionRatio)}%
                     </p>
                     <p className="text-xs text-gray-500">
-                      {compressionRatio > 0 ? '减少' : '增加'} {formatFileSize(Math.abs(item.compressionResult.original.fileSize - item.compressionResult.compressed.fileSize))}
+                      {compressionRatio > 0 ? '减少' : '增加'} {formatFileSize(Math.abs((item.compressionResult.original.fileSize || 0) - (item.compressionResult.compressed.fileSize || 0)))}
                     </p>
                   </div>
                 </div>
