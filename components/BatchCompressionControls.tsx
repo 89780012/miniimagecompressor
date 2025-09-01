@@ -203,7 +203,7 @@ export function BatchCompressionControls({
                 <option value="">{t('compression.defaultSettings')}</option>
                 {images.map(img => (
                   <option key={img.id} value={img.id}>
-                    {img.file.name} {img.settings ? '(已自定义)' : ''}
+                    {img.file.name} {img.settings ? `(${t('compression.customized')})` : ''}
                   </option>
                 ))}
               </select>
@@ -229,27 +229,62 @@ export function BatchCompressionControls({
             </TabsList>
 
             <TabsContent value="quality" className="space-y-4">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <h4 className="text-sm font-medium text-blue-800 mb-1">{t('compression.qualityModeTitle')}</h4>
+                <p className="text-xs text-blue-700">
+                  {t('compression.qualityModeDescription')}
+                </p>
+              </div>
+              
               <div>
                 <Label className="text-sm font-medium">
-                  {t('compression.quality')}: {currentSettings.quality}%
+                  {t('compression.quality')}: {currentSettings.quality ?? 80}%
                 </Label>
+                <div className="text-xs text-gray-600 mb-2">
+                  {(currentSettings.quality ?? 80) >= 90 && t('compression.qualityVeryHigh')}
+                  {(currentSettings.quality ?? 80) >= 80 && (currentSettings.quality ?? 80) < 90 && t('compression.qualityHigh')}
+                  {(currentSettings.quality ?? 80) >= 60 && (currentSettings.quality ?? 80) < 80 && t('compression.qualityMedium')}
+                  {(currentSettings.quality ?? 80) >= 40 && (currentSettings.quality ?? 80) < 60 && t('compression.qualityLow')}
+                  {(currentSettings.quality ?? 80) < 40 && t('compression.qualityVeryLow')}
+                </div>
                 <Slider
                   value={[currentSettings.quality || 80]}
                   onValueChange={([value]) => updateCurrentSettings({ quality: value })}
-                  max={100}
-                  min={1}
-                  step={1}
+                  max={95}
+                  min={20}
+                  step={5}
                   className="mt-2"
                   disabled={disabled}
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>{t('compression.lowQuality')}</span>
-                  <span>{t('compression.highQuality')}</span>
+                  <span>{t('compression.smallFileQuality')}</span>
+                  <span>{t('compression.largeFileQuality')}</span>
+                </div>
+              </div>
+              
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.864-.833-2.634 0L3.18 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <div>
+                    <p className="text-xs text-amber-800 font-medium">{t('compression.smartCompressionTip')}</p>
+                    <p className="text-xs text-amber-700 mt-1">
+                      {t('compression.smartCompressionDescription')}
+                    </p>
+                  </div>
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="size" className="space-y-4">
+              <div className="bg-green-50 border border-green-200 rounded-lg p-3 mb-4">
+                <h4 className="text-sm font-medium text-green-800 mb-1">{t('compression.sizeModeTitle')}</h4>
+                <p className="text-xs text-green-700">
+                  {t('compression.sizeModeDescription')}
+                </p>
+              </div>
+              
               <div>
                 <Label htmlFor="target-size" className="text-sm font-medium">
                   {t('compression.targetSize')} (KB)
@@ -261,12 +296,29 @@ export function BatchCompressionControls({
                   onChange={(e) => updateCurrentSettings({ 
                     targetSizeKb: parseInt(e.target.value) || undefined 
                   })}
-                  placeholder={t('compression.enterTargetSize')}
-                  min={1}
+                  placeholder={t('compression.targetSizePlaceholder')}
+                  min={10}
                   max={10240}
                   className="mt-1"
                   disabled={disabled}
                 />
+                <div className="text-xs text-gray-600 mt-1">
+                  {t('compression.targetSizeHint')}
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="flex items-start gap-2">
+                  <svg className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-xs text-blue-800 font-medium">{t('compression.compressionStrategy')}</p>
+                    <p className="text-xs text-blue-700 mt-1">
+                      {t('compression.compressionStrategyDescription')}
+                    </p>
+                  </div>
+                </div>
               </div>
             </TabsContent>
           </Tabs>

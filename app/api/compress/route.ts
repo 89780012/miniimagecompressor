@@ -145,6 +145,64 @@ export async function POST(request: NextRequest) {
       } else {
         // 按质量压缩
         compressedBuffer = await sharpInstance.toBuffer()
+        
+        // 检查是否压缩后文件变大了，如果是则进行智能处理
+        if (compressedBuffer.length >= originalFileSize) {
+          console.log('质量压缩后文件变大，尝试优化处理')
+          
+          // 尝试更低的质量设置
+          let optimizedQuality = Math.max(20, (quality ? parseInt(quality) : 80) - 20)
+          let attempts = 0
+          const maxAttempts = 5
+          
+          do {
+            let tempSharp = sharp(buffer)
+            
+            if (format === 'jpeg') {
+              tempSharp = tempSharp.jpeg({ quality: optimizedQuality })
+            } else if (format === 'png') {
+              const compressionLevel = Math.round((100 - optimizedQuality) / 10)
+              tempSharp = tempSharp.png({ compressionLevel })
+            } else if (format === 'webp') {
+              tempSharp = tempSharp.webp({ quality: optimizedQuality })
+            }
+            
+            const optimizedBuffer = await tempSharp.toBuffer()
+            
+            // 如果优化后的文件更小，使用优化版本
+            if (optimizedBuffer.length < originalFileSize) {
+              compressedBuffer = optimizedBuffer
+              break
+            }
+            
+            // 进一步降低质量
+            optimizedQuality = Math.max(20, optimizedQuality - 10)
+            attempts++
+          } while (attempts < maxAttempts && optimizedQuality >= 20)
+          
+          // 如果质量压缩还是不行，尝试轻微调整尺寸（90%）
+          if (compressedBuffer.length >= originalFileSize && metadata.width && metadata.height) {
+            console.log('尝试轻微缩小尺寸以减少文件大小')
+            const newWidth = Math.round(metadata.width * 0.9)
+            const newHeight = Math.round(metadata.height * 0.9)
+            
+            let resizeSharp = sharp(buffer).resize(newWidth, newHeight)
+            
+            if (format === 'jpeg') {
+              resizeSharp = resizeSharp.jpeg({ quality: quality ? parseInt(quality) : 80 })
+            } else if (format === 'png') {
+              const compressionLevel = Math.round((100 - (quality ? parseInt(quality) : 80)) / 10)
+              resizeSharp = resizeSharp.png({ compressionLevel })
+            } else if (format === 'webp') {
+              resizeSharp = resizeSharp.webp({ quality: quality ? parseInt(quality) : 80 })
+            }
+            
+            const resizedBuffer = await resizeSharp.toBuffer()
+            if (resizedBuffer.length < originalFileSize) {
+              compressedBuffer = resizedBuffer
+            }
+          }
+        }
       }
 
       compressedMetadata = await sharp(compressedBuffer).metadata()
