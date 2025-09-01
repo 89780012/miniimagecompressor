@@ -32,6 +32,9 @@ export const metadata: Metadata = {
       'zh-CN': 'https://mycompressor.org',
       'en-US': 'https://mycompressor.org/en'
     }
+  },
+  verification: {
+    google: "12h-5YPuL_fTEsRcfcn5zTWvBF7qiyd8tF4d9P4Env4"
   }
 };
 
