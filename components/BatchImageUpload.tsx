@@ -6,18 +6,11 @@ import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
-import { X, Upload, Settings } from 'lucide-react'
+import { X, Upload, Settings, Folder, FileImage, Download } from 'lucide-react'
 import Image from 'next/image'
-
-interface ImageFile {
-  id: string
-  file: File
-  preview: string
-  size: number
-  dimensions?: { width: number; height: number }
-  progress: number
-  status: 'pending' | 'compressing' | 'completed' | 'error'
-}
+import JSZip from 'jszip'
+import { DownloadProgressModal } from './DownloadProgressModal'
+import { ImageFile } from '@/types/image'
 
 interface BatchImageUploadProps {
   images: ImageFile[]
@@ -33,11 +26,22 @@ export function BatchImageUpload({
   onImagesAdd,
   onImageRemove,
   onImagesClear,
-  maxFiles = 10,
+  maxFiles = 30,
   disabled = false
 }: BatchImageUploadProps) {
   const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
+  const [uploadMode, setUploadMode] = useState<'files' | 'folder'>('files')
+  
+  // 下载进度状态
+  const [downloadProgress, setDownloadProgress] = useState({
+    isOpen: false,
+    current: 0,
+    total: 0,
+    currentFile: '',
+    isDownloading: false,
+    error: ''
+  })
 
   // 获取图片尺寸
   const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
@@ -64,10 +68,29 @@ export function BatchImageUpload({
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || disabled) return
     
-    const remainingSlots = maxFiles - images.length
-    const filesToProcess = acceptedFiles.slice(0, remainingSlots)
+    // 检查文件是否为图片
+    const isImageFile = (file: File): boolean => {
+      const imageTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/bmp', 'image/gif']
+      return imageTypes.includes(file.type)
+    }
     
-    if (filesToProcess.length === 0) return
+    // 检查是否为文件夹上传（通过检查是否有 webkitRelativePath）
+    const isFolderUpload = acceptedFiles.some(file => 'webkitRelativePath' in file && (file as File & { webkitRelativePath: string }).webkitRelativePath)
+    
+    let filesToProcess: File[] = []
+    
+    if (isFolderUpload) {
+      // 文件夹上传：过滤出图片文件
+      filesToProcess = acceptedFiles.filter(isImageFile)
+    } else {
+      // 普通文件上传
+      filesToProcess = acceptedFiles.filter(isImageFile)
+    }
+    
+    const remainingSlots = maxFiles - images.length
+    const finalFilesToProcess = filesToProcess.slice(0, remainingSlots)
+    
+    if (finalFilesToProcess.length === 0) return
 
     setIsLoading(true)
 
@@ -79,7 +102,7 @@ export function BatchImageUpload({
       }
       
       const newImages: ImageFile[] = await Promise.all(
-        filesToProcess.map(async (file) => {
+        finalFilesToProcess.map(async (file) => {
           const preview = URL.createObjectURL(file)
           let dimensions: { width: number; height: number } | undefined
           
@@ -89,6 +112,9 @@ export function BatchImageUpload({
             console.error('Error getting image dimensions:', error)
           }
           
+          // 获取相对路径（如果是文件夹上传）
+          const relativePath = 'webkitRelativePath' in file ? (file as File & { webkitRelativePath: string }).webkitRelativePath : undefined
+          
           return {
             id: `${Date.now()}-${Math.random()}`,
             file,
@@ -96,7 +122,8 @@ export function BatchImageUpload({
             size: file.size,
             dimensions,
             progress: 0,
-            status: 'pending' as const
+            status: 'pending' as const,
+            relativePath
           }
         })
       )
@@ -108,6 +135,154 @@ export function BatchImageUpload({
       setIsLoading(false)
     }
   }, [images.length, maxFiles, onImagesAdd, disabled])
+
+  // 处理文件夹选择
+  const handleFolderSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files
+    if (!files || files.length === 0 || disabled) return
+    
+    const fileArray = Array.from(files)
+    await onDrop(fileArray)
+    
+    // 清空 input 的值，允许重复选择同一个文件夹
+    event.target.value = ''
+  }, [onDrop, disabled])
+
+  // 批量下载功能
+  const handleBatchDownload = useCallback(async () => {
+    try {
+      const completedImages = images.filter(img => img.status === 'completed')
+      
+      if (completedImages.length === 0) {
+        alert('没有可下载的压缩图片')
+        return
+      }
+      
+      // 初始化下载进度
+      setDownloadProgress({
+        isOpen: true,
+        current: 0,
+        total: completedImages.length,
+        currentFile: '',
+        isDownloading: true,
+        error: ''
+      })
+      
+      console.log('批量下载调试信息:')
+      console.log('完成的图片数量:', completedImages.length)
+      
+      const zip = new JSZip()
+      let successCount = 0
+      
+      // 下载所有压缩后的图片
+      for (let i = 0; i < completedImages.length; i++) {
+        const image = completedImages[i]
+        
+        // 更新当前下载的文件名
+        setDownloadProgress(prev => ({
+          ...prev,
+          current: i,
+          currentFile: image.file.name
+        }))
+        
+        try {
+          const compressedImageUrl = await getCompressedImageUrl(image)
+          
+          if (compressedImageUrl) {
+            try {
+              // 直接使用API代理下载，避免CORS问题
+              const proxyUrl = `/api/download?url=${encodeURIComponent(compressedImageUrl)}`
+              const proxyResponse = await fetch(proxyUrl)
+              
+              if (!proxyResponse.ok) {
+                throw new Error(`代理下载失败: ${proxyResponse.status} ${proxyResponse.statusText}`)
+              }
+              
+              const blob = await proxyResponse.blob()
+              
+              // 确定文件在压缩包中的路径
+              const filePath = image.relativePath 
+                ? image.relativePath.replace(/\\/g, '/') 
+                : `compressed_${image.file.name}`
+              
+              zip.file(filePath, blob)
+              successCount++
+            } catch (proxyError) {
+              console.error(`下载图片 ${image.file.name} 失败:`, proxyError)
+            }
+          } else {
+            console.error(`图片 ${image.file.name} 没有找到压缩URL`)
+          }
+        } catch (error) {
+          console.error(`下载图片失败: ${image.file.name}`, error)
+        }
+      }
+      
+      console.log(`成功添加到压缩包的图片数量: ${successCount}`)
+      
+      if (successCount === 0) {
+        setDownloadProgress(prev => ({
+          ...prev,
+          isDownloading: false,
+          error: '没有找到可下载的压缩图片URL，请检查压缩是否完成'
+        }))
+        return
+      }
+      
+      // 更新进度为正在生成压缩包
+      setDownloadProgress(prev => ({
+        ...prev,
+        current: completedImages.length,
+        currentFile: '正在生成压缩包...'
+      }))
+      
+      // 生成并下载压缩包
+      const content = await zip.generateAsync({ type: 'blob' })
+      const url = URL.createObjectURL(content)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `compressed_images_${Date.now()}.zip`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+      
+      console.log(`压缩包下载完成，包含 ${successCount} 张图片`)
+      
+      // 下载完成
+      setDownloadProgress(prev => ({
+        ...prev,
+        isDownloading: false,
+        currentFile: `压缩包已生成，包含 ${successCount} 张图片`
+      }))
+      
+    } catch (error) {
+      console.error('批量下载失败:', error)
+      setDownloadProgress(prev => ({
+        ...prev,
+        isDownloading: false,
+        error: '批量下载失败，请重试'
+      }))
+    }
+  }, [images])
+  
+  // 关闭下载进度弹窗
+  const handleCloseDownloadProgress = useCallback(() => {
+    setDownloadProgress(prev => ({
+      ...prev,
+      isOpen: false
+    }))
+  }, [])
+  
+  // 获取压缩后的图片URL
+  const getCompressedImageUrl = async (image: ImageFile): Promise<string | null> => {
+    // 方式1: 从 image.result.compressed.url 中获取URL（标准结构）
+    if (image.result?.compressed?.url) {
+      return image.result.compressed.url
+    }
+    
+    return null
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -156,33 +331,109 @@ export function BatchImageUpload({
 
   return (
     <div className="space-y-6">
+      {/* 下载进度弹窗 */}
+      <DownloadProgressModal
+        isOpen={downloadProgress.isOpen}
+        current={downloadProgress.current}
+        total={downloadProgress.total}
+        currentFile={downloadProgress.currentFile}
+        isDownloading={downloadProgress.isDownloading}
+        error={downloadProgress.error}
+        onClose={handleCloseDownloadProgress}
+      />
+      
       {/* 上传区域 */}
       <Card className="p-6">
-        <div
-          {...getRootProps()}
-          className={`
-            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-            ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-            ${disabled || images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : ''}
-          `}
-        >
-          <input {...getInputProps()} />
-          <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-          <p className="text-lg font-medium text-gray-900 mb-2">
-            {isDragActive ? t('upload.dropHere') : t('upload.clickOrDrag')}
-          </p>
-          <p className="text-sm text-gray-500 mb-4">
-            {t('upload.supportFormats')}
-          </p>
-          <p className="text-xs text-gray-400">
-            {t('upload.maxFiles', { current: images.length, max: maxFiles })}
-          </p>
-          {isLoading && (
-            <div className="mt-4">
-              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
-            </div>
-          )}
+        {/* 上传模式选择 */}
+        <div className="flex justify-center mb-4">
+          <div className="flex bg-gray-100 rounded-lg p-1">
+            <button
+              onClick={() => setUploadMode('files')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                uploadMode === 'files' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <FileImage className="w-4 h-4" />
+              选择文件
+            </button>
+            <button
+              onClick={() => setUploadMode('folder')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                uploadMode === 'folder' 
+                  ? 'bg-white text-gray-900 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Folder className="w-4 h-4" />
+              选择文件夹
+            </button>
+          </div>
         </div>
+
+        {uploadMode === 'files' ? (
+          <div
+            {...getRootProps()}
+            className={`
+              border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
+              ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
+              ${disabled || images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : ''}
+            `}
+          >
+            <input {...getInputProps()} />
+            <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+            <p className="text-lg font-medium text-gray-900 mb-2">
+              {isDragActive ? t('upload.dropHere') : t('upload.clickOrDrag')}
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              {t('upload.supportFormats')}
+            </p>
+            <p className="text-xs text-gray-400">
+              {t('upload.maxFiles', { current: images.length, max: maxFiles })}
+            </p>
+            {isLoading && (
+              <div className="mt-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="border-2 border-dashed rounded-lg p-8 text-center">
+            <input
+              type="file"
+              id="folder-input"
+              {...({ webkitdirectory: "true", directory: "" } as React.InputHTMLAttributes<HTMLInputElement>)}
+              multiple
+              onChange={handleFolderSelect}
+              disabled={disabled || images.length >= maxFiles}
+              className="hidden"
+              accept="image/*"
+            />
+            <label
+              htmlFor="folder-input"
+              className={`cursor-pointer block ${
+                disabled || images.length >= maxFiles ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
+            >
+              <Folder className="mx-auto h-12 w-12 text-gray-400 mb-4" />
+              <p className="text-lg font-medium text-gray-900 mb-2">
+                点击选择文件夹
+              </p>
+              <p className="text-sm text-gray-500 mb-4">
+                将自动扫描文件夹中的所有图片文件
+              </p>
+              <p className="text-xs text-gray-400">
+                {t('upload.maxFiles', { current: images.length, max: maxFiles })}
+              </p>
+            </label>
+            {isLoading && (
+              <div className="mt-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+              </div>
+            )}
+          </div>
+        )}
       </Card>
 
       {/* 图片列表 */}
@@ -192,14 +443,28 @@ export function BatchImageUpload({
             <h3 className="text-lg font-semibold">
               {t('upload.selectedImages', { count: images.length })}
             </h3>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={onImagesClear}
-              disabled={disabled}
-            >
-              {t('upload.clearAll')}
-            </Button>
+            <div className="flex items-center gap-2">
+              {images.some(img => img.status === 'completed') && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleBatchDownload}
+                  disabled={disabled}
+                  className="text-blue-600 border-blue-600 hover:bg-blue-50"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  批量下载
+                </Button>
+              )}
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={onImagesClear}
+                disabled={disabled}
+              >
+                {t('upload.clearAll')}
+              </Button>
+            </div>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -229,9 +494,18 @@ export function BatchImageUpload({
                   {/* 图片信息 */}
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-medium truncate">{image.file.name}</span>
+                      <span className="font-medium truncate" title={image.file.name}>
+                        {image.file.name}
+                      </span>
                       <Settings className="h-3 w-3 text-gray-400" />
                     </div>
+                    
+                    {/* 显示相对路径 */}
+                    {image.relativePath && (
+                      <div className="text-xs text-gray-400 truncate" title={image.relativePath}>
+                        📁 {image.relativePath.split('/').slice(0, -1).join('/')}
+                      </div>
+                    )}
                     
                     <div className="text-xs text-gray-500 space-y-1">
                       <div>{formatFileSize(image.size)}</div>

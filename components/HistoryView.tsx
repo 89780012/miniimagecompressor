@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
+import Image from 'next/image'
 import { HistoryItem, clearHistory, removeHistoryItem, getHistoryStats } from '@/lib/history'
 
 interface HistoryViewProps {
@@ -91,14 +92,6 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
         </div>
         
         <div className="flex items-center gap-3">
-          {validItems.length > 0 && (
-            <button
-              onClick={() => setShowConfirmClear(true)}
-              className="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 border border-red-200 rounded-md hover:bg-red-100"
-            >
-              {t('history.clear')}
-            </button>
-          )}
           <button
             onClick={onBack}
             className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
@@ -147,9 +140,11 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
-            <img
+            <Image
               src={previewImage.url}
               alt={previewImage.fileName}
+              width={800}
+              height={600}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
             <div className="absolute bottom-0 left-0 right-0 bg-black/50 text-white p-4 rounded-b-lg">
@@ -185,9 +180,11 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                     <div className="flex-shrink-0">
                       {item.compressionResult.compressed.url ? (
                         <div className="relative">
-                          <img
+                          <Image
                             src={item.compressionResult.compressed.url}
                             alt={item.compressionResult.original.fileName}
+                            width={80}
+                            height={80}
                             className="w-20 h-20 object-cover rounded-lg border border-gray-200 cursor-pointer bg-white"
                             onClick={() => setPreviewImage({
                               url: item.compressionResult.compressed.url!,

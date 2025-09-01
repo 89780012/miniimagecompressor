@@ -4,9 +4,12 @@ import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, XCircle, Download, Eye } from 'lucide-react'
+import { CheckCircle, XCircle, Download, Eye, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import { CompressionResult } from '@/lib/compression'
+import { downloadAsZip, DownloadableItem } from '@/lib/batch-download'
+import { useDownloadProgress } from '@/hooks/useDownloadProgress'
+import { DownloadProgressModal } from '@/components/DownloadProgressModal'
 
 interface ImageFile {
   id: string
@@ -18,6 +21,7 @@ interface ImageFile {
   status: 'pending' | 'compressing' | 'completed' | 'error'
   result?: CompressionResult
   error?: string
+  relativePath?: string // 添加相对路径字段
 }
 
 interface BatchProgress {
@@ -29,7 +33,7 @@ interface BatchProgress {
 interface BatchProgressDisplayProps {
   images: ImageFile[]
   batchProgress: BatchProgress
-  onDownloadAll: () => void
+  onDownloadAll?: () => void // 保持向后兼容，但改为可选
   onDownloadSingle: (imageId: string) => void
   onPreview: (imageId: string) => void
 }
@@ -43,6 +47,15 @@ export function BatchProgressDisplay({
 }: BatchProgressDisplayProps) {
   const t = useTranslations()
   const [showDetails, setShowDetails] = useState(false)
+
+  // 下载进度管理
+  const {
+    downloadState,
+    startDownload,
+    updateProgress,
+    completeDownload,
+    resetDownload
+  } = useDownloadProgress()
 
   const completedImages = images.filter(img => img.status === 'completed')
   const errorImages = images.filter(img => img.status === 'error')
@@ -59,6 +72,46 @@ export function BatchProgressDisplay({
   const totalSavings = totalOriginalSize - totalCompressedSize
   const savingsPercent = totalOriginalSize > 0 ? (totalSavings / totalOriginalSize) * 100 : 0
 
+  // 使用新的批量下载逻辑
+  const handleBatchDownload = async () => {
+    if (onDownloadAll) {
+      // 如果提供了自定义下载函数，使用它
+      onDownloadAll()
+      return
+    }
+    
+    // 否则使用新的压缩包下载逻辑
+    const downloadableItems: DownloadableItem[] = completedImages
+      .filter(img => img.result?.compressed?.url)
+      .map(img => ({
+        id: img.id,
+        fileName: img.file.name,
+        url: img.result!.compressed.url!,
+        relativePath: img.relativePath
+      }))
+    
+    if (downloadableItems.length === 0) {
+      alert('没有可下载的文件')
+      return
+    }
+
+    // 开始下载进度
+    startDownload(downloadableItems.length)
+    
+    try {
+      const success = await downloadAsZip(
+        downloadableItems, 
+        `compressed_batch_${Date.now()}.zip`,
+        updateProgress
+      )
+      
+      completeDownload(!!success, success ? undefined : '下载失败，请重试')
+    } catch (error) {
+      console.error('Download error:', error)
+      completeDownload(false, '下载出错，请重试')
+    }
+  }
+
   const formatFileSize = (bytes: number): string => {
     if (bytes === 0) return '0 Bytes'
     const k = 1024
@@ -72,6 +125,7 @@ export function BatchProgressDisplay({
   }
 
   return (
+    <>
     <Card className="p-6">
       <div className="space-y-4">
         <div className="flex items-center justify-between">
@@ -127,12 +181,16 @@ export function BatchProgressDisplay({
               <div>
                 <Button
                   size="sm"
-                  onClick={onDownloadAll}
-                  disabled={completedImages.length === 0}
+                  onClick={handleBatchDownload}
+                  disabled={completedImages.length === 0 || downloadState.isDownloading}
                   className="w-full"
                 >
-                  <Download className="h-3 w-3 mr-1" />
-                  {t('progress.downloadAll')}
+                  {downloadState.isDownloading ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <Download className="h-3 w-3 mr-1" />
+                  )}
+                  {downloadState.isDownloading ? '下载中...' : t('progress.downloadAll')}
                 </Button>
               </div>
             </div>
@@ -243,5 +301,17 @@ export function BatchProgressDisplay({
         )}
       </div>
     </Card>
+    
+    {/* 下载进度弹窗 */}
+    <DownloadProgressModal
+      isOpen={downloadState.isDownloading || downloadState.error !== undefined}
+      current={downloadState.current}
+      total={downloadState.total}
+      currentFile={downloadState.currentFile}
+      isDownloading={downloadState.isDownloading}
+      error={downloadState.error}
+      onClose={resetDownload}
+    />
+    </>
   )
 }

@@ -14,10 +14,14 @@ import {
   LayoutGrid,
   ChevronLeft,
   ChevronRight,
-  ArrowLeft
+  ArrowLeft,
+  Loader2
 } from 'lucide-react'
 import Image from 'next/image'
 import { CompressionResult, formatFileSize, calculateSavings } from '@/lib/compression'
+import { downloadAsZip, DownloadableItem } from '@/lib/batch-download'
+import { useDownloadProgress } from '@/hooks/useDownloadProgress'
+import { DownloadProgressModal } from '@/components/DownloadProgressModal'
 
 interface ImageFile {
   id: string
@@ -29,12 +33,13 @@ interface ImageFile {
   status: 'pending' | 'compressing' | 'completed' | 'error'
   result?: CompressionResult & { url?: string }
   error?: string
+  relativePath?: string // 添加相对路径字段
 }
 
 interface BatchComparisonViewProps {
   images: ImageFile[]
   onBack: () => void
-  onDownloadAll: () => void
+  onDownloadAll?: () => void // 改为可选，保持向后兼容
   onDownloadSingle: (imageId: string) => void
   onReset: () => void
 }
@@ -53,6 +58,15 @@ export function BatchComparisonView({
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [showOriginal, setShowOriginal] = useState<Record<string, boolean>>({})
 
+  // 下载进度管理
+  const {
+    downloadState,
+    startDownload,
+    updateProgress,
+    completeDownload,
+    resetDownload
+  } = useDownloadProgress()
+
   const completedImages = images.filter(img => img.status === 'completed' && img.result)
   
   // 计算总体统计
@@ -61,6 +75,46 @@ export function BatchComparisonView({
     sum + (img.result?.compressed.fileSize || 0), 0
   )
   const totalSavings = calculateSavings(totalOriginalSize, totalCompressedSize)
+
+  // 使用新的批量下载逻辑
+  const handleBatchDownload = async () => {
+    if (onDownloadAll) {
+      // 如果提供了自定义下载函数，使用它
+      onDownloadAll()
+      return
+    }
+    
+    // 否则使用新的压缩包下载逻辑
+    const downloadableItems: DownloadableItem[] = completedImages
+      .filter(img => img.result?.compressed?.url)
+      .map(img => ({
+        id: img.id,
+        fileName: img.file.name,
+        url: img.result!.compressed.url!,
+        relativePath: img.relativePath
+      }))
+    
+    if (downloadableItems.length === 0) {
+      alert('没有可下载的文件')
+      return
+    }
+
+    // 开始下载进度
+    startDownload(downloadableItems.length)
+    
+    try {
+      const success = await downloadAsZip(
+        downloadableItems, 
+        `compressed_batch_${Date.now()}.zip`,
+        updateProgress
+      )
+      
+      completeDownload(!!success, success ? undefined : '下载失败，请重试')
+    } catch (error) {
+      console.error('Download error:', error)
+      completeDownload(false, '下载出错，请重试')
+    }
+  }
 
   // 切换显示原图还是压缩图
   const toggleImageView = (imageId: string) => {
@@ -75,6 +129,7 @@ export function BatchComparisonView({
   }
 
   return (
+    <>
     <div className="space-y-6">
       {/* 头部控制栏 */}
       <Card className="p-4">
@@ -110,11 +165,16 @@ export function BatchComparisonView({
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              onClick={onDownloadAll}
+              onClick={handleBatchDownload}
+              disabled={downloadState.isDownloading}
               className="flex items-center gap-2"
             >
-              <Download className="h-4 w-4" />
-              {t('comparison.downloadAll')}
+              {downloadState.isDownloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {downloadState.isDownloading ? '下载中...' : t('comparison.downloadAll')}
             </Button>
             <Button
               variant="outline"
@@ -388,5 +448,17 @@ export function BatchComparisonView({
         })()
       )}
     </div>
+    
+    {/* 下载进度弹窗 */}
+    <DownloadProgressModal
+      isOpen={downloadState.isDownloading || downloadState.error !== undefined}
+      current={downloadState.current}
+      total={downloadState.total}
+      currentFile={downloadState.currentFile}
+      isDownloading={downloadState.isDownloading}
+      error={downloadState.error}
+      onClose={resetDownload}
+    />
+    </>
   )
 }

@@ -9,7 +9,7 @@ import { BatchComparisonView } from '@/components/BatchComparisonView'
 import { HistoryView } from '@/components/HistoryView'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { StructuredData } from '@/components/StructuredData'
-import { compressImage, CompressionResult } from '@/lib/compression'
+import { compressImage } from '@/lib/compression'
 import { CompressionSettings } from '@/components/CompressionControls'
 import { 
   saveToHistory, 
@@ -17,25 +17,10 @@ import {
   clearExpiredHistory,
   HistoryItem 
 } from '@/lib/history'
-
-interface ImageFile {
-  id: string
-  file: File
-  preview: string
-  size: number
-  dimensions?: { width: number; height: number }
-  settings?: CompressionSettings
-  progress: number
-  status: 'pending' | 'compressing' | 'completed' | 'error'
-  result?: CompressionResult
-  error?: string
-}
-
-interface BatchProgress {
-  completed: number
-  total: number
-  isRunning: boolean
-}
+import { downloadAsZip, DownloadableItem } from '@/lib/batch-download'
+import { useDownloadProgress } from '@/hooks/useDownloadProgress'
+import { DownloadProgressModal } from '@/components/DownloadProgressModal'
+import { ImageFile, BatchProgress } from '@/types/image'
 
 export default function HomePage() {
   const t = useTranslations()
@@ -52,6 +37,15 @@ export default function HomePage() {
     quality: 80,
     format: 'jpeg'
   })
+  
+  // 下载进度管理
+  const {
+    downloadState,
+    startDownload,
+    updateProgress,
+    completeDownload,
+    resetDownload
+  } = useDownloadProgress()
   
   // 初始化时加载历史记录并清理过期记录
   useEffect(() => {
@@ -190,21 +184,40 @@ export default function HomePage() {
     setBatchProgress({ completed: 0, total: 0, isRunning: false })
   }, [])
   
-  // 下载所有完成的图片
-  const handleDownloadAll = useCallback(() => {
+  // 下载所有完成的图片（统一使用压缩包下载）
+  const handleDownloadAll = useCallback(async () => {
     const completedImages = images.filter(img => img.status === 'completed' && img.result)
     
-    completedImages.forEach(img => {
-      if (img.result?.compressed?.url) {
-        const link = document.createElement('a')
-        link.href = `/api/download?url=${encodeURIComponent(img.result.compressed.url)}`
-        link.download = `compressed_${img.file.name}`
-        document.body.appendChild(link)
-        link.click()
-        document.body.removeChild(link)
-      }
-    })
-  }, [images])
+    const downloadableItems: DownloadableItem[] = completedImages
+      .filter(img => img.result?.compressed?.url)
+      .map(img => ({
+        id: img.id,
+        fileName: img.file.name,
+        url: img.result!.compressed.url!,
+        relativePath: img.relativePath
+      }))
+    
+    if (downloadableItems.length === 0) {
+      alert('没有可下载的文件')
+      return
+    }
+
+    // 开始下载进度
+    startDownload(downloadableItems.length)
+    
+    try {
+      const success = await downloadAsZip(
+        downloadableItems, 
+        `compressed_batch_${Date.now()}.zip`,
+        updateProgress
+      )
+      
+      completeDownload(!!success, success ? undefined : '下载失败，请重试')
+    } catch (error) {
+      console.error('Download error:', error)
+      completeDownload(false, '下载出错，请重试')
+    }
+  }, [images, startDownload, updateProgress, completeDownload])
   
   // 下载单个图片
   const handleDownloadSingle = useCallback((imageId: string) => {
@@ -423,6 +436,17 @@ export default function HomePage() {
             </div>
           </div>
         </footer>
+        
+        {/* 下载进度弹窗 */}
+        <DownloadProgressModal
+          isOpen={downloadState.isDownloading || downloadState.error !== undefined}
+          current={downloadState.current}
+          total={downloadState.total}
+          currentFile={downloadState.currentFile}
+          isDownloading={downloadState.isDownloading}
+          error={downloadState.error}
+          onClose={resetDownload}
+        />
       </div>
     </>
   )
