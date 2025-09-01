@@ -1,0 +1,115 @@
+{
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "projectName": "miniimagecompressor",
+  "projectType": "next.js-app",
+  "coverage": {
+    "totalFiles": 85,
+    "scannedFiles": 45,
+    "coveragePercent": 53,
+    "truncated": false,
+    "reasons": []
+  },
+  "modules": [
+    {
+      "path": "app",
+      "type": "next.js-app-router",
+      "entry": "app/[locale]/page.tsx",
+      "purpose": "主应用界面和路由配置",
+      "apis": [
+        "app/api/compress/route.ts",
+        "app/api/cleanup/route.ts", 
+        "app/api/init/route.ts"
+      ],
+      "i18n": "app/[locale]",
+      "coverage": "complete"
+    },
+    {
+      "path": "lib",
+      "type": "utility-services",
+      "entry": "lib/compression.ts",
+      "purpose": "核心业务逻辑库",
+      "services": [
+        "lib/r2.ts",
+        "lib/cleanup.ts",
+        "lib/scheduler.ts",
+        "lib/prisma.ts"
+      ],
+      "coverage": "complete"
+    },
+    {
+      "path": "components",
+      "type": "react-components",
+      "entry": "components/BatchImageUpload.tsx",
+      "purpose": "UI组件库",
+      "ui_system": "components/ui/",
+      "coverage": "partial"
+    },
+    {
+      "path": "prisma", 
+      "type": "database-schema",
+      "entry": "prisma/schema.prisma",
+      "purpose": "数据库模式和迁移",
+      "migrations": "prisma/migrations/",
+      "coverage": "complete"
+    },
+    {
+      "path": "i18n",
+      "type": "internationalization",
+      "entry": "i18n/config.ts",
+      "purpose": "多语言支持配置",
+      "messages": ["messages/zh.json", "messages/en.json"],
+      "coverage": "partial"
+    }
+  ],
+  "keyFiles": {
+    "configs": [
+      "package.json",
+      "next.config.ts",
+      "prisma/schema.prisma",
+      "middleware.ts"
+    ],
+    "docs": [
+      "README.md",
+      "R2_SETUP.md",
+      "CLAUDE.md"
+    ],
+    "scripts": [
+      "scripts/check-r2-config.js"
+    ]
+  },
+  "technologies": {
+    "framework": "Next.js 15",
+    "language": "TypeScript",
+    "styling": "Tailwind CSS 4",
+    "database": "PostgreSQL + Prisma",
+    "storage": "Cloudflare R2",
+    "image_processing": "Sharp",
+    "i18n": "next-intl",
+    "ui_components": "Radix UI",
+    "scheduling": "node-cron"
+  },
+  "gaps": {
+    "missing_tests": [
+      "No test files found",
+      "Consider adding unit tests for lib functions",
+      "Consider adding E2E tests for compression workflow"
+    ],
+    "missing_docs": [],
+    "unscanned_paths": [
+      "Some UI components in components/ directory",
+      "All files in node_modules/ (intentionally ignored)"
+    ]
+  },
+  "next_steps": [
+    "扫描剩余的UI组件以完善组件库文档",
+    "考虑添加测试文件扫描",
+    "可选: 添加环境变量模板(.env.example)"
+  ],
+  "architecture_highlights": {
+    "storage_strategy": "云端优先，R2作为主要存储，数据库记录元信息",
+    "compression_engine": "Sharp驱动的自适应压缩，支持质量和大小两种模式",
+    "batch_processing": "渐进式批量处理，单个失败不影响整体",
+    "cleanup_mechanism": "基于cron的自动清理，24小时过期策略",
+    "i18n_architecture": "基于locale的动态路由，集中式消息管理"
+  }
+}

@@ -168,7 +168,7 @@ export default function HomePage() {
     completedImages.forEach(img => {
       if (img.result?.compressed?.url) {
         const link = document.createElement('a')
-        link.href = img.result.compressed.url
+        link.href = `/api/download?url=${encodeURIComponent(img.result.compressed.url)}`
         link.download = `compressed_${img.file.name}`
         document.body.appendChild(link)
         link.click()
@@ -182,7 +182,7 @@ export default function HomePage() {
     const image = images.find(img => img.id === imageId)
     if (image?.result?.compressed?.url) {
       const link = document.createElement('a')
-      link.href = image.result.compressed.url
+      link.href = `/api/download?url=${encodeURIComponent(image.result.compressed.url)}`
       link.download = `compressed_${image.file.name}`
       document.body.appendChild(link)
       link.click()
