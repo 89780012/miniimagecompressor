@@ -37,7 +37,7 @@ export async function generateSEOMetadata({
   const fullDescription = description || siteDescription
   const allKeywords = [...defaultKeywords, ...keywords]
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://imagecompressor.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
   const fullUrl = url ? `${baseUrl}${url}` : baseUrl
   const imageUrl = image ? `${baseUrl}${image}` : `${baseUrl}/og-image.jpg`
 
@@ -106,7 +106,7 @@ export async function generateSEOMetadata({
 
 // Schema.org JSON-LD structured data
 export function generateWebsiteSchema(locale: string = 'zh') {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://imagecompressor.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
   
   return {
     '@context': 'https://schema.org',
@@ -137,7 +137,7 @@ export function generateWebsiteSchema(locale: string = 'zh') {
 }
 
 export function generateBreadcrumbSchema(items: Array<{name: string, url: string}>) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://imagecompressor.com'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
   
   return {
     '@context': 'https://schema.org',

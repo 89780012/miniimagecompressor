@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "zh_CN",
     alternateLocale: "en_US",
-    url: "https://imagecompressor.com",
+    url: "https://mycompressor.org",
     title: "Image Compressor | 图片压缩工具",
     description: "Free online image compression tool | 免费在线图片压缩工具",
     siteName: "Image Compressor"
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
     description: "Free online image compression tool | 免费在线图片压缩工具"
   },
   alternates: {
-    canonical: "https://imagecompressor.com",
+    canonical: "https://mycompressor.org",
     languages: {
-      'zh-CN': 'https://imagecompressor.com',
-      'en-US': 'https://imagecompressor.com/en'
+      'zh-CN': 'https://mycompressor.org',
+      'en-US': 'https://mycompressor.org/en'
     }
   }
 };
