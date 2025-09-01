@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -14,6 +15,7 @@ interface ComparisonViewProps {
 }
 
 export function ComparisonView({ result, onReset }: ComparisonViewProps) {
+  const t = useTranslations()
   const savings = calculateSavings(result.original.fileSize, result.compressed.fileSize)
 
   const downloadImage = async (path: string, filename: string) => {

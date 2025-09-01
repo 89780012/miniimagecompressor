@@ -1,6 +1,7 @@
 'use client'
 
 import { CheckCircle, Download, X, AlertCircle } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface DownloadProgressModalProps {
   isOpen: boolean
@@ -21,6 +22,8 @@ export function DownloadProgressModal({
   error,
   onClose
 }: DownloadProgressModalProps) {
+  const t = useTranslations()
+  
   if (!isOpen) return null
 
   const progress = total > 0 ? (current / total) * 100 : 0
@@ -40,7 +43,7 @@ export function DownloadProgressModal({
               <Download className="w-5 h-5 text-blue-500" />
             )}
             <h3 className="text-lg font-semibold text-gray-900">
-              {hasError ? '下载失败' : isCompleted ? '下载完成' : '正在下载'}
+              {hasError ? t('downloadProgress.failed') : isCompleted ? t('downloadProgress.completed') : t('downloadProgress.downloading')}
             </h3>
           </div>
           <button
@@ -58,13 +61,13 @@ export function DownloadProgressModal({
           </div>
         ) : isCompleted ? (
           <div className="text-green-600 text-sm mb-4">
-            压缩包已成功下载到您的设备
+            {t('downloadProgress.successMessage')}
           </div>
         ) : (
           <>
             <div className="mb-4">
               <div className="flex justify-between text-sm text-gray-600 mb-2">
-                <span>进度</span>
+                <span>{t('downloadProgress.progress')}</span>
                 <span>{current}/{total}</span>
               </div>
               <div className="w-full bg-gray-200 rounded-full h-2">
@@ -86,7 +89,7 @@ export function DownloadProgressModal({
               onClick={onClose}
               className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
             >
-              确定
+              {t('downloadProgress.confirm')}
             </button>
           </div>
         )}

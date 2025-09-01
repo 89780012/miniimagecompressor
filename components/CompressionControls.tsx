@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
@@ -31,6 +32,7 @@ export function CompressionControls({
   isCompressing = false,
   disabled = false
 }: CompressionControlsProps) {
+  const t = useTranslations()
   const [localSettings, setLocalSettings] = useState<CompressionSettings>(settings)
 
   const updateSettings = (updates: Partial<CompressionSettings>) => {
@@ -78,7 +80,7 @@ export function CompressionControls({
                     type="number"
                     value={localSettings.targetSizeKb || ''}
                     onChange={(e) => updateSettings({ targetSizeKb: parseInt(e.target.value) || undefined })}
-                    placeholder="输入目标大小"
+                    placeholder={t('compression.targetSizePlaceholder')}
                     className="flex-1"
                     disabled={disabled}
                   />
@@ -167,7 +169,7 @@ export function CompressionControls({
           className="w-full"
           size="lg"
         >
-          {isCompressing ? '正在压缩...' : '开始压缩'}
+          {isCompressing ? t('compression.compressing') : t('compressionControls.compress')}
         </Button>
       </div>
     </Card>

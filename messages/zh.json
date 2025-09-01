@@ -41,6 +41,8 @@
   },
   "compression": {
     "title": "步骤 2: 设置压缩参数",
+    "compressing": "正在压缩...",
+    "targetSizePlaceholder": "输入目标大小",
     "batchTitle": "批量压缩控制",
     "imageCount": "已选择 {count} 张图片",
     "pending": "等待中",
@@ -173,5 +175,27 @@
       "totalProcessed": "总共处理",
       "totalSaved": "总共节省"
     }
+  },
+  "downloadProgress": {
+    "downloading": "正在下载",
+    "completed": "下载完成", 
+    "failed": "下载失败",
+    "progress": "进度",
+    "generating": "正在生成压缩包...",
+    "successMessage": "压缩包已成功下载到您的设备",
+    "confirm": "确定"
+  },
+  "compressionControls": {
+    "title": "压缩设置",
+    "mode": "压缩模式",
+    "quality": "质量",
+    "qualityMode": "质量模式",
+    "sizeMode": "大小模式",
+    "targetSize": "目标大小",
+    "format": "输出格式",
+    "compress": "开始压缩",
+    "qualityDescription": "调整图片质量（推荐80%）",
+    "targetSizeDescription": "设置目标文件大小（KB）",
+    "formatDescription": "选择输出图片格式"
   }
 }

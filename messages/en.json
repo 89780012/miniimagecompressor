@@ -41,6 +41,8 @@
   },
   "compression": {
     "title": "Step 2: Compression Settings",
+    "compressing": "Compressing...",
+    "targetSizePlaceholder": "Enter target size",
     "batchTitle": "Batch Compression Control",
     "imageCount": "{count} images selected",
     "pending": "Pending",
@@ -173,5 +175,27 @@
       "totalProcessed": "Total Processed",
       "totalSaved": "Total Saved"
     }
+  },
+  "downloadProgress": {
+    "downloading": "Downloading",
+    "completed": "Download Completed",
+    "failed": "Download Failed", 
+    "progress": "Progress",
+    "generating": "Generating archive...",
+    "successMessage": "Archive has been successfully downloaded to your device",
+    "confirm": "OK"
+  },
+  "compressionControls": {
+    "title": "Compression Settings",
+    "mode": "Compression Mode", 
+    "quality": "Quality",
+    "qualityMode": "Quality Mode",
+    "sizeMode": "Size Mode",
+    "targetSize": "Target Size",
+    "format": "Output Format",
+    "compress": "Start Compression",
+    "qualityDescription": "Adjust image quality (80% recommended)",
+    "targetSizeDescription": "Set target file size (KB)",
+    "formatDescription": "Select output image format"
   }
 }
