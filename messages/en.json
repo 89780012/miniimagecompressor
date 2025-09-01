@@ -200,29 +200,99 @@
   },
   "resize": {
     "title": "Image Resize",
-    "subtitle": "Smart image resizing with multiple modes",
-    "uploadTitle": "Step 1: Upload Images",
-    "controlsTitle": "Step 2: Resize Settings",
+    "subtitle": "Smart image resizing with multiple presets and custom settings",
+    "uploadTitle": "Upload Images",
+    "controlsTitle": "Resize Settings",
+    "uploadMessage": "Upload images to configure resize settings",
+    "viewPreview": "View Preview Results",
     "clickOrDrag": "Click to select files or drag and drop",
     "dropHere": "Drop images here to upload",
-    "selectedImages": "Selected Images ({count})",
-    "uploadMessage": "Please upload images first to configure resize settings",
-    "viewPreview": "View Preview Results",
-    "featuresTitle": "Resize Features",
-    "featuresSubtitle": "Professional image resizing tool for all your needs",
+    "selectedImages": "Selected {count} images",
+    "featuresTitle": "Powerful Resize Features", 
+    "featuresSubtitle": "Professional image resizing tool for all scenarios",
     "features": {
       "precise": {
         "title": "Precise Control",
-        "description": "Pixel-level precision control with custom width and height settings"
+        "description": "Pixel-level precision control to meet professional requirements"
       },
       "ratio": {
-        "title": "Aspect Ratio Protection",
-        "description": "Smart preservation of original aspect ratio to prevent image distortion"
+        "title": "Aspect Ratio Lock",
+        "description": "Smart preservation of original aspect ratio to prevent distortion"
       },
       "formats": {
         "title": "Multiple Format Support",
-        "description": "Supports JPEG, PNG, WebP, GIF, BMP and other mainstream formats"
+        "description": "Supports JPEG, PNG, WebP and other mainstream formats"
       }
+    },
+    "controls": {
+      "progress": "Processing Progress",
+      "pending": "Pending",
+      "processing": "Processing",
+      "completed": "Completed",
+      "customSize": "Custom Size (pixels)",
+      "width": "Width",
+      "height": "Height", 
+      "linked": "Linked",
+      "unlinked": "Unlinked",
+      "linkDimensions": "Lock aspect ratio",
+      "unlinkDimensions": "Unlock aspect ratio",
+      "resizeMode": "Resize Mode",
+      "fit": "Fit",
+      "fill": "Fill",
+      "cover": "Cover",
+      "aspectRatioStatus": "Aspect Ratio",
+      "currentSettings": "Current Settings",
+      "dimensionsSetting": "Size: {width} × {height} pixels",
+      "startProcessing": "Start Resizing ({count})",
+      "reset": "Reset"
+    },
+    "presets": {
+      "selectPreset": "Select preset size",
+      "square": "Square",
+      "story": "Story",
+      "cover": "Cover",
+      "wechatMoments": "WeChat Moments",
+      "thumbnail": "Thumbnail",
+      "banner": "Banner"
+    },
+    "modes": {
+      "fit": "Fit",
+      "fill": "Fill",
+      "cover": "Cover",
+      "fitDescription": "Keep aspect ratio, image fully displayed within target size",
+      "fillDescription": "Stretch image to fill target size (may distort)",
+      "coverDescription": "Keep aspect ratio, crop image to fill target size"
+    },
+    "crop": {
+      "title": "Image Cropper",
+      "subtitle": "Upload images first, then you can crop them precisely",
+      "features": "Supports fixed aspect ratio cropping and free cropping",
+      "complete": "Complete Cropping",
+      "cancel": "Cancel",
+      "dragHint": "Drag the dashed frame to adjust crop area",
+      "aspectRatio": "Aspect Ratio",
+      "position": "Position",
+      "size": "Size",
+      "info": "Crop Info",
+      "aspectRatios": {
+        "free": "Free Crop",
+        "square": "Square (1:1)",
+        "standard": "Standard (4:3)",
+        "photo": "Photo (3:2)",
+        "widescreen": "Widescreen (16:9)",
+        "portrait": "Portrait (9:16)",
+        "vertical": "Vertical (3:4)",
+        "verticalPhoto": "Vertical Photo (2:3)"
+      },
+      "instructions": {
+        "title": "Crop Feature Instructions",
+        "clickToOpen": "Click image to open crop editor",
+        "aspectRatios": "Supports multiple aspect ratio presets (1:1, 4:3, 16:9, etc.)",
+        "dragToAdjust": "Drag to adjust crop area position and size",
+        "replaceOriginal": "Cropped image will replace original uploaded file",
+        "openEditor": "Open crop editor"
+      },
+      "moreImages": "{count} more images, scroll up to view more..."
     },
     "status": {
       "pending": "Pending",

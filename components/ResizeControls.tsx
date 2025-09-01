@@ -1,14 +1,30 @@
 'use client'
 
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
-import { Play, RotateCcw, Settings } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Separator } from '@/components/ui/separator'
+import { Play, RotateCcw, Crop, Link2, Unlink2, Settings } from 'lucide-react'
 import { ImageFile, ResizeSettings } from '@/types/image'
+
+// 常用预设尺寸
+const getPresetSizes = (t: any) => [
+  { label: t('resize.controls.customSize'), width: 0, height: 0, category: 'custom' },
+  { label: 'Instagram ' + t('resize.presets.square') + ' (1080×1080)', width: 1080, height: 1080, category: 'social' },
+  { label: 'Instagram ' + t('resize.presets.story') + ' (1080×1920)', width: 1080, height: 1920, category: 'social' },
+  { label: 'Facebook ' + t('resize.presets.cover') + ' (1200×630)', width: 1200, height: 630, category: 'social' },
+  { label: t('resize.presets.wechatMoments') + ' (1080×1080)', width: 1080, height: 1080, category: 'social' },
+  { label: 'Web ' + t('resize.presets.thumbnail') + ' (300×300)', width: 300, height: 300, category: 'web' },
+  { label: 'Web ' + t('resize.presets.banner') + ' (1200×400)', width: 1200, height: 400, category: 'web' },
+  { label: 'HD (1280×720)', width: 1280, height: 720, category: 'screen' },
+  { label: 'Full HD (1920×1080)', width: 1920, height: 1080, category: 'screen' },
+  { label: '4K (3840×2160)', width: 3840, height: 2160, category: 'screen' },
+]
 
 interface ResizeControlsProps {
   images: ImageFile[]
@@ -27,251 +43,362 @@ export function ResizeControls({
   onDefaultSettingsChange,
   disabled = false
 }: ResizeControlsProps) {
-  const [isApplyingToAll, setIsApplyingToAll] = useState(false)
+  const t = useTranslations()
+  const [selectedPresetIndex, setSelectedPresetIndex] = useState(0) // 默认自定义
+  const [linkedDimensions, setLinkedDimensions] = useState(defaultSettings.maintainAspectRatio)
   
+  const PRESET_SIZES = getPresetSizes(t)
   const pendingImages = images.filter(img => img.status === 'pending')
   const processingImages = images.filter(img => img.status === 'compressing')
-  const completedImages = images.filter(img => img.status === 'completed')
-  const hasImages = images.length > 0
-
-  // 更新默认设置
-  const handleDefaultSettingsChange = useCallback((key: keyof ResizeSettings, value: string | number | boolean) => {
-    const newSettings = { ...defaultSettings, [key]: value }
-    onDefaultSettingsChange(newSettings)
-  }, [defaultSettings, onDefaultSettingsChange])
-
-  // 获取推荐的预设尺寸选项
-  const presetSizes = useMemo(() => [
-    { label: '原始尺寸', width: 0, height: 0 }, // 特殊值，表示保持原始尺寸
-    { label: 'HD (1280×720)', width: 1280, height: 720 },
-    { label: 'Full HD (1920×1080)', width: 1920, height: 1080 },
-    { label: '4K (3840×2160)', width: 3840, height: 2160 },
-    { label: 'Instagram 正方形 (1080×1080)', width: 1080, height: 1080 },
-    { label: 'Instagram 故事 (1080×1920)', width: 1080, height: 1920 },
-    { label: 'Facebook 封面 (820×312)', width: 820, height: 312 },
-    { label: '微信头像 (640×640)', width: 640, height: 640 },
-    { label: '网页横幅 (1200×400)', width: 1200, height: 400 },
-    { label: '自定义', width: -1, height: -1 }
-  ], [])
-
-  // 应用默认设置到所有图片
-  const handleApplyToAll = useCallback(() => {
-    setIsApplyingToAll(true)
-    const updatedImages = images.map(img => ({
-      ...img,
-      resizeSettings: { ...defaultSettings }
-    }))
-    onImagesUpdate(updatedImages)
-    setTimeout(() => setIsApplyingToAll(false), 500)
-  }, [images, defaultSettings, onImagesUpdate])
-
-  // 重置所有图片状态
-  const handleResetAll = useCallback(() => {
-    const resetImages = images.map(img => ({
-      ...img,
-      status: 'pending' as const,
-      progress: 0,
-      result: undefined,
-      error: undefined
-    }))
-    onImagesUpdate(resetImages)
-  }, [images, onImagesUpdate])
+  const isProcessing = processingImages.length > 0
 
   // 处理预设尺寸选择
-  const handlePresetSelect = useCallback((preset: string) => {
-    const selected = presetSizes.find(p => p.label === preset)
-    if (selected) {
-      if (selected.width === 0 && selected.height === 0) {
-        // 原始尺寸 - 这里需要根据第一张图片的尺寸来设置
-        const firstImage = images.find(img => img.dimensions)
-        if (firstImage?.dimensions) {
-          handleDefaultSettingsChange('width', firstImage.dimensions.width)
-          handleDefaultSettingsChange('height', firstImage.dimensions.height)
-        }
-      } else if (selected.width > 0 && selected.height > 0) {
-        handleDefaultSettingsChange('width', selected.width)
-        handleDefaultSettingsChange('height', selected.height)
-      }
-      // 自定义选项不更改数值
+  const handlePresetChange = useCallback((presetIndex: string) => {
+    const index = parseInt(presetIndex)
+    setSelectedPresetIndex(index)
+    const preset = PRESET_SIZES[index]
+    
+    if (preset.width > 0 && preset.height > 0) {
+      // 使用预设尺寸
+      onDefaultSettingsChange({
+        ...defaultSettings,
+        width: preset.width,
+        height: preset.height,
+        maintainAspectRatio: true
+      })
+      setLinkedDimensions(true)
     }
-  }, [presetSizes, images, handleDefaultSettingsChange])
+    // 如果是自定义(width=0, height=0)，保持当前设置
+  }, [defaultSettings, onDefaultSettingsChange])
+
+  // 处理宽度变化 (智能联动)
+  const handleWidthChange = useCallback((value: string) => {
+    const width = parseInt(value) || 0
+    setSelectedPresetIndex(0) // 切换到自定义
+    
+    if (linkedDimensions && defaultSettings.height > 0) {
+      // 根据当前宽高比计算新高度
+      const aspectRatio = defaultSettings.width / defaultSettings.height
+      const newHeight = Math.round(width / aspectRatio)
+      onDefaultSettingsChange({
+        ...defaultSettings,
+        width: width,
+        height: newHeight
+      })
+    } else {
+      onDefaultSettingsChange({
+        ...defaultSettings,
+        width: width
+      })
+    }
+  }, [defaultSettings, linkedDimensions, onDefaultSettingsChange])
+
+  // 处理高度变化 (智能联动)
+  const handleHeightChange = useCallback((value: string) => {
+    const height = parseInt(value) || 0
+    setSelectedPresetIndex(0) // 切换到自定义
+    
+    if (linkedDimensions && defaultSettings.width > 0) {
+      // 根据当前宽高比计算新宽度
+      const aspectRatio = defaultSettings.width / defaultSettings.height
+      const newWidth = Math.round(height * aspectRatio)
+      onDefaultSettingsChange({
+        ...defaultSettings,
+        width: newWidth,
+        height: height
+      })
+    } else {
+      onDefaultSettingsChange({
+        ...defaultSettings,
+        height: height
+      })
+    }
+  }, [defaultSettings, linkedDimensions, onDefaultSettingsChange])
+
+  // 切换宽高比锁定
+  const toggleDimensionsLink = useCallback(() => {
+    const newLinked = !linkedDimensions
+    setLinkedDimensions(newLinked)
+    onDefaultSettingsChange({
+      ...defaultSettings,
+      maintainAspectRatio: newLinked
+    })
+  }, [linkedDimensions, defaultSettings, onDefaultSettingsChange])
+
+  // 处理调整模式变化
+  const handleResizeModeChange = useCallback((mode: 'fit' | 'fill' | 'cover') => {
+    onDefaultSettingsChange({
+      ...defaultSettings,
+      resizeMode: mode
+    })
+  }, [defaultSettings, onDefaultSettingsChange])
 
   return (
-    <Card className="p-6 space-y-6">
-      {/* 预设尺寸选择 */}
-      <div className="space-y-2">
-        <Label className="text-base font-medium">预设尺寸</Label>
-        <Select onValueChange={handlePresetSelect} disabled={disabled}>
-          <SelectTrigger>
-            <SelectValue placeholder="选择预设尺寸或自定义" />
-          </SelectTrigger>
-          <SelectContent>
-            {presetSizes.map((preset) => (
-              <SelectItem key={preset.label} value={preset.label}>
-                {preset.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      {/* 尺寸设置 */}
-      <div className="space-y-4">
-        <Label className="text-base font-medium">目标尺寸</Label>
+    <div className="space-y-6">
+      {/* 进度状态 */}
+      <Card className="p-4">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-semibold text-gray-900">{t('resize.controls.progress')}</h3>
+          <span className="text-sm text-gray-500">{t('resize.selectedImages', { count: images.length })}</span>
+        </div>
         
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="width" className="text-sm">宽度 (像素)</Label>
-            <Input
-              id="width"
-              type="number"
-              value={defaultSettings.width}
-              onChange={(e) => handleDefaultSettingsChange('width', parseInt(e.target.value) || 0)}
-              min="1"
-              max="10000"
-              disabled={disabled}
-              className="w-full"
-            />
+        <div className="grid grid-cols-3 gap-4 text-center text-sm">
+          <div>
+            <div className="text-2xl font-bold text-gray-600">{pendingImages.length}</div>
+            <div className="text-gray-500">{t('resize.controls.pending')}</div>
           </div>
-          
-          <div className="space-y-2">
-            <Label htmlFor="height" className="text-sm">高度 (像素)</Label>
-            <Input
-              id="height"
-              type="number"
-              value={defaultSettings.height}
-              onChange={(e) => handleDefaultSettingsChange('height', parseInt(e.target.value) || 0)}
-              min="1"
-              max="10000"
-              disabled={disabled}
-              className="w-full"
-            />
+          <div>
+            <div className="text-2xl font-bold text-blue-600">{processingImages.length}</div>
+            <div className="text-blue-500">{t('resize.controls.processing')}</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-green-600">
+              {images.filter(img => img.status === 'completed').length}
+            </div>
+            <div className="text-green-500">{t('resize.controls.completed')}</div>
           </div>
         </div>
-      </div>
+      </Card>
 
-      {/* 保持宽高比选项 */}
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id="maintain-ratio"
-          checked={defaultSettings.maintainAspectRatio}
-          onCheckedChange={(checked) => 
-            handleDefaultSettingsChange('maintainAspectRatio', checked === true)
-          }
-          disabled={disabled}
-        />
-        <Label htmlFor="maintain-ratio" className="text-sm">
-          保持原始宽高比
-        </Label>
-      </div>
+      {/* 主要控制面板 */}
+      <Card className="p-6">
+        <Tabs defaultValue="resize" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="resize" className="flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              {t('resize.title')}
+            </TabsTrigger>
+            <TabsTrigger value="crop" className="flex items-center gap-2">
+              <Crop className="w-4 h-4" />
+              {t('resize.crop.title')}
+            </TabsTrigger>
+          </TabsList>
 
-      {/* 调整模式 */}
-      <div className="space-y-2">
-        <Label className="text-base font-medium">调整模式</Label>
-        <Select
-          value={defaultSettings.resizeMode}
-          onValueChange={(value: 'fit' | 'fill' | 'cover') => 
-            handleDefaultSettingsChange('resizeMode', value)
-          }
-          disabled={disabled || !defaultSettings.maintainAspectRatio}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="fit">
-              <div>
-                <div className="font-medium">适应 (Fit)</div>
-                <div className="text-xs text-gray-500">图片完全显示在指定尺寸内</div>
-              </div>
-            </SelectItem>
-            <SelectItem value="fill">
-              <div>
-                <div className="font-medium">填充 (Fill)</div>
-                <div className="text-xs text-gray-500">填满指定尺寸，可能会裁剪</div>
-              </div>
-            </SelectItem>
-            <SelectItem value="cover">
-              <div>
-                <div className="font-medium">覆盖 (Cover)</div>
-                <div className="text-xs text-gray-500">图片覆盖整个区域</div>
-              </div>
-            </SelectItem>
-          </SelectContent>
-        </Select>
-        {!defaultSettings.maintainAspectRatio && (
-          <p className="text-xs text-gray-500">
-            未保持宽高比时，图片将被强制调整为指定尺寸
-          </p>
-        )}
-      </div>
-
-      {/* 统计信息 */}
-      {hasImages && (
-        <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-          <div className="text-sm font-medium text-gray-900">状态统计</div>
-          <div className="grid grid-cols-3 gap-4 text-sm">
-            <div>
-              <div className="text-gray-500">等待中</div>
-              <div className="text-lg font-medium text-blue-600">{pendingImages.length}</div>
+          {/* 调整尺寸面板 */}
+          <TabsContent value="resize" className="space-y-6">
+            {/* 预设尺寸 */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">{t('resize.presets.selectPreset')}</Label>
+              <Select value={selectedPresetIndex.toString()} onValueChange={handlePresetChange} disabled={disabled}>
+                <SelectTrigger className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {PRESET_SIZES.map((preset, index) => (
+                    <SelectItem key={index} value={index.toString()}>
+                      {preset.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div>
-              <div className="text-gray-500">处理中</div>
-              <div className="text-lg font-medium text-orange-600">{processingImages.length}</div>
-            </div>
-            <div>
-              <div className="text-gray-500">已完成</div>
-              <div className="text-lg font-medium text-green-600">{completedImages.length}</div>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* 操作按钮 */}
-      <div className="space-y-3">
-        {/* 应用设置到所有图片 */}
-        {hasImages && (
-          <Button
-            onClick={handleApplyToAll}
-            variant="outline"
-            className="w-full"
-            disabled={disabled || isApplyingToAll}
+            <Separator />
+
+            {/* 自定义尺寸 */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="text-base font-medium">{t('resize.controls.customSize')}</Label>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={toggleDimensionsLink}
+                  className="h-8 px-2"
+                  title={linkedDimensions ? t('resize.controls.unlinkDimensions') : t('resize.controls.linkDimensions')}
+                >
+                  {linkedDimensions ? <Link2 className="w-4 h-4" /> : <Unlink2 className="w-4 h-4" />}
+                  <span className="ml-1 text-xs">
+                    {linkedDimensions ? t('resize.controls.linked') : t('resize.controls.unlinked')}
+                  </span>
+                </Button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="width">{t('resize.controls.width')}</Label>
+                  <Input
+                    id="width"
+                    type="number"
+                    min="1"
+                    max="10000"
+                    value={defaultSettings.width}
+                    onChange={(e) => handleWidthChange(e.target.value)}
+                    disabled={disabled}
+                    placeholder={t('resize.controls.width')}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="height">{t('resize.controls.height')}</Label>
+                  <Input
+                    id="height"
+                    type="number"
+                    min="1"
+                    max="10000"
+                    value={defaultSettings.height}
+                    onChange={(e) => handleHeightChange(e.target.value)}
+                    disabled={disabled}
+                    placeholder={t('resize.controls.height')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <Separator />
+
+            {/* 调整模式 */}
+            <div className="space-y-3">
+              <Label className="text-base font-medium">{t('resize.controls.resizeMode')}</Label>
+              <div className="grid grid-cols-3 gap-2">
+                <Button
+                  variant={defaultSettings.resizeMode === 'fit' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleResizeModeChange('fit')}
+                  disabled={disabled}
+                  className="text-xs"
+                >
+                  {t('resize.controls.fit')}
+                </Button>
+                <Button
+                  variant={defaultSettings.resizeMode === 'fill' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleResizeModeChange('fill')}
+                  disabled={disabled}
+                  className="text-xs"
+                >
+                  {t('resize.controls.fill')}
+                </Button>
+                <Button
+                  variant={defaultSettings.resizeMode === 'cover' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => handleResizeModeChange('cover')}
+                  disabled={disabled}
+                  className="text-xs"
+                >
+                  {t('resize.controls.cover')}
+                </Button>
+              </div>
+              <div className="text-xs text-gray-500 space-y-1">
+                <p><strong>{t('resize.modes.fit')}</strong>: {t('resize.modes.fitDescription')}</p>
+                <p><strong>{t('resize.modes.fill')}</strong>: {t('resize.modes.fillDescription')}</p>
+                <p><strong>{t('resize.modes.cover')}</strong>: {t('resize.modes.coverDescription')}</p>
+              </div>
+            </div>
+
+            {/* 当前设置预览 */}
+            {defaultSettings.width > 0 && defaultSettings.height > 0 && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <div className="text-sm font-medium text-blue-900">{t('resize.controls.currentSettings')}</div>
+                <div className="text-sm text-blue-700 mt-1">
+                  {t('resize.controls.dimensionsSetting', { width: defaultSettings.width, height: defaultSettings.height })}
+                </div>
+                <div className="text-xs text-blue-600 mt-1">
+                  {t('resize.controls.aspectRatioStatus')}: {linkedDimensions ? t('resize.controls.linked') : t('resize.controls.unlinked')} | 
+                  {t('resize.controls.resizeMode')}: {
+                    defaultSettings.resizeMode === 'fit' ? t('resize.controls.fit') :
+                    defaultSettings.resizeMode === 'fill' ? t('resize.controls.fill') : t('resize.controls.cover')
+                  }
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* 裁剪编辑面板 */}
+          <TabsContent value="crop" className="space-y-6">
+            {images.length === 0 ? (
+              <div className="text-center py-8">
+                <Crop className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="font-semibold text-gray-900 mb-2">{t('resize.crop.title')}</h3>
+                <p className="text-sm text-gray-600 mb-4">
+                  {t('resize.crop.subtitle')}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {t('resize.crop.features')}
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <h4 className="text-sm font-medium text-green-800 mb-2">{t('resize.crop.instructions.title')}</h4>
+                  <ul className="text-xs text-green-700 space-y-1">
+                    <li>• {t('resize.crop.instructions.clickToOpen')}</li>
+                    <li>• {t('resize.crop.instructions.aspectRatios')}</li>
+                    <li>• {t('resize.crop.instructions.dragToAdjust')}</li>
+                    <li>• {t('resize.crop.instructions.replaceOriginal')}</li>
+                  </ul>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 max-h-64 overflow-y-auto">
+                  {images.slice(0, 4).map((image) => (
+                    <div key={image.id} className="relative group">
+                      <div 
+                        className="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-blue-300 transition-colors"
+                        onClick={() => {
+                          // TODO: 打开裁剪编辑器
+                          console.log(t('resize.crop.instructions.openEditor') + ':', image.file.name)
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img 
+                          src={image.preview} 
+                          alt={image.file.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                          <Crop className="w-6 h-6 text-white" />
+                        </div>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-600 truncate">
+                        {image.file.name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {images.length > 4 && (
+                  <div className="text-center text-sm text-gray-500">
+                    {t('resize.crop.moreImages', { count: images.length - 4 })}
+                  </div>
+                )}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+
+        <Separator className="my-6" />
+
+        {/* 操作按钮 */}
+        <div className="flex gap-3">
+          <Button 
+            onClick={onStartResize} 
+            disabled={disabled || pendingImages.length === 0 || isProcessing}
+            className="flex-1"
+            size="lg"
           >
-            <Settings className="w-4 h-4 mr-2" />
-            {isApplyingToAll ? '正在应用...' : '应用设置到所有图片'}
+            <Play className="w-4 h-4 mr-2" />
+            {isProcessing ? t('resize.controls.processing') : t('resize.controls.startProcessing', { count: pendingImages.length })}
           </Button>
-        )}
-
-        {/* 开始调整尺寸 */}
-        <Button
-          onClick={onStartResize}
-          disabled={disabled || pendingImages.length === 0}
-          className="w-full bg-blue-600 hover:bg-blue-700"
-        >
-          <Play className="w-4 h-4 mr-2" />
-          开始调整尺寸 ({pendingImages.length})
-        </Button>
-
-        {/* 重置 */}
-        {(processingImages.length > 0 || completedImages.length > 0) && (
-          <Button
-            onClick={handleResetAll}
-            variant="outline"
-            className="w-full"
-            disabled={disabled}
+          
+          <Button 
+            variant="outline" 
+            onClick={() => {
+              // 重置逻辑
+              const resetImages = images.map(img => ({
+                ...img,
+                status: 'pending' as const,
+                progress: 0,
+                result: undefined,
+                error: undefined
+              }))
+              onImagesUpdate(resetImages)
+            }}
+            disabled={disabled || images.length === 0}
+            size="lg"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
-            重置所有
+            {t('resize.controls.reset')}
           </Button>
-        )}
-      </div>
-
-      {/* 提示信息 */}
-      {!hasImages && (
-        <div className="text-center text-gray-500 text-sm">
-          请先上传图片再进行尺寸调整设置
         </div>
-      )}
-    </Card>
+      </Card>
+    </div>
   )
 }

@@ -200,29 +200,99 @@
   },
   "resize": {
     "title": "图片尺寸调整",
-    "subtitle": "智能调整图片尺寸，支持多种模式",
-    "uploadTitle": "步骤 1: 上传图片",
-    "controlsTitle": "步骤 2: 调整设置",
+    "subtitle": "精确调整图片尺寸，支持多种预设和自定义设置",
+    "uploadTitle": "上传图片",
+    "controlsTitle": "调整设置",
+    "uploadMessage": "上传图片后可以设置调整参数",
+    "viewPreview": "查看预览结果",
     "clickOrDrag": "点击选择文件或拖拽上传",
     "dropHere": "释放图片到这里上传",
-    "selectedImages": "已选择的图片 ({count})",
-    "uploadMessage": "请先上传图片再进行尺寸调整设置",
-    "viewPreview": "查看预览结果",
-    "featuresTitle": "尺寸调整特色功能",
-    "featuresSubtitle": "专业的图片尺寸调整工具，满足各种需求",
+    "selectedImages": "已选择 {count} 张图片",
+    "featuresTitle": "强大的尺寸调整功能",
+    "featuresSubtitle": "专业的图片尺寸调整工具，满足各种使用场景",
     "features": {
       "precise": {
         "title": "精确控制",
-        "description": "像素级精确控制，支持自定义宽度和高度"
+        "description": "像素级精确控制图片尺寸，满足专业需求"
       },
       "ratio": {
-        "title": "宽高比保护",
-        "description": "智能保持原始宽高比，避免图片变形"
+        "title": "宽高比锁定",
+        "description": "智能保持原始宽高比，避免图片变形失真"
       },
       "formats": {
         "title": "多格式支持",
-        "description": "支持 JPEG、PNG、WebP、GIF、BMP 等主流格式"
+        "description": "支持JPEG、PNG、WebP等主流图片格式"
       }
+    },
+    "controls": {
+      "progress": "处理进度",
+      "pending": "等待处理",
+      "processing": "正在处理",
+      "completed": "已完成",
+      "customSize": "自定义尺寸 (像素)",
+      "width": "宽度",
+      "height": "高度",
+      "linked": "已锁定",
+      "unlinked": "未锁定",
+      "linkDimensions": "锁定宽高比",
+      "unlinkDimensions": "解除宽高比锁定",
+      "resizeMode": "调整模式",
+      "fit": "适应",
+      "fill": "填充",
+      "cover": "覆盖",
+      "aspectRatioStatus": "宽高比",
+      "currentSettings": "当前设置",
+      "dimensionsSetting": "尺寸: {width} × {height} 像素",
+      "startProcessing": "开始调整 ({count})",
+      "reset": "重置"
+    },
+    "presets": {
+      "selectPreset": "选择预设尺寸",
+      "square": "正方形",
+      "story": "故事",
+      "cover": "封面",
+      "wechatMoments": "微信朋友圈",
+      "thumbnail": "缩略图",
+      "banner": "横幅"
+    },
+    "modes": {
+      "fit": "适应",
+      "fill": "填充",
+      "cover": "覆盖",
+      "fitDescription": "保持比例，图片完全显示在目标尺寸内",
+      "fillDescription": "拉伸图片填满目标尺寸 (可能变形)",
+      "coverDescription": "保持比例，裁剪图片填满目标尺寸"
+    },
+    "crop": {
+      "title": "图片裁剪编辑器",
+      "subtitle": "请先上传图片，然后就可以进行精确裁剪了",
+      "features": "支持固定宽高比裁剪、自由裁剪等多种模式",
+      "complete": "完成裁剪",
+      "cancel": "取消",
+      "dragHint": "拖拽虚线框调整裁剪区域",
+      "aspectRatio": "宽高比",
+      "position": "位置",
+      "size": "大小",
+      "info": "裁剪信息",
+      "aspectRatios": {
+        "free": "自由裁剪",
+        "square": "正方形 (1:1)",
+        "standard": "标准 (4:3)",
+        "photo": "照片 (3:2)",
+        "widescreen": "宽屏 (16:9)",
+        "portrait": "竖屏 (9:16)",
+        "vertical": "竖直 (3:4)",
+        "verticalPhoto": "竖直照片 (2:3)"
+      },
+      "instructions": {
+        "title": "裁剪功能说明",
+        "clickToOpen": "点击图片可以打开裁剪编辑器",
+        "aspectRatios": "支持多种宽高比预设 (1:1、4:3、16:9 等)",
+        "dragToAdjust": "可以拖拽调整裁剪区域位置和大小",
+        "replaceOriginal": "裁剪后的图片将替换原始上传文件",
+        "openEditor": "打开裁剪编辑器"
+      },
+      "moreImages": "还有 {count} 张图片，向上滚动查看更多..."
     },
     "status": {
       "pending": "等待中",
