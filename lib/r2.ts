@@ -40,10 +40,11 @@ export async function uploadToR2(
 
     await r2Client.send(command)
     
-    // 构建公开访问URL
+    // 构建公开访问URL - 对路径的各个部分分别编码
+    const encodedKey = key.split('/').map(part => encodeURIComponent(part)).join('/')
     const publicUrl = PUBLIC_DOMAIN 
-      ? `https://${PUBLIC_DOMAIN}/${key}`
-      : `${R2_CONFIG.endpoint}/${BUCKET_NAME}/${key}`
+      ? `https://${PUBLIC_DOMAIN}/${encodedKey}`
+      : `${R2_CONFIG.endpoint}/${BUCKET_NAME}/${encodedKey}`
 
     return { 
       success: true, 
@@ -111,12 +112,18 @@ export function generateR2Key(originalFileName: string, prefix: string): string 
   const extension = originalFileName.split('.').pop()
   const baseName = originalFileName.replace(/\.[^/.]+$/, '')
   
+  // 对文件名进行安全化处理，移除或替换特殊字符
+  const safeBaseName = baseName
+    .replace(/[^\w\u4e00-\u9fa5.-]/g, '_') // 只保留字母、数字、中文、点号、连字符，其他替换为下划线
+    .replace(/_{2,}/g, '_') // 多个连续下划线替换为单个
+    .replace(/^_|_$/g, '') // 移除开头和结尾的下划线
+  
   // 格式: images/{year}/{month}/{prefix}_{timestamp}_{random}_{basename}.{ext}
   const now = new Date()
   const year = now.getFullYear()
   const month = String(now.getMonth() + 1).padStart(2, '0')
   
-  return `images/${year}/${month}/${prefix}_${timestamp}_${randomStr}_${baseName}.${extension}`
+  return `images/${year}/${month}/${prefix}_${timestamp}_${randomStr}_${safeBaseName}.${extension}`
 }
 
 /**

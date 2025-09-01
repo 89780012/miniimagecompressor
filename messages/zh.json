@@ -7,7 +7,8 @@
     "success": "成功",
     "reset": "重置",
     "download": "下载",
-    "close": "关闭"
+    "close": "关闭",
+    "cancel": "取消"
   },
   "upload": {
     "title": "步骤 1: 上传图片",
@@ -158,5 +159,19 @@
     "unknownError": "未知错误",
     "noFileUploaded": "没有文件上传",
     "downloadFailed": "下载失败"
+  },
+  "history": {
+    "title": "历史记录",
+    "empty": "暂无历史记录",
+    "savedOn": "保存于",
+    "expired": "已过期",
+    "downloadAgain": "重新下载",
+    "clear": "清空历史",
+    "confirmClear": "确定要清空所有历史记录吗？",
+    "justNow": "刚刚",
+    "stats": {
+      "totalProcessed": "总共处理",
+      "totalSaved": "总共节省"
+    }
   }
 }

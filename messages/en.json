@@ -7,7 +7,8 @@
     "success": "Success", 
     "reset": "Reset",
     "download": "Download",
-    "close": "Close"
+    "close": "Close",
+    "cancel": "Cancel"
   },
   "upload": {
     "title": "Step 1: Upload Image",
@@ -158,5 +159,19 @@
     "unknownError": "Unknown error",
     "noFileUploaded": "No file uploaded",
     "downloadFailed": "Download failed"
+  },
+  "history": {
+    "title": "History",
+    "empty": "No history records",
+    "savedOn": "Saved on",
+    "expired": "Expired",
+    "downloadAgain": "Download Again",
+    "clear": "Clear History",
+    "confirmClear": "Are you sure you want to clear all history records?",
+    "justNow": "Just now",
+    "stats": {
+      "totalProcessed": "Total Processed",
+      "totalSaved": "Total Saved"
+    }
   }
 }

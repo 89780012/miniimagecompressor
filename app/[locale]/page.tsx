@@ -1,15 +1,22 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useTranslations } from 'next-intl'
 import { BatchImageUpload } from '@/components/BatchImageUpload'
 import { BatchCompressionControls } from '@/components/BatchCompressionControls'
 import { BatchProgressDisplay } from '@/components/BatchProgressDisplay'
 import { BatchComparisonView } from '@/components/BatchComparisonView'
+import { HistoryView } from '@/components/HistoryView'
 import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { StructuredData } from '@/components/StructuredData'
 import { compressImage, CompressionResult } from '@/lib/compression'
 import { CompressionSettings } from '@/components/CompressionControls'
+import { 
+  saveToHistory, 
+  getHistory, 
+  clearExpiredHistory,
+  HistoryItem 
+} from '@/lib/history'
 
 interface ImageFile {
   id: string
@@ -33,7 +40,8 @@ interface BatchProgress {
 export default function HomePage() {
   const t = useTranslations()
   const [images, setImages] = useState<ImageFile[]>([])
-  const [currentView, setCurrentView] = useState<'upload' | 'comparison'>('upload')
+  const [currentView, setCurrentView] = useState<'upload' | 'comparison' | 'history'>('upload')
+  const [historyItems, setHistoryItems] = useState<HistoryItem[]>([])
   const [batchProgress, setBatchProgress] = useState<BatchProgress>({
     completed: 0,
     total: 0,
@@ -44,6 +52,17 @@ export default function HomePage() {
     quality: 80,
     format: 'jpeg'
   })
+  
+  // 初始化时加载历史记录并清理过期记录
+  useEffect(() => {
+    try {
+      clearExpiredHistory() // 清理过期记录
+      const history = getHistory()
+      setHistoryItems(history)
+    } catch (error) {
+      console.error('Failed to load history:', error)
+    }
+  }, [])
   
   // 添加图片到批量列表
   const handleImagesAdd = useCallback((newImages: ImageFile[]) => {
@@ -117,6 +136,16 @@ export default function HomePage() {
             }
           } : img
         ))
+        
+        // 保存到历史记录
+        try {
+          saveToHistory(result, settings)
+          // 更新历史记录状态
+          const updatedHistory = getHistory()
+          setHistoryItems(updatedHistory)
+        } catch (error) {
+          console.error('Failed to save to history:', error)
+        }
       } catch (error) {
         // 更新为错误状态
         const errorMessage = error instanceof Error ? error.message : t('errors.unknownError')
@@ -208,6 +237,21 @@ export default function HomePage() {
     setCurrentView('comparison')
   }, [])
 
+  // 查看历史记录
+  const handleViewHistory = useCallback(() => {
+    setCurrentView('history')
+  }, [])
+
+  // 从历史记录刷新数据
+  const handleRefreshHistory = useCallback(() => {
+    try {
+      const history = getHistory()
+      setHistoryItems(history)
+    } catch (error) {
+      console.error('Failed to refresh history:', error)
+    }
+  }, [])
+
   return (
     <>
       <StructuredData />
@@ -220,13 +264,33 @@ export default function HomePage() {
                 <h1 className="text-2xl font-bold text-gray-900">{t('common.title')}</h1>
                 <p className="text-sm text-gray-600">{t('common.subtitle')}</p>
               </div>
-              <LanguageSwitcher />
+              <div className="flex items-center gap-4">
+                {/* 历史记录按钮 */}
+                {historyItems.filter(item => !item.isExpired).length > 0 && (
+                  <button
+                    onClick={handleViewHistory}
+                    className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 h-8"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    {t('history.title')} ({historyItems.filter(item => !item.isExpired).length})
+                  </button>
+                )}
+                <LanguageSwitcher />
+              </div>
             </div>
           </div>
         </header>
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {currentView === 'comparison' ? (
+          {currentView === 'history' ? (
+            <HistoryView
+              historyItems={historyItems}
+              onBack={handleBackToUpload}
+              onRefresh={handleRefreshHistory}
+            />
+          ) : currentView === 'comparison' ? (
             // 批量对比视图
             <BatchComparisonView
               images={images}
