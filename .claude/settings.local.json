@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"D:\\code\\miniimagecompressor\\app\\robots.ts\")",
+      "Bash(del \"D:\\code\\miniimagecompressor\\app\\sitemap.ts\")",
+      "Bash(npm install:*)",
+      "Bash(npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint)",
+      "Bash(npm run build:*)",
+      "Bash(npx prisma generate:*)",
+      "Bash(npx prisma migrate:*)",
+      "Bash(npx eslint:*)",
+      "Bash(grep:*)",
+      "Bash(pnpm lint:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

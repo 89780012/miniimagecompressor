@@ -22,7 +22,6 @@ export function ResizePreview({
   onReset
 }: ResizePreviewProps) {
   const t = useTranslations()
-  
   const completedImages = images.filter(img => img.status === 'completed' && img.result)
 
   const formatFileSize = (bytes: number) => {
@@ -53,12 +52,12 @@ export function ResizePreview({
         <div className="flex items-center space-x-4">
           <Button onClick={onBack} variant="outline" size="sm">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            返回编辑
+            {t('resize.preview.backToEdit')}
           </Button>
           <div>
-            <h2 className="text-xl font-semibold text-gray-900">调整结果预览</h2>
+            <h2 className="text-xl font-semibold text-gray-900">{t('resize.preview.title')}</h2>
             <p className="text-sm text-gray-600">
-              共 {completedImages.length} 张图片调整完成
+              {t('resize.preview.completedCount', { count: completedImages.length })}
             </p>
           </div>
         </div>
@@ -66,7 +65,7 @@ export function ResizePreview({
         <div className="flex items-center space-x-2">
           <Button onClick={onReset} variant="outline" size="sm">
             <RotateCcw className="w-4 h-4 mr-2" />
-            重新开始
+            {t('resize.preview.restart')}
           </Button>
         </div>
       </div>
@@ -88,7 +87,7 @@ export function ResizePreview({
                     size="sm"
                   >
                     <Eye className="w-4 h-4 mr-1" />
-                    预览
+                    {t('common.preview')}
                   </Button>
                   <Button
                     onClick={() => onDownloadSingle(image.id)}
@@ -96,7 +95,7 @@ export function ResizePreview({
                     className="bg-blue-600 hover:bg-blue-700"
                   >
                     <Download className="w-4 h-4 mr-1" />
-                    下载
+                    {t('common.download')}
                   </Button>
                 </div>
               </div>
@@ -105,59 +104,59 @@ export function ResizePreview({
               <div className="grid grid-cols-2 gap-4">
                 {/* 原图 */}
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-700">原图</h4>
+                  <h4 className="text-sm font-medium text-gray-700">{t('resize.preview.original')}</h4>
                   <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
                     <Image
                       src={image.preview}
-                      alt={`${image.file.name} - 原图`}
+                      alt={`${image.file.name} - ${t('resize.preview.original')}`}
                       fill
                       className="object-contain"
                     />
                   </div>
                   <div className="text-xs text-gray-600 space-y-1">
-                    <div>尺寸: {image.result?.stats?.originalDimensions}</div>
-                    <div>大小: {formatFileSize(image.result?.stats?.originalSize || 0)}</div>
+                    <div>{t('resize.preview.dimensions')}: {image.result?.stats?.originalDimensions}</div>
+                    <div>{t('resize.preview.size')}: {formatFileSize(image.result?.stats?.originalSize || 0)}</div>
                   </div>
                 </div>
 
                 {/* 调整后 */}
                 <div className="space-y-2">
-                  <h4 className="text-sm font-medium text-gray-700">调整后</h4>
+                  <h4 className="text-sm font-medium text-gray-700">{t('resize.preview.resized')}</h4>
                   <div className="relative bg-gray-100 rounded-lg overflow-hidden aspect-square">
                     {image.result?.compressed?.url && (
                       <Image
                         src={image.result.compressed.url}
-                        alt={`${image.file.name} - 调整后`}
+                        alt={`${image.file.name} - ${t('resize.preview.resized')}`}
                         fill
                         className="object-contain"
                       />
                     )}
                   </div>
                   <div className="text-xs text-gray-600 space-y-1">
-                    <div>尺寸: {image.result?.stats?.compressedDimensions}</div>
-                    <div>大小: {formatFileSize(image.result?.stats?.compressedSize || 0)}</div>
+                    <div>{t('resize.preview.dimensions')}: {image.result?.stats?.compressedDimensions}</div>
+                    <div>{t('resize.preview.size')}: {formatFileSize(image.result?.stats?.compressedSize || 0)}</div>
                   </div>
                 </div>
               </div>
 
               {/* 统计信息 */}
               <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-900 mb-3">调整统计</h4>
+                <h4 className="text-sm font-medium text-gray-900 mb-3">{t('resize.preview.stats')}</h4>
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <div className="text-gray-500">原始尺寸</div>
+                    <div className="text-gray-500">{t('resize.preview.originalDimensions')}</div>
                     <div className="font-medium">
                       {image.result?.stats?.originalDimensions}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500">调整后尺寸</div>
+                    <div className="text-gray-500">{t('resize.preview.resizedDimensions')}</div>
                     <div className="font-medium">
                       {image.result?.stats?.compressedDimensions}
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500">文件大小变化</div>
+                    <div className="text-gray-500">{t('resize.preview.fileSizeChange')}</div>
                     <div className={`font-medium ${
                       parseFloat(calculateSizeChange(
                         image.result?.stats?.originalSize || 0,
@@ -175,11 +174,18 @@ export function ResizePreview({
                     </div>
                   </div>
                   <div>
-                    <div className="text-gray-500">调整设置</div>
+                    <div className="text-gray-500">{t('resize.preview.resizeSettings')}</div>
                     <div className="font-medium text-xs">
-                      {image.resizeSettings?.maintainAspectRatio ? '保持宽高比' : '自由调整'} / 
-                      {image.resizeSettings?.resizeMode === 'fit' ? '适应' : 
-                       image.resizeSettings?.resizeMode === 'fill' ? '填充' : '覆盖'}
+                      {image.resizeSettings?.maintainAspectRatio 
+                        ? t('resize.preview.maintainAspectRatio') 
+                        : t('resize.preview.freeAdjustment')
+                      } / 
+                      {image.resizeSettings?.resizeMode === 'fit' 
+                        ? t('resize.controls.fit') 
+                        : image.resizeSettings?.resizeMode === 'fill' 
+                          ? t('resize.controls.fill') 
+                          : t('resize.controls.cover')
+                      }
                     </div>
                   </div>
                 </div>
@@ -189,9 +195,9 @@ export function ResizePreview({
         </div>
       ) : (
         <div className="text-center py-12">
-          <div className="text-gray-400 text-lg mb-2">没有已完成的图片</div>
+          <div className="text-gray-400 text-lg mb-2">{t('resize.preview.noCompletedImages')}</div>
           <p className="text-gray-600">
-            请返回编辑页面上传并调整图片尺寸
+            {t('resize.preview.backToEditHint')}
           </p>
         </div>
       )}
@@ -199,14 +205,14 @@ export function ResizePreview({
       {/* 全局统计 */}
       {completedImages.length > 0 && (
         <Card className="p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">总体统计</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('resize.preview.overallStats')}</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div className="text-center">
-              <div className="text-gray-500">处理图片数</div>
+              <div className="text-gray-500">{t('resize.preview.processedCount')}</div>
               <div className="text-2xl font-bold text-blue-600">{completedImages.length}</div>
             </div>
             <div className="text-center">
-              <div className="text-gray-500">原始总大小</div>
+              <div className="text-gray-500">{t('resize.preview.originalTotalSize')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {formatFileSize(
                   completedImages.reduce((sum, img) => sum + (img.result?.stats?.originalSize || 0), 0)
@@ -214,7 +220,7 @@ export function ResizePreview({
               </div>
             </div>
             <div className="text-center">
-              <div className="text-gray-500">调整后总大小</div>
+              <div className="text-gray-500">{t('resize.preview.resizedTotalSize')}</div>
               <div className="text-2xl font-bold text-gray-900">
                 {formatFileSize(
                   completedImages.reduce((sum, img) => sum + (img.result?.stats?.compressedSize || 0), 0)
@@ -222,7 +228,7 @@ export function ResizePreview({
               </div>
             </div>
             <div className="text-center">
-              <div className="text-gray-500">总体大小变化</div>
+              <div className="text-gray-500">{t('resize.preview.overallSizeChange')}</div>
               <div className={`text-2xl font-bold ${
                 parseFloat(calculateSizeChange(
                   completedImages.reduce((sum, img) => sum + (img.result?.stats?.originalSize || 0), 0),

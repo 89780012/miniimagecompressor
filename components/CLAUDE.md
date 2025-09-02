@@ -15,8 +15,6 @@
 | `BatchImageUpload.tsx` | 批量文件上传和管理 | 主页面核心组件 | react-dropzone, Image |
 | `BatchCompressionControls.tsx` | 批量压缩控制面板 | 压缩参数设置 | Slider, Switch, Tabs |
 | `BatchComparisonView.tsx` | 批量结果对比展示 | 压缩完成后预览 | Card, Progress, Button |
-| `BatchProgressDisplay.tsx` | 实时处理进度显示 | 压缩过程监控 | Progress, Badge |
-| `CompressionControls.tsx` | 单图压缩控制 | 兼容性组件 | Slider, Select |
 
 ## 对外接口
 
@@ -248,7 +246,7 @@ const response = await fetch(proxyUrl)
 
 ### 工具组件
 - `ComparisonView.tsx` - 单图对比视图 (兼容性组件)
-- `CompressionControls.tsx` - 单图压缩控制 (兼容性组件)
+- `CompressionControls.tsx` - 单图压缩控制 (已删除)
 - `LanguageSwitcher.tsx` - 语言切换组件 (约50行)
 - `StructuredData.tsx` - SEO结构化数据 (约30行)
 

@@ -1,4 +1,4 @@
-import { CompressionSettings } from '@/components/CompressionControls'
+import { CompressionSettings } from '@/types/image'
 
 export interface CompressionResult {
   id: string

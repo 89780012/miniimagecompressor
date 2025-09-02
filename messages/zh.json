@@ -39,6 +39,9 @@
       "ratio": "• 压缩后的图片将保持原有的长宽比"
     }
   },
+  "compress": {
+    "title": "图片压缩"
+  },
   "compression": {
     "title": "步骤 2: 设置压缩参数",
     "compressing": "正在压缩...",
@@ -266,8 +269,8 @@
     "crop": {
       "title": "图片裁剪编辑器",
       "subtitle": "请先上传图片，然后就可以进行精确裁剪了",
-      "features": "支持固定宽高比裁剪、自由裁剪等多种模式",
-      "complete": "完成裁剪",
+      "features": "支持固定宽高比裁剪、自由裁剪等多种模式，纯客户端操作",
+      "complete": "完成裁剪并下载",
       "cancel": "取消",
       "dragHint": "拖拽虚线框调整裁剪区域",
       "aspectRatio": "宽高比",
@@ -289,7 +292,7 @@
         "clickToOpen": "点击图片可以打开裁剪编辑器",
         "aspectRatios": "支持多种宽高比预设 (1:1、4:3、16:9 等)",
         "dragToAdjust": "可以拖拽调整裁剪区域位置和大小",
-        "replaceOriginal": "裁剪后的图片将替换原始上传文件",
+        "replaceOriginal": "裁剪完成后直接下载，无需上传服务器",
         "openEditor": "打开裁剪编辑器"
       },
       "moreImages": "还有 {count} 张图片，向上滚动查看更多..."
@@ -299,6 +302,30 @@
       "compressing": "调整中...",
       "completed": "已完成",
       "error": "错误"
+    },
+    "preview": {
+      "title": "调整结果预览",
+      "backToEdit": "返回编辑",
+      "restart": "重新开始",
+      "completedCount": "已完成 {count} 张图片",
+      "original": "原图",
+      "resized": "调整后",
+      "dimensions": "尺寸",
+      "size": "大小",
+      "stats": "统计信息",
+      "originalDimensions": "原始尺寸",
+      "resizedDimensions": "调整后尺寸",
+      "fileSizeChange": "文件大小变化",
+      "resizeSettings": "调整设置",
+      "maintainAspectRatio": "保持宽高比",
+      "freeAdjustment": "自由调整",
+      "noCompletedImages": "暂无完成的图片",
+      "backToEditHint": "请返回编辑页面处理图片",
+      "overallStats": "总体统计",
+      "processedCount": "处理数量",
+      "originalTotalSize": "原始总大小",
+      "resizedTotalSize": "调整后总大小",
+      "overallSizeChange": "总体大小变化"
     }
   }
 }

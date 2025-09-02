@@ -1,5 +1,5 @@
 import { CompressionResult } from './compression'
-import { CompressionSettings } from '@/components/CompressionControls'
+import { CompressionSettings } from '@/types/image'
 
 const STORAGE_KEY = 'imageCompression_history'
 const MAX_HISTORY_ITEMS = 100

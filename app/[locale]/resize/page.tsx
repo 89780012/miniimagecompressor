@@ -21,7 +21,7 @@ const ResizePreview = dynamic(() => import('@/components/ResizePreview').then(mo
   loading: () => <div className="h-96 bg-gray-100 rounded-lg animate-pulse"></div>
 })
 
-const LanguageSwitcher = dynamic(() => import('@/components/LanguageSwitcher').then(mod => ({ default: mod.LanguageSwitcher })), {
+const AppHeader = dynamic(() => import('@/components/AppHeader').then(mod => ({ default: mod.AppHeader })), {
   ssr: false
 })
 
@@ -173,14 +173,6 @@ export default function ResizePage() {
     }
   }, [images])
 
-  // 预览图片
-  const handlePreview = useCallback((imageId: string) => {
-    const image = images.find(img => img.id === imageId)
-    if (image?.result?.compressed?.url) {
-      window.open(image.result.compressed.url, '_blank')
-    }
-  }, [images])
-
   // 回到上传界面
   const handleBackToUpload = useCallback(() => {
     setCurrentView('upload')
@@ -196,32 +188,7 @@ export default function ResizePage() {
       <StructuredData />
       <div className="min-h-screen bg-gray-50">
         {/* Header */}
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="flex items-center gap-4">
-                  <button
-                    onClick={() => window.history.back()}
-                    className="text-gray-600 hover:text-gray-900 transition-colors"
-                    title="返回"
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                  </button>
-                  <div>
-                    <h1 className="text-2xl font-bold text-gray-900">{t('resize.title')}</h1>
-                    <p className="text-sm text-gray-600">{t('resize.subtitle')}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <LanguageSwitcher />
-              </div>
-            </div>
-          </div>
-        </header>
+        <AppHeader />
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {currentView === 'preview' ? (

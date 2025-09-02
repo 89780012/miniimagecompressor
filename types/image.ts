@@ -1,5 +1,11 @@
 import { CompressionResult } from '@/lib/compression'
-import { CompressionSettings } from '@/components/CompressionControls'
+
+export interface CompressionSettings {
+  mode: 'size' | 'quality'
+  targetSizeKb?: number
+  quality?: number
+  format: 'jpeg' | 'png' | 'webp'
+}
 
 export interface ResizeSettings {
   width: number

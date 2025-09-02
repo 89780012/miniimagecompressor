@@ -11,7 +11,7 @@ import { Separator } from '@/components/ui/separator'
 import { Switch } from '@/components/ui/switch'
 import { useTranslations } from 'next-intl'
 import { Settings, Play, Pause, RotateCcw } from 'lucide-react'
-import { CompressionSettings } from './CompressionControls'
+import { CompressionSettings } from '@/types/image'
 
 interface ImageFile {
   id: string

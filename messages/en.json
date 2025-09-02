@@ -39,6 +39,9 @@
       "ratio": "• Compressed images maintain original aspect ratio"
     }
   },
+  "compress": {
+    "title": "Image Compression"
+  },
   "compression": {
     "title": "Step 2: Compression Settings",
     "compressing": "Compressing...",
@@ -267,7 +270,7 @@
       "title": "Image Cropper",
       "subtitle": "Upload images first, then you can crop them precisely",
       "features": "Supports fixed aspect ratio cropping and free cropping",
-      "complete": "Complete Cropping",
+      "complete": "Complete Cropping And Download",
       "cancel": "Cancel",
       "dragHint": "Drag the dashed frame to adjust crop area",
       "aspectRatio": "Aspect Ratio",
@@ -299,6 +302,30 @@
       "compressing": "Resizing...",
       "completed": "Completed",
       "error": "Error"
+    },
+    "preview": {
+      "title": "Resize Preview Results",
+      "backToEdit": "Back to Edit",
+      "restart": "Start Over",
+      "completedCount": "Completed {count} images",
+      "original": "Original",
+      "resized": "Resized",
+      "dimensions": "Dimensions",
+      "size": "Size",
+      "stats": "Statistics",
+      "originalDimensions": "Original Dimensions",
+      "resizedDimensions": "Resized Dimensions",
+      "fileSizeChange": "File Size Change",
+      "resizeSettings": "Resize Settings",
+      "maintainAspectRatio": "Maintain Aspect Ratio",
+      "freeAdjustment": "Free Adjustment",
+      "noCompletedImages": "No completed images",
+      "backToEditHint": "Please go back to edit page to process images",
+      "overallStats": "Overall Statistics",
+      "processedCount": "Processed Count",
+      "originalTotalSize": "Original Total Size",
+      "resizedTotalSize": "Resized Total Size",
+      "overallSizeChange": "Overall Size Change"
     }
   }
 }

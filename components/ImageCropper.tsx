@@ -16,22 +16,24 @@ interface CropArea {
   height: number
 }
 
+// 拖拽类型
+type DragType = 'move' | 'resize-nw' | 'resize-ne' | 'resize-sw' | 'resize-se' | 'resize-n' | 'resize-s' | 'resize-w' | 'resize-e' | null
+
 interface ImageCropperProps {
   imageUrl: string
   imageName: string
-  onCropComplete: (croppedImageBlob: Blob, cropData: CropArea) => void
   onCancel: () => void
 }
 
-export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: ImageCropperProps) {
+export function ImageCropper({ imageUrl, imageName, onCancel }: ImageCropperProps) {
   const t = useTranslations()
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
   
   const [isLoaded, setIsLoaded] = useState(false)
   const [cropArea, setCropArea] = useState<CropArea>({ x: 50, y: 50, width: 200, height: 200 })
-  const [isDragging, setIsDragging] = useState(false)
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [dragType, setDragType] = useState<DragType>(null)
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, cropArea: { x: 0, y: 0, width: 0, height: 0 } })
   const [selectedAspectRatio, setSelectedAspectRatio] = useState<number | null>(null)
   const [imageScale, setImageScale] = useState(1)
   const [imageOffset, setImageOffset] = useState({ x: 0, y: 0 })
@@ -131,18 +133,30 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
     ctx.setLineDash([5, 5])
     ctx.strokeRect(cropArea.x, cropArea.y, cropArea.width, cropArea.height)
     
-    // 绘制裁剪框角点
+    // 绘制裁剪框角点和边缘控制点
     ctx.setLineDash([])
     ctx.fillStyle = '#3b82f6'
     const handleSize = 8
-    const handles = [
+    
+    // 四个角点
+    const cornerHandles = [
       { x: cropArea.x - handleSize/2, y: cropArea.y - handleSize/2 }, // 左上
       { x: cropArea.x + cropArea.width - handleSize/2, y: cropArea.y - handleSize/2 }, // 右上
       { x: cropArea.x - handleSize/2, y: cropArea.y + cropArea.height - handleSize/2 }, // 左下
       { x: cropArea.x + cropArea.width - handleSize/2, y: cropArea.y + cropArea.height - handleSize/2 } // 右下
     ]
     
-    handles.forEach(handle => {
+    // 四条边的中点
+    const edgeHandles = [
+      { x: cropArea.x + cropArea.width/2 - handleSize/2, y: cropArea.y - handleSize/2 }, // 上边
+      { x: cropArea.x + cropArea.width/2 - handleSize/2, y: cropArea.y + cropArea.height - handleSize/2 }, // 下边
+      { x: cropArea.x - handleSize/2, y: cropArea.y + cropArea.height/2 - handleSize/2 }, // 左边
+      { x: cropArea.x + cropArea.width - handleSize/2, y: cropArea.y + cropArea.height/2 - handleSize/2 } // 右边
+    ]
+    
+    // 绘制所有控制点
+    const allHandles = [...cornerHandles, ...edgeHandles]
+    allHandles.forEach(handle => {
       ctx.fillRect(handle.x, handle.y, handleSize, handleSize)
     })
   }, [cropArea, isLoaded, imageScale, imageOffset])
@@ -151,6 +165,56 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
   useEffect(() => {
     drawCanvas()
   }, [drawCanvas])
+
+  // 检测拖拽类型
+  const detectDragType = useCallback((x: number, y: number): DragType => {
+    const handleSize = 8
+    const tolerance = handleSize / 2
+    
+    // 检查四个角点
+    if (x >= cropArea.x - tolerance && x <= cropArea.x + tolerance &&
+        y >= cropArea.y - tolerance && y <= cropArea.y + tolerance) {
+      return 'resize-nw' // 左上角
+    }
+    if (x >= cropArea.x + cropArea.width - tolerance && x <= cropArea.x + cropArea.width + tolerance &&
+        y >= cropArea.y - tolerance && y <= cropArea.y + tolerance) {
+      return 'resize-ne' // 右上角
+    }
+    if (x >= cropArea.x - tolerance && x <= cropArea.x + tolerance &&
+        y >= cropArea.y + cropArea.height - tolerance && y <= cropArea.y + cropArea.height + tolerance) {
+      return 'resize-sw' // 左下角
+    }
+    if (x >= cropArea.x + cropArea.width - tolerance && x <= cropArea.x + cropArea.width + tolerance &&
+        y >= cropArea.y + cropArea.height - tolerance && y <= cropArea.y + cropArea.height + tolerance) {
+      return 'resize-se' // 右下角
+    }
+    
+    // 检查边缘
+    if (x >= cropArea.x - tolerance && x <= cropArea.x + tolerance &&
+        y >= cropArea.y + tolerance && y <= cropArea.y + cropArea.height - tolerance) {
+      return 'resize-w' // 左边
+    }
+    if (x >= cropArea.x + cropArea.width - tolerance && x <= cropArea.x + cropArea.width + tolerance &&
+        y >= cropArea.y + tolerance && y <= cropArea.y + cropArea.height - tolerance) {
+      return 'resize-e' // 右边
+    }
+    if (y >= cropArea.y - tolerance && y <= cropArea.y + tolerance &&
+        x >= cropArea.x + tolerance && x <= cropArea.x + cropArea.width - tolerance) {
+      return 'resize-n' // 上边
+    }
+    if (y >= cropArea.y + cropArea.height - tolerance && y <= cropArea.y + cropArea.height + tolerance &&
+        x >= cropArea.x + tolerance && x <= cropArea.x + cropArea.width - tolerance) {
+      return 'resize-s' // 下边
+    }
+    
+    // 检查是否在裁剪区域内（移动）
+    if (x >= cropArea.x && x <= cropArea.x + cropArea.width &&
+        y >= cropArea.y && y <= cropArea.y + cropArea.height) {
+      return 'move'
+    }
+    
+    return null
+  }, [cropArea])
 
   // 处理鼠标按下
   const handleMouseDown = useCallback((e: React.MouseEvent) => {
@@ -161,17 +225,20 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     
-    // 检查是否点击在裁剪区域内
-    if (x >= cropArea.x && x <= cropArea.x + cropArea.width &&
-        y >= cropArea.y && y <= cropArea.y + cropArea.height) {
-      setIsDragging(true)
-      setDragStart({ x: x - cropArea.x, y: y - cropArea.y })
+    const dragType = detectDragType(x, y)
+    if (dragType) {
+      setDragType(dragType)
+      setDragStart({ 
+        x, 
+        y, 
+        cropArea: { ...cropArea } 
+      })
     }
-  }, [cropArea])
+  }, [cropArea, detectDragType])
 
   // 处理鼠标移动
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) return
+    if (!dragType) return
     
     const canvas = canvasRef.current
     if (!canvas) return
@@ -180,20 +247,148 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
     
-    const newX = Math.max(0, Math.min(x - dragStart.x, CANVAS_WIDTH - cropArea.width))
-    const newY = Math.max(0, Math.min(y - dragStart.y, CANVAS_HEIGHT - cropArea.height))
+    const deltaX = x - dragStart.x
+    const deltaY = y - dragStart.y
+    const originalCrop = dragStart.cropArea
     
-    setCropArea(prev => ({
-      ...prev,
-      x: newX,
-      y: newY
-    }))
-  }, [isDragging, dragStart, cropArea.width, cropArea.height])
+    const newCropArea = { ...cropArea }
+    
+    switch (dragType) {
+      case 'move':
+        newCropArea.x = Math.max(0, Math.min(originalCrop.x + deltaX, CANVAS_WIDTH - originalCrop.width))
+        newCropArea.y = Math.max(0, Math.min(originalCrop.y + deltaY, CANVAS_HEIGHT - originalCrop.height))
+        break
+        
+      case 'resize-nw': // 左上角
+        const nwNewWidth = originalCrop.width - deltaX
+        const nwNewHeight = selectedAspectRatio ? nwNewWidth / selectedAspectRatio : originalCrop.height - deltaY
+        newCropArea.width = Math.max(20, Math.min(nwNewWidth, originalCrop.x + originalCrop.width))
+        newCropArea.height = Math.max(20, Math.min(nwNewHeight, originalCrop.y + originalCrop.height))
+        newCropArea.x = originalCrop.x + originalCrop.width - newCropArea.width
+        newCropArea.y = originalCrop.y + originalCrop.height - newCropArea.height
+        break
+        
+      case 'resize-ne': // 右上角
+        const neNewWidth = originalCrop.width + deltaX
+        const neNewHeight = selectedAspectRatio ? neNewWidth / selectedAspectRatio : originalCrop.height - deltaY
+        newCropArea.width = Math.max(20, Math.min(neNewWidth, CANVAS_WIDTH - originalCrop.x))
+        newCropArea.height = Math.max(20, Math.min(neNewHeight, originalCrop.y + originalCrop.height))
+        newCropArea.x = originalCrop.x
+        newCropArea.y = originalCrop.y + originalCrop.height - newCropArea.height
+        break
+        
+      case 'resize-sw': // 左下角
+        const swNewWidth = originalCrop.width - deltaX
+        const swNewHeight = selectedAspectRatio ? swNewWidth / selectedAspectRatio : originalCrop.height + deltaY
+        newCropArea.width = Math.max(20, Math.min(swNewWidth, originalCrop.x + originalCrop.width))
+        newCropArea.height = Math.max(20, Math.min(swNewHeight, CANVAS_HEIGHT - originalCrop.y))
+        newCropArea.x = originalCrop.x + originalCrop.width - newCropArea.width
+        newCropArea.y = originalCrop.y
+        break
+        
+      case 'resize-se': // 右下角
+        const seNewWidth = originalCrop.width + deltaX
+        const seNewHeight = selectedAspectRatio ? seNewWidth / selectedAspectRatio : originalCrop.height + deltaY
+        newCropArea.width = Math.max(20, Math.min(seNewWidth, CANVAS_WIDTH - originalCrop.x))
+        newCropArea.height = Math.max(20, Math.min(seNewHeight, CANVAS_HEIGHT - originalCrop.y))
+        newCropArea.x = originalCrop.x
+        newCropArea.y = originalCrop.y
+        break
+        
+      case 'resize-n': // 上边
+        const nNewHeight = originalCrop.height - deltaY
+        newCropArea.height = Math.max(20, Math.min(nNewHeight, originalCrop.y + originalCrop.height))
+        newCropArea.y = originalCrop.y + originalCrop.height - newCropArea.height
+        if (selectedAspectRatio) {
+          const nNewWidth = newCropArea.height * selectedAspectRatio
+          newCropArea.width = Math.max(20, Math.min(nNewWidth, CANVAS_WIDTH - originalCrop.x))
+          newCropArea.x = originalCrop.x + (originalCrop.width - newCropArea.width) / 2
+        }
+        break
+        
+      case 'resize-s': // 下边
+        const sNewHeight = originalCrop.height + deltaY
+        newCropArea.height = Math.max(20, Math.min(sNewHeight, CANVAS_HEIGHT - originalCrop.y))
+        newCropArea.y = originalCrop.y
+        if (selectedAspectRatio) {
+          const sNewWidth = newCropArea.height * selectedAspectRatio
+          newCropArea.width = Math.max(20, Math.min(sNewWidth, CANVAS_WIDTH - originalCrop.x))
+          newCropArea.x = originalCrop.x + (originalCrop.width - newCropArea.width) / 2
+        }
+        break
+        
+      case 'resize-w': // 左边
+        const wNewWidth = originalCrop.width - deltaX
+        newCropArea.width = Math.max(20, Math.min(wNewWidth, originalCrop.x + originalCrop.width))
+        newCropArea.x = originalCrop.x + originalCrop.width - newCropArea.width
+        if (selectedAspectRatio) {
+          const wNewHeight = newCropArea.width / selectedAspectRatio
+          newCropArea.height = Math.max(20, Math.min(wNewHeight, CANVAS_HEIGHT - originalCrop.y))
+          newCropArea.y = originalCrop.y + (originalCrop.height - newCropArea.height) / 2
+        }
+        break
+        
+      case 'resize-e': // 右边
+        const eNewWidth = originalCrop.width + deltaX
+        newCropArea.width = Math.max(20, Math.min(eNewWidth, CANVAS_WIDTH - originalCrop.x))
+        newCropArea.x = originalCrop.x
+        if (selectedAspectRatio) {
+          const eNewHeight = newCropArea.width / selectedAspectRatio
+          newCropArea.height = Math.max(20, Math.min(eNewHeight, CANVAS_HEIGHT - originalCrop.y))
+          newCropArea.y = originalCrop.y + (originalCrop.height - newCropArea.height) / 2
+        }
+        break
+    }
+    
+    // 确保裁剪区域不超出画布边界
+    newCropArea.x = Math.max(0, Math.min(newCropArea.x, CANVAS_WIDTH - newCropArea.width))
+    newCropArea.y = Math.max(0, Math.min(newCropArea.y, CANVAS_HEIGHT - newCropArea.height))
+    
+    setCropArea(newCropArea)
+  }, [dragType, dragStart, cropArea, selectedAspectRatio])
 
   // 处理鼠标释放
   const handleMouseUp = useCallback(() => {
-    setIsDragging(false)
+    setDragType(null)
   }, [])
+
+  // 获取光标样式
+  const getCursor = useCallback((x: number, y: number): string => {
+    const dragType = detectDragType(x, y)
+    switch (dragType) {
+      case 'resize-nw':
+      case 'resize-se':
+        return 'nw-resize'
+      case 'resize-ne':
+      case 'resize-sw':
+        return 'ne-resize'
+      case 'resize-n':
+      case 'resize-s':
+        return 'ns-resize'
+      case 'resize-w':
+      case 'resize-e':
+        return 'ew-resize'
+      case 'move':
+        return 'move'
+      default:
+        return 'default'
+    }
+  }, [detectDragType])
+
+  // 处理鼠标移动时的光标更新
+  const handleMouseMoveForCursor = useCallback((e: React.MouseEvent) => {
+    if (dragType) return // 拖拽时不改变光标
+    
+    const canvas = canvasRef.current
+    if (!canvas) return
+    
+    const rect = canvas.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    const cursor = getCursor(x, y)
+    canvas.style.cursor = cursor
+  }, [dragType, getCursor])
 
   // 处理宽高比变化
   const handleAspectRatioChange = useCallback((value: string) => {
@@ -224,7 +419,7 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
     }
   }, [cropArea])
 
-  // 处理裁剪完成
+  // 处理裁剪完成 - 纯客户端下载
   const handleCropComplete = useCallback(async () => {
     const img = imageRef.current
     if (!img || !isLoaded) return
@@ -261,13 +456,24 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
       actualCrop.height
     )
 
-    // 转换为Blob
+    // 直接下载裁剪后的图片
     cropCanvas.toBlob((blob) => {
       if (blob) {
-        onCropComplete(blob, actualCrop)
+        // 创建下载链接
+        const url = URL.createObjectURL(blob)
+        const link = document.createElement('a')
+        link.href = url
+        link.download = `cropped_${imageName}`
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        URL.revokeObjectURL(url)
+        
+        // 关闭裁剪器
+        onCancel()
       }
     }, 'image/jpeg', 0.9)
-  }, [cropArea, isLoaded, imageScale, imageOffset, onCropComplete])
+  }, [cropArea, isLoaded, imageScale, imageOffset, imageName, onCancel])
 
   // 重置裁剪区域
   const handleReset = useCallback(() => {
@@ -303,9 +509,12 @@ export function ImageCropper({ imageUrl, imageName, onCropComplete, onCancel }: 
                   ref={canvasRef}
                   width={CANVAS_WIDTH}
                   height={CANVAS_HEIGHT}
-                  className="border border-gray-300 rounded cursor-move max-w-full"
+                  className="border border-gray-300 rounded max-w-full"
                   onMouseDown={handleMouseDown}
-                  onMouseMove={handleMouseMove}
+                  onMouseMove={(e) => {
+                    handleMouseMove(e)
+                    handleMouseMoveForCursor(e)
+                  }}
                   onMouseUp={handleMouseUp}
                   onMouseLeave={handleMouseUp}
                 />

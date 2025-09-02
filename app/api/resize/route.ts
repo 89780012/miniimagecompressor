@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import sharp from 'sharp'
 import { prisma } from '@/lib/prisma'
 import { uploadToR2, generateR2Key } from '@/lib/r2'
+import { ResizeMode } from '@/lib/generated/prisma'
 
 interface ResizeSettings {
   width: number
@@ -74,6 +75,13 @@ export async function POST(request: NextRequest) {
     const expiresAt = new Date()
     expiresAt.setHours(expiresAt.getHours() + 24) // 24小时后过期
 
+    // 映射resizeMode字符串到Prisma枚举
+    const resizeModeMapping: Record<string, ResizeMode> = {
+      'fit': ResizeMode.FIT,
+      'fill': ResizeMode.FILL,
+      'cover': ResizeMode.COVER
+    }
+    
     const resize = await prisma.imageResize.create({
       data: {
         originalFileName: file.name,
@@ -82,10 +90,11 @@ export async function POST(request: NextRequest) {
         originalWidth: metadata.width,
         originalHeight: metadata.height,
         originalR2Key: originalR2Key,
+        originalR2Url: originalUploadResult.url,
         targetWidth: settings.width,
         targetHeight: settings.height,
         maintainAspectRatio: settings.maintainAspectRatio,
-        resizeMode: settings.resizeMode.toUpperCase() as "FIT" | "FILL" | "COVER",
+        resizeMode: resizeModeMapping[settings.resizeMode],
         status: 'PROCESSING',
         expiresAt: expiresAt
       }
@@ -190,6 +199,7 @@ export async function POST(request: NextRequest) {
         resizedWidth: actualWidth,
         resizedHeight: actualHeight,
         resizedR2Key: resizedR2Key,
+        resizedR2Url: resizedUploadResult.url,
         status: 'COMPLETED'
       }
     })

@@ -11,9 +11,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { Play, RotateCcw, Crop, Link2, Unlink2, Settings } from 'lucide-react'
 import { ImageFile, ResizeSettings } from '@/types/image'
+import { ImageCropper } from '@/components/ImageCropper'
 
 // 常用预设尺寸
-const getPresetSizes = (t: any) => [
+const getPresetSizes = (t: (key: string) => string) => [
   { label: t('resize.controls.customSize'), width: 0, height: 0, category: 'custom' },
   { label: 'Instagram ' + t('resize.presets.square') + ' (1080×1080)', width: 1080, height: 1080, category: 'social' },
   { label: 'Instagram ' + t('resize.presets.story') + ' (1080×1920)', width: 1080, height: 1920, category: 'social' },
@@ -46,6 +47,20 @@ export function ResizeControls({
   const t = useTranslations()
   const [selectedPresetIndex, setSelectedPresetIndex] = useState(0) // 默认自定义
   const [linkedDimensions, setLinkedDimensions] = useState(defaultSettings.maintainAspectRatio)
+  const [activeTab, setActiveTab] = useState('resize') // 跟踪当前选项卡
+  
+  // 裁剪编辑器状态
+  const [cropperState, setCropperState] = useState<{
+    isOpen: boolean
+    imageId: string | null
+    imageUrl: string | null
+    imageName: string | null
+  }>({
+    isOpen: false,
+    imageId: null,
+    imageUrl: null,
+    imageName: null
+  })
   
   const PRESET_SIZES = getPresetSizes(t)
   const pendingImages = images.filter(img => img.status === 'pending')
@@ -69,7 +84,7 @@ export function ResizeControls({
       setLinkedDimensions(true)
     }
     // 如果是自定义(width=0, height=0)，保持当前设置
-  }, [defaultSettings, onDefaultSettingsChange])
+  }, [defaultSettings, onDefaultSettingsChange, PRESET_SIZES])
 
   // 处理宽度变化 (智能联动)
   const handleWidthChange = useCallback((value: string) => {
@@ -125,6 +140,26 @@ export function ResizeControls({
     })
   }, [linkedDimensions, defaultSettings, onDefaultSettingsChange])
 
+  // 打开裁剪编辑器
+  const openCropper = useCallback((imageId: string, imageUrl: string, imageName: string) => {
+    setCropperState({
+      isOpen: true,
+      imageId,
+      imageUrl,
+      imageName
+    })
+  }, [])
+
+  // 关闭裁剪编辑器
+  const closeCropper = useCallback(() => {
+    setCropperState({
+      isOpen: false,
+      imageId: null,
+      imageUrl: null,
+      imageName: null
+    })
+  }, [])
+
   // 处理调整模式变化
   const handleResizeModeChange = useCallback((mode: 'fit' | 'fill' | 'cover') => {
     onDefaultSettingsChange({
@@ -162,7 +197,7 @@ export function ResizeControls({
 
       {/* 主要控制面板 */}
       <Card className="p-6">
-        <Tabs defaultValue="resize" className="space-y-6">
+        <Tabs defaultValue="resize" value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="resize" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
@@ -333,8 +368,7 @@ export function ResizeControls({
                       <div 
                         className="aspect-square bg-gray-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-blue-300 transition-colors"
                         onClick={() => {
-                          // TODO: 打开裁剪编辑器
-                          console.log(t('resize.crop.instructions.openEditor') + ':', image.file.name)
+                          openCropper(image.id, image.preview, image.file.name)
                         }}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -366,39 +400,50 @@ export function ResizeControls({
 
         <Separator className="my-6" />
 
-        {/* 操作按钮 */}
-        <div className="flex gap-3">
-          <Button 
-            onClick={onStartResize} 
-            disabled={disabled || pendingImages.length === 0 || isProcessing}
-            className="flex-1"
-            size="lg"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            {isProcessing ? t('resize.controls.processing') : t('resize.controls.startProcessing', { count: pendingImages.length })}
-          </Button>
-          
-          <Button 
-            variant="outline" 
-            onClick={() => {
-              // 重置逻辑
-              const resetImages = images.map(img => ({
-                ...img,
-                status: 'pending' as const,
-                progress: 0,
-                result: undefined,
-                error: undefined
-              }))
-              onImagesUpdate(resetImages)
-            }}
-            disabled={disabled || images.length === 0}
-            size="lg"
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            {t('resize.controls.reset')}
-          </Button>
-        </div>
+        {/* 操作按钮 - 仅在尺寸调整选项卡显示 */}
+        {activeTab === 'resize' && (
+          <div className="flex gap-3">
+            <Button 
+              onClick={onStartResize} 
+              disabled={disabled || pendingImages.length === 0 || isProcessing}
+              className="flex-1"
+              size="lg"
+            >
+              <Play className="w-4 h-4 mr-2" />
+              {isProcessing ? t('resize.controls.processing') : t('resize.controls.startProcessing', { count: pendingImages.length })}
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                // 重置逻辑
+                const resetImages = images.map(img => ({
+                  ...img,
+                  status: 'pending' as const,
+                  progress: 0,
+                  result: undefined,
+                  error: undefined
+                }))
+                onImagesUpdate(resetImages)
+              }}
+              disabled={disabled || images.length === 0}
+              size="lg"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              {t('resize.controls.reset')}
+            </Button>
+          </div>
+        )}
       </Card>
+      
+      {/* 裁剪编辑器 */}
+      {cropperState.isOpen && cropperState.imageUrl && cropperState.imageName && (
+        <ImageCropper
+          imageUrl={cropperState.imageUrl}
+          imageName={cropperState.imageName}
+          onCancel={closeCropper}
+        />
+      )}
     </div>
   )
 }
