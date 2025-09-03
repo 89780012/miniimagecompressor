@@ -31,7 +31,7 @@ export function ImageResizeUpload({
   const [isLoading, setIsLoading] = useState(false)
 
   // 获取图片尺寸
-  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+  const getImageDimensions = useCallback((file: File): Promise<{ width: number; height: number }> => {
     return new Promise((resolve, reject) => {
       // 确保在浏览器环境中
       if (typeof window === 'undefined') {
@@ -50,7 +50,7 @@ export function ImageResizeUpload({
       }
       img.src = URL.createObjectURL(file)
     })
-  }
+  }, [t])
 
   // 处理文件上传
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
@@ -104,11 +104,11 @@ export function ImageResizeUpload({
       onImagesAdd(imageFiles)
     } catch (error) {
       console.error('文件处理失败:', error)
-      alert('文件处理失败，请重试')
+      alert(t('errors.fileProcessingFailed'))
     } finally {
       setIsLoading(false)
     }
-  }, [disabled, images.length, maxFiles, onImagesAdd])
+  }, [disabled, images.length, maxFiles, onImagesAdd, getImageDimensions, t])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,

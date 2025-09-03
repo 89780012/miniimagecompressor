@@ -176,7 +176,8 @@
     "noCompressedImages": "No compressed images to download",
     "proxyDownloadFailed": "Proxy download failed",
     "noCompressedImageUrls": "No compressed image URLs found, please check if compression is completed",
-    "batchDownloadFailed": "Batch download failed, please retry"
+    "batchDownloadFailed": "Batch download failed, please retry",
+    "fileProcessingFailed": "File processing failed, please retry"
   },
   "history": {
     "title": "History",

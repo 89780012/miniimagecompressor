@@ -44,7 +44,7 @@ export function BatchImageUpload({
   })
 
   // 获取图片尺寸
-  const getImageDimensions = (file: File): Promise<{ width: number; height: number }> => {
+  const getImageDimensions = useCallback((file: File): Promise<{ width: number; height: number }> => {
     return new Promise((resolve, reject) => {
       // 确保在浏览器环境中
       if (typeof window === 'undefined') {
@@ -63,7 +63,7 @@ export function BatchImageUpload({
       }
       img.src = URL.createObjectURL(file)
     })
-  }
+  }, [t])
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0 || disabled) return
@@ -134,7 +134,7 @@ export function BatchImageUpload({
     } finally {
       setIsLoading(false)
     }
-  }, [images.length, maxFiles, onImagesAdd, disabled])
+  }, [images.length, maxFiles, onImagesAdd, disabled, getImageDimensions])
 
   // 处理文件夹选择
   const handleFolderSelect = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,7 +264,7 @@ export function BatchImageUpload({
         error: t('errors.batchDownloadFailed')
       }))
     }
-  }, [images])
+  }, [images, t])
   
   // 关闭下载进度弹窗
   const handleCloseDownloadProgress = useCallback(() => {

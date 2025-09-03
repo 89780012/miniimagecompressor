@@ -176,7 +176,8 @@
     "noCompressedImages": "没有可下载的压缩图片",
     "proxyDownloadFailed": "代理下载失败",
     "noCompressedImageUrls": "没有找到可下载的压缩图片URL，请检查压缩是否完成",
-    "batchDownloadFailed": "批量下载失败，请重试"
+    "batchDownloadFailed": "批量下载失败，请重试",
+    "fileProcessingFailed": "文件处理失败，请重试"
   },
   "history": {
     "title": "历史记录",
