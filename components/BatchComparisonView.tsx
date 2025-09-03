@@ -95,7 +95,7 @@ export function BatchComparisonView({
       }))
     
     if (downloadableItems.length === 0) {
-      alert('没有可下载的文件')
+      alert(t('errors.noDownloadableFiles'))
       return
     }
 
@@ -174,7 +174,7 @@ export function BatchComparisonView({
               ) : (
                 <Download className="h-4 w-4" />
               )}
-              {downloadState.isDownloading ? '下载中...' : t('comparison.downloadAll')}
+              {downloadState.isDownloading ? t('downloadProgress.downloading') : t('comparison.downloadAll')}
             </Button>
             <Button
               variant="outline"

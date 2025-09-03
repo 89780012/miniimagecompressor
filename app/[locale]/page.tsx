@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useTranslations } from 'next-intl'
+import { useTranslations} from 'next-intl'
 import { AppHeader } from '@/components/AppHeader'
 import { StructuredData } from '@/components/StructuredData'
 import { ImageCompressionPage } from '@/components/ImageCompressionPage'
 import { ImageResizePage } from '@/components/ImageResizePage'
+
 
 // 功能类型定义
 type FeatureType = 'compression' | 'resize'
@@ -14,6 +15,7 @@ export default function HomePage() {
   const t = useTranslations()
   const [currentFeature, setCurrentFeature] = useState<FeatureType>('compression')
   const [showHistory, setShowHistory] = useState(false)
+
 
   // 切换功能
   const handleFeatureChange = useCallback((feature: FeatureType) => {

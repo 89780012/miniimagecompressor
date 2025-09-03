@@ -73,7 +73,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
     
     if (diffInHours < 1) return t('history.justNow')
-    if (diffInHours < 24) return `${diffInHours}小时前`
+    if (diffInHours < 24) return t('history.hoursAgo', { hours: diffInHours })
     return date.toLocaleDateString()
   }
 
@@ -115,7 +115,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                 onClick={() => setShowConfirmClear(false)}
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
               >
-                {t('common.cancel') || '取消'}
+                {t('common.cancel')}
               </button>
               <button
                 onClick={handleClearHistory}
@@ -163,7 +163,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
             </svg>
           </div>
           <p className="text-gray-500 text-lg">{t('history.empty')}</p>
-          <p className="text-gray-400 text-sm mt-2">压缩图片后会在这里显示历史记录</p>
+          <p className="text-gray-400 text-sm mt-2">{t('history.emptyDescription')}</p>
         </div>
       ) : (
         <div className="space-y-4">
@@ -228,10 +228,10 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                       </h3>
                       <div className="flex items-center gap-4 mt-1 text-sm text-gray-500">
                         <span>{formatDate(item.createdAt)}</span>
-                        <span>{item.settings.mode === 'quality' ? '质量模式' : '大小模式'}</span>
+                        <span>{t(`history.modes.${item.settings.mode}`)}</span>
                         <span>{item.settings.format.toUpperCase()}</span>
                         {isExpiringSoon && (
-                          <span className="text-amber-600 font-medium">即将过期</span>
+                          <span className="text-amber-600 font-medium">{t('history.expiringSoon')}</span>
                         )}
                       </div>
                     </div>
@@ -240,7 +240,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                   <button
                     onClick={() => handleRemoveItem(item.id)}
                     className="ml-4 p-1 text-gray-400 hover:text-red-500 transition-colors"
-                    title="删除记录"
+                    title={t('history.deleteRecord')}
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -275,7 +275,7 @@ export function HistoryView({ historyItems, onBack, onRefresh }: HistoryViewProp
                       {compressionRatio > 0 ? '-' : '+'}{Math.abs(compressionRatio)}%
                     </p>
                     <p className="text-xs text-gray-500">
-                      {compressionRatio > 0 ? '减少' : '增加'} {formatFileSize(Math.abs((item.compressionResult.original.fileSize || 0) - (item.compressionResult.compressed.fileSize || 0)))}
+                      {t(`history.${compressionRatio > 0 ? 'reduced' : 'increased'}`)} {formatFileSize(Math.abs((item.compressionResult.original.fileSize || 0) - (item.compressionResult.compressed.fileSize || 0)))}
                     </p>
                   </div>
                 </div>

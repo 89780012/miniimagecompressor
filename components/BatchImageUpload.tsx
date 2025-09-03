@@ -58,7 +58,7 @@ export function BatchImageUpload({
         URL.revokeObjectURL(img.src)
       }
       img.onerror = () => {
-        reject(new Error('Failed to load image'))
+        reject(new Error(t('errors.failedToLoadImage')))
         URL.revokeObjectURL(img.src)
       }
       img.src = URL.createObjectURL(file)
@@ -154,7 +154,7 @@ export function BatchImageUpload({
       const completedImages = images.filter(img => img.status === 'completed')
       
       if (completedImages.length === 0) {
-        alert('没有可下载的压缩图片')
+        alert(t('errors.noCompressedImages'))
         return
       }
       
@@ -195,7 +195,7 @@ export function BatchImageUpload({
               const proxyResponse = await fetch(proxyUrl)
               
               if (!proxyResponse.ok) {
-                throw new Error(`代理下载失败: ${proxyResponse.status} ${proxyResponse.statusText}`)
+                throw new Error(`${t('errors.proxyDownloadFailed')}: ${proxyResponse.status} ${proxyResponse.statusText}`)
               }
               
               const blob = await proxyResponse.blob()
@@ -224,7 +224,7 @@ export function BatchImageUpload({
         setDownloadProgress(prev => ({
           ...prev,
           isDownloading: false,
-          error: '没有找到可下载的压缩图片URL，请检查压缩是否完成'
+          error: t('errors.noCompressedImageUrls')
         }))
         return
       }
@@ -233,7 +233,7 @@ export function BatchImageUpload({
       setDownloadProgress(prev => ({
         ...prev,
         current: completedImages.length,
-        currentFile: '正在生成压缩包...'
+        currentFile: t('downloadProgress.generating')
       }))
       
       // 生成并下载压缩包
@@ -253,7 +253,7 @@ export function BatchImageUpload({
       setDownloadProgress(prev => ({
         ...prev,
         isDownloading: false,
-        currentFile: `压缩包已生成，包含 ${successCount} 张图片`
+        currentFile: t('downloadProgress.archiveGenerated', { count: successCount })
       }))
       
     } catch (error) {
@@ -261,7 +261,7 @@ export function BatchImageUpload({
       setDownloadProgress(prev => ({
         ...prev,
         isDownloading: false,
-        error: '批量下载失败，请重试'
+        error: t('errors.batchDownloadFailed')
       }))
     }
   }, [images])
@@ -356,7 +356,7 @@ export function BatchImageUpload({
               }`}
             >
               <FileImage className="w-4 h-4" />
-              选择文件
+              {t('upload.selectFiles')}
             </button>
             <button
               onClick={() => setUploadMode('folder')}
@@ -367,7 +367,7 @@ export function BatchImageUpload({
               }`}
             >
               <Folder className="w-4 h-4" />
-              选择文件夹
+              {t('upload.selectFolder')}
             </button>
           </div>
         </div>
@@ -418,10 +418,10 @@ export function BatchImageUpload({
             >
               <Folder className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <p className="text-lg font-medium text-gray-900 mb-2">
-                点击选择文件夹
+                {t('upload.clickToSelectFolder')}
               </p>
               <p className="text-sm text-gray-500 mb-4">
-                将自动扫描文件夹中的所有图片文件
+                {t('upload.folderScanDescription')}
               </p>
               <p className="text-xs text-gray-400">
                 {t('upload.maxFiles', { current: images.length, max: maxFiles })}
@@ -453,7 +453,7 @@ export function BatchImageUpload({
                   className="text-blue-600 border-blue-600 hover:bg-blue-50"
                 >
                   <Download className="w-4 h-4 mr-2" />
-                  批量下载
+                  {t('upload.batchDownload')}
                 </Button>
               )}
               <Button 

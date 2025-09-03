@@ -45,7 +45,7 @@ export function ImageResizeUpload({
         URL.revokeObjectURL(img.src)
       }
       img.onerror = () => {
-        reject(new Error('无法读取图片尺寸'))
+        reject(new Error(t('errors.cannotReadImageDimensions')))
         URL.revokeObjectURL(img.src)
       }
       img.src = URL.createObjectURL(file)

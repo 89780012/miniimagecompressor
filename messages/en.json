@@ -8,7 +8,8 @@
     "reset": "Reset",
     "download": "Download",
     "close": "Close",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "preview": "Preview"
   },
   "upload": {
     "title": "Step 1: Upload Image",
@@ -26,6 +27,11 @@
     "maxFiles": "{current} / {max} files",
     "supportedFormats": "Supports JPEG, PNG, WebP, BMP, GIF formats",
     "supportFormats": "Supports JPEG, PNG, WebP, BMP, GIF formats",
+    "selectFiles": "Select Files",
+    "selectFolder": "Select Folder",
+    "clickToSelectFolder": "Click to select folder",
+    "folderScanDescription": "Will automatically scan all image files in the folder",
+    "batchDownload": "Batch Download",
     "status": {
       "pending": "Pending",
       "compressing": "Compressing...", 
@@ -163,17 +169,34 @@
     "compressionFailed": "Compression failed",
     "unknownError": "Unknown error",
     "noFileUploaded": "No file uploaded",
-    "downloadFailed": "Download failed"
+    "downloadFailed": "Download failed",
+    "noDownloadableFiles": "No downloadable files",
+    "cannotReadImageDimensions": "Cannot read image dimensions",
+    "failedToLoadImage": "Failed to load image",
+    "noCompressedImages": "No compressed images to download",
+    "proxyDownloadFailed": "Proxy download failed",
+    "noCompressedImageUrls": "No compressed image URLs found, please check if compression is completed",
+    "batchDownloadFailed": "Batch download failed, please retry"
   },
   "history": {
     "title": "History",
     "empty": "No history records",
+    "emptyDescription": "History records will appear here after compressing images",
     "savedOn": "Saved on",
     "expired": "Expired",
     "downloadAgain": "Download Again",
     "clear": "Clear History",
     "confirmClear": "Are you sure you want to clear all history records?",
     "justNow": "Just now",
+    "hoursAgo": "{hours} hours ago",
+    "expiringSoon": "Expiring Soon",
+    "deleteRecord": "Delete Record",
+    "reduced": "Reduced",
+    "increased": "Increased",
+    "modes": {
+      "quality": "Quality Mode",
+      "size": "Size Mode"
+    },
     "stats": {
       "totalProcessed": "Total Processed",
       "totalSaved": "Total Saved"
@@ -186,7 +209,8 @@
     "progress": "Progress",
     "generating": "Generating archive...",
     "successMessage": "Archive has been successfully downloaded to your device",
-    "confirm": "OK"
+    "confirm": "OK",
+    "archiveGenerated": "Archive generated, containing {count} images"
   },
   "compressionControls": {
     "title": "Compression Settings",
