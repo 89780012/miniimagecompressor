@@ -29,8 +29,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://mycompressor.org",
     languages: {
-      'zh-CN': 'https://mycompressor.org',
-      'en-US': 'https://mycompressor.org/en'
+      'en-US': 'https://mycompressor.org',
+      'zh-CN': 'https://mycompressor.org/zh',
+      'x-default': 'https://mycompressor.org'
     }
   },
   verification: {

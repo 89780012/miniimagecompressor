@@ -3,5 +3,7 @@ Allow: /
 Disallow: /api/
 Disallow: /uploads/
 Disallow: /private/
+Disallow: /_next/
+Disallow: /admin/
 
 Sitemap: https://mycompressor.org/sitemap.xml

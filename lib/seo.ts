@@ -77,8 +77,9 @@ export async function generateSEOMetadata({
     alternates: {
       canonical: fullUrl,
       languages: {
-        'zh-CN': locale === 'zh' ? fullUrl : fullUrl.replace('/en', ''),
-        'en-US': locale === 'en' ? fullUrl : `${fullUrl}/en`,
+        'en-US': locale === 'en' ? fullUrl : baseUrl + (url || ''),
+        'zh-CN': locale === 'zh' ? fullUrl : baseUrl + '/zh' + (url || ''),
+        'x-default': baseUrl + (url || '')
       },
     },
     
