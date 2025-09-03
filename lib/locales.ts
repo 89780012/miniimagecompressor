@@ -9,7 +9,7 @@ export interface LocaleConfig {
 }
 
 // 默认语言（不需要URL前缀）
-export const DEFAULT_LOCALE = 'zh'
+export const DEFAULT_LOCALE = 'en'
 
 // 支持的语言列表
 export const locales: LocaleConfig[] = [

@@ -8,6 +8,7 @@ export default async function LocaleLayout({
   children: React.ReactNode;
 }) {
   const locale = await getLocale();
+  console.log("locale", locale);
 
   const messages = await getMessages();
 
