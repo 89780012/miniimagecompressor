@@ -352,5 +352,105 @@
       "resizedTotalSize": "调整后总大小",
       "overallSizeChange": "总体大小变化"
     }
+  },
+  "hero": {
+    "title": "免费在线图片压缩工具",
+    "description": "在保持图片质量的同时减小文件大小。支持JPEG、PNG、WebP、BMP、GIF格式。快速、安全、完全免费使用。",
+    "features": {
+      "free": "100% 免费",
+      "fast": "闪电般快速",
+      "secure": "安全私密"
+    }
+  },
+  "features": {
+    "title": "为什么选择我们的图片压缩工具？",
+    "subtitle": "专业的图片压缩工具，采用先进算法完美优化您的图片。",
+    "fast": {
+      "title": "闪电般快速处理",
+      "description": "先进的压缩算法确保您的图片在几秒钟内完成处理，而不是几分钟。"
+    },
+    "quality": {
+      "title": "保持高质量",
+      "description": "智能压缩技术在显著减小文件大小的同时保持图片质量。"
+    },
+    "secure": {
+      "title": "100% 安全私密",
+      "description": "所有处理都在您的浏览器中进行。您的图片永远不会离开您的设备。"
+    },
+    "formats": {
+      "title": "多种格式支持",
+      "description": "支持JPEG、PNG、WebP、BMP和GIF格式，提供灵活的输出选项。"
+    },
+    "batch": {
+      "title": "批量处理",
+      "description": "一次压缩多张图片，节省时间并提高工作效率。"
+    },
+    "smart": {
+      "title": "智能压缩",
+      "description": "智能算法自动优化压缩设置，获得最佳效果。"
+    }
+  },
+  "howItWorks": {
+    "title": "使用方法",
+    "subtitle": "三个简单步骤压缩您的图片",
+    "step1": {
+      "title": "上传图片",
+      "description": "从您的设备选择单张或多张图片。支持拖拽上传，操作简便。"
+    },
+    "step2": {
+      "title": "选择设置",
+      "description": "选择压缩质量或目标文件大小。我们的智能算法会处理其余工作。"
+    },
+    "step3": {
+      "title": "下载结果",
+      "description": "单独下载压缩后的图片或批量处理时下载ZIP文件。"
+    }
+  },
+  "faq": {
+    "title": "常见问题",
+    "subtitle": "关于图片压缩您需要了解的一切",
+    "q1": {
+      "question": "支持哪些图片格式？",
+      "answer": "我们支持JPEG、PNG、WebP、BMP和GIF格式。您可以上传任何这些格式的图片并选择您偏好的输出格式。"
+    },
+    "q2": {
+      "question": "文件大小有限制吗？",
+      "answer": "为了获得最佳性能，我们建议文件大小在10MB以下。较大的文件可能需要更长的处理时间，但仍然支持。"
+    },
+    "q3": {
+      "question": "我的图片会存储在您的服务器上吗？",
+      "answer": "不会，所有图片处理都直接在您的浏览器中进行。您的图片永远不会离开您的设备，确保完全的隐私和安全。"
+    },
+    "q4": {
+      "question": "我可以将图片压缩到多小？",
+      "answer": "压缩效果取决于原始图片和设置。通常情况下，您可以在保持良好质量的同时实现50-80%的文件大小减少。"
+    },
+    "q5": {
+      "question": "可以一次压缩多张图片吗？",
+      "answer": "可以！我们的批量处理功能允许您同时压缩多张图片并将它们下载为ZIP文件。"
+    }
+  },
+  "benefits": {
+    "title": "图片压缩的好处",
+    "subtitle": "为什么图片压缩对现代网络和移动应用至关重要",
+    "webOptimization": {
+      "title": "更快的网站加载",
+      "description": "压缩后的图片加载更快，改善用户体验并降低网站跳出率。"
+    },
+    "storage": {
+      "title": "节省存储空间",
+      "description": "减少存储成本，释放设备、云存储和服务器上的空间。"
+    },
+    "bandwidth": {
+      "title": "减少带宽使用",
+      "description": "降低带宽消耗意味着更快的上传、下载和更低的数据成本。"
+    },
+    "seo": {
+      "title": "更好的SEO表现",
+      "description": "更快加载的图片提高您网站的SEO排名和Core Web Vitals分数。"
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 图片压缩工具。保留所有权利。"
   }
 }

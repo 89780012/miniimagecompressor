@@ -352,5 +352,105 @@
       "resizedTotalSize": "Resized Total Size",
       "overallSizeChange": "Overall Size Change"
     }
+  },
+  "hero": {
+    "title": "Free Online Image Compressor",
+    "description": "Reduce image file size while maintaining quality. Support JPEG, PNG, WebP, BMP, GIF formats. Fast, secure, and completely free to use.",
+    "features": {
+      "free": "100% Free",
+      "fast": "Lightning Fast",
+      "secure": "Secure & Private"
+    }
+  },
+  "features": {
+    "title": "Why Choose Our Image Compressor?",
+    "subtitle": "Professional image compression tools with advanced algorithms to optimize your images perfectly.",
+    "fast": {
+      "title": "Lightning Fast Processing",
+      "description": "Advanced compression algorithms ensure your images are processed in seconds, not minutes."
+    },
+    "quality": {
+      "title": "Maintain High Quality",
+      "description": "Smart compression technology preserves image quality while significantly reducing file size."
+    },
+    "secure": {
+      "title": "100% Secure & Private",
+      "description": "All processing happens in your browser. Your images never leave your device."
+    },
+    "formats": {
+      "title": "Multiple Formats",
+      "description": "Support for JPEG, PNG, WebP, BMP, and GIF formats with flexible output options."
+    },
+    "batch": {
+      "title": "Batch Processing",
+      "description": "Compress multiple images at once to save time and increase productivity."
+    },
+    "smart": {
+      "title": "Smart Compression",
+      "description": "Intelligent algorithms automatically optimize compression settings for best results."
+    }
+  },
+  "howItWorks": {
+    "title": "How It Works",
+    "subtitle": "Compress your images in three simple steps",
+    "step1": {
+      "title": "Upload Images",
+      "description": "Select single or multiple images from your device. Supports drag and drop for easy uploading."
+    },
+    "step2": {
+      "title": "Choose Settings",
+      "description": "Select compression quality or target file size. Our smart algorithms will handle the rest."
+    },
+    "step3": {
+      "title": "Download Results",
+      "description": "Download your compressed images individually or as a ZIP file for batch processing."
+    }
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "subtitle": "Everything you need to know about image compression",
+    "q1": {
+      "question": "What image formats are supported?",
+      "answer": "We support JPEG, PNG, WebP, BMP, and GIF formats. You can upload any of these formats and choose your preferred output format."
+    },
+    "q2": {
+      "question": "Is there a file size limit?",
+      "answer": "For optimal performance, we recommend files under 10MB. Larger files may take longer to process but are still supported."
+    },
+    "q3": {
+      "question": "Are my images stored on your servers?",
+      "answer": "No, all image processing happens directly in your browser. Your images never leave your device, ensuring complete privacy and security."
+    },
+    "q4": {
+      "question": "How much can I compress my images?",
+      "answer": "Compression results vary depending on the original image and settings. Typically, you can achieve 50-80% file size reduction while maintaining good quality."
+    },
+    "q5": {
+      "question": "Can I compress multiple images at once?",
+      "answer": "Yes! Our batch processing feature allows you to compress multiple images simultaneously and download them as a ZIP file."
+    }
+  },
+  "benefits": {
+    "title": "Benefits of Image Compression",
+    "subtitle": "Why compressing images is essential for modern web and mobile applications",
+    "webOptimization": {
+      "title": "Faster Website Loading",
+      "description": "Compressed images load faster, improving user experience and reducing bounce rates on your website."
+    },
+    "storage": {
+      "title": "Save Storage Space",
+      "description": "Reduce storage costs and free up space on your devices, cloud storage, and servers."
+    },
+    "bandwidth": {
+      "title": "Reduce Bandwidth Usage",
+      "description": "Lower bandwidth consumption means faster uploads, downloads, and reduced data costs."
+    },
+    "seo": {
+      "title": "Better SEO Performance",
+      "description": "Faster loading images improve your website's SEO ranking and Core Web Vitals scores."
+    }
+  },
+  "footer": {
+    "copyright": "© 2024 Image Compressor. All rights reserved."
   }
 }
