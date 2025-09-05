@@ -36,8 +36,8 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
     isRunning: false
   })
   const [defaultSettings, setDefaultSettings] = useState<CompressionSettings>({
-    mode: 'quality',
-    quality: 80,
+    mode: 'size',
+    targetSizeKb: 50,
     format: 'jpeg'
   })
   
@@ -162,12 +162,12 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
     
     setBatchProgress(prev => ({ ...prev, isRunning: false }))
     
-    // 如果有成功压缩的图片，自动切换到对比视图
-    const hasCompletedImages = pendingImages.length > 0 && completed === pendingImages.length
-    if (hasCompletedImages) {
-      // 延迟一下让用户看到完成状态
-      setTimeout(() => setCurrentView('comparison'), 1000)
-    }
+    // // 如果有成功压缩的图片，自动切换到对比视图
+    // const hasCompletedImages = pendingImages.length > 0 && completed === pendingImages.length
+    // if (hasCompletedImages) {
+    //   // 延迟一下让用户看到完成状态
+    //   setTimeout(() => setCurrentView('comparison'), 1000)
+    // }
   }, [images, defaultSettings, t])
   
   // 暂停批量压缩

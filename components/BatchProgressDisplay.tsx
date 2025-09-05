@@ -46,7 +46,7 @@ export function BatchProgressDisplay({
   onPreview
 }: BatchProgressDisplayProps) {
   const t = useTranslations()
-  const [showDetails, setShowDetails] = useState(false)
+  const [showDetails, setShowDetails] = useState(true)
 
   // 下载进度管理
   const {
