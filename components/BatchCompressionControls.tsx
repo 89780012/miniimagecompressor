@@ -213,18 +213,18 @@ export function BatchCompressionControls({
           <Tabs value={currentSettings.mode} className="w-full">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger 
-                value="quality" 
-                onClick={() => updateCurrentSettings({ mode: 'quality' })}
-                disabled={disabled}
-              >
-                {t('compression.qualityMode')}
-              </TabsTrigger>
-              <TabsTrigger 
                 value="size" 
                 onClick={() => updateCurrentSettings({ mode: 'size' })}
                 disabled={disabled}
               >
                 {t('compression.sizeMode')}
+              </TabsTrigger>
+               <TabsTrigger 
+                value="quality" 
+                onClick={() => updateCurrentSettings({ mode: 'quality' })}
+                disabled={disabled}
+              >
+                {t('compression.qualityMode')}
               </TabsTrigger>
             </TabsList>
 
@@ -292,7 +292,7 @@ export function BatchCompressionControls({
                 <Input
                   id="target-size"
                   type="number"
-                  value={currentSettings.targetSizeKb || ''}
+                  value={currentSettings.targetSizeKb || 50}
                   onChange={(e) => updateCurrentSettings({ 
                     targetSizeKb: parseInt(e.target.value) || undefined 
                   })}
