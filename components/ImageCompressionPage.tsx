@@ -354,7 +354,7 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
       )}
 
       {/* Features - 只在上传页面且没有图片时显示 */}
-      {currentView === 'upload' && images.length === 0 && (
+      {/* {currentView === 'upload' && images.length === 0 && (
         <div className="mt-16">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">{t('features.title')}</h2>
@@ -393,7 +393,7 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
             </article>
           </div>
         </div>
-      )}
+      )} */}
       
       {/* 下载进度弹窗 */}
       <DownloadProgressModal
