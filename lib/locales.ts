@@ -15,6 +15,7 @@ export const DEFAULT_LOCALE = 'en'
 export const locales: LocaleConfig[] = [
   { code: 'zh', name: '中文', flag: '🇨🇳', nativeName: '中文' },
   { code: 'en', name: 'English', flag: '🇺🇸', nativeName: 'English' },
+  { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', nativeName: 'हिन्दी' },
   // 未来可以轻松添加更多语言：
   // { code: 'ja', name: '日本語', flag: '🇯🇵', nativeName: '日本語' },
   // { code: 'ko', name: '한국어', flag: '🇰🇷', nativeName: '한국어' },
@@ -24,7 +25,6 @@ export const locales: LocaleConfig[] = [
   // { code: 'pt', name: 'Português', flag: '🇵🇹', nativeName: 'Português' },
   // { code: 'ru', name: 'Русский', flag: '🇷🇺', nativeName: 'Русский' },
   // { code: 'ar', name: 'العربية', flag: '🇸🇦', nativeName: 'العربية' },
-  // { code: 'hi', name: 'हिन्दी', flag: '🇮🇳', nativeName: 'हिन्दी' },
   // { code: 'th', name: 'ไทย', flag: '🇹🇭', nativeName: 'ไทย' },
 ]
 

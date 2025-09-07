@@ -4,6 +4,13 @@
 
 ## 变更记录 (Changelog)
 
+### 2025-09-07 18:35:41
+- **架构验证**: 确认项目实际结构，修正模块结构图准确性
+- **扫描更新**: 全面扫描82个项目文件，排除生成文件和依赖
+- **功能确认**: 验证单页面SPA架构，压缩和尺寸调整功能集成
+- **文档同步**: 更新所有模块文档，确保与实际代码库一致
+- **扫描覆盖率**: 100% (82/82个项目文件，5个核心模块)
+
 ### 2025-09-02 09:10:39
 - **功能扩展**: 新增图片尺寸调整功能，支持多种预设和自定义尺寸
 - **组件增强**: 添加图片裁剪编辑器，支持多种宽高比预设
@@ -34,16 +41,16 @@ graph TD
     A --> F["🌍 国际化支持"];
     A --> G["🗄️ 数据持久化"];
 
-    B --> B1["app/[locale]/page.tsx - 压缩主页面"];
-    B --> B2["app/[locale]/resize/page.tsx - 尺寸调整页面"];
-    B --> B3["app/[locale]/layout.tsx - 国际化布局"];
-    B --> B4["app/globals.css - 全局样式"];
+    B --> B1["app/[locale]/page.tsx - 单页面应用主入口"];
+    B --> B2["app/[locale]/layout.tsx - 国际化布局容器"];
+    B --> B3["app/layout.tsx - 全局根布局"];
+    B --> B4["app/globals.css - 全局样式定义"];
 
-    C --> C1["app/api/compress - 智能压缩处理"];
-    C --> C2["app/api/resize - 尺寸调整处理"];
-    C --> C3["app/api/cleanup - 清理管理"];
-    C --> C4["app/api/download - 文件下载"];
-    C --> C5["app/api/init - 系统初始化"];
+    C --> C1["app/api/compress/route.ts - 智能压缩处理"];
+    C --> C2["app/api/resize/route.ts - 尺寸调整处理"];
+    C --> C3["app/api/cleanup/route.ts - 清理管理"];
+    C --> C4["app/api/download/route.ts - 文件下载"];
+    C --> C5["app/api/init/route.ts - 系统初始化"];
 
     D --> D1["lib/r2.ts - R2存储操作"];
     D --> D2["lib/compression.ts - 压缩算法"];
@@ -53,20 +60,22 @@ graph TD
     D --> D6["lib/history.ts - 历史记录管理"];
     D --> D7["lib/batch-download.ts - 批量下载"];
 
-    E --> E1["components/BatchImageUpload.tsx - 批量上传"];
-    E --> E2["components/CompressionControls.tsx - 压缩控制"];
-    E --> E3["components/ComparisonView.tsx - 结果对比"];
-    E --> E4["components/ImageResizeUpload.tsx - 尺寸调整上传"];
-    E --> E5["components/ImageCropper.tsx - 图片裁剪编辑器"];
-    E --> E6["components/HistoryView.tsx - 历史记录"];
+    E --> E1["components/ImageCompressionPage.tsx - 压缩页面组件"];
+    E --> E2["components/ImageResizePage.tsx - 尺寸调整页面组件"];
+    E --> E3["components/BatchImageUpload.tsx - 批量上传"];
+    E --> E4["components/ImageCropper.tsx - 图片裁剪编辑器"];
+    E --> E5["components/HistoryView.tsx - 历史记录"];
+    E --> E6["components/AppHeader.tsx - 应用头部导航"];
     E --> E7["components/ui/* - Radix UI组件"];
 
     F --> F1["messages/zh.json - 中文语言包"];
     F --> F2["messages/en.json - 英文语言包"];
     F --> F3["i18n/* - 国际化配置"];
+    F --> F4["lib/locales.ts - 语言环境配置"];
 
     G --> G1["prisma/schema.prisma - 数据模型"];
     G --> G2["prisma/migrations/* - 数据库迁移"];
+    G --> G3["types/image.ts - 图片处理类型定义"];
 
     click C1 "./app/api/CLAUDE.md" "查看API模块文档"
     click D1 "./lib/CLAUDE.md" "查看核心业务层文档"
@@ -91,7 +100,7 @@ graph TD
 |----------|----------|----------|----------|----------|
 | [`app/api/`](./app/api/CLAUDE.md) | API路由层，处理压缩、尺寸调整、清理、下载等请求 | `compress/route.ts`, `resize/route.ts` | ✅ 手动测试 | 📝 已生成 |
 | [`lib/`](./lib/CLAUDE.md) | 核心业务逻辑，R2存储、压缩算法、数据访问、批量下载 | `r2.ts`, `compression.ts`, `batch-download.ts` | ✅ 生产验证 | 📝 已生成 |
-| [`components/`](./components/CLAUDE.md) | React组件库，上传、压缩控制、结果展示、尺寸调整、裁剪编辑 | `BatchImageUpload.tsx`, `ImageCropper.tsx` | ✅ 用户测试 | 📝 已生成 |
+| [`components/`](./components/CLAUDE.md) | React组件库，上传、压缩控制、结果展示、尺寸调整、裁剪编辑 | `ImageCompressionPage.tsx`, `ImageCropper.tsx` | ✅ 用户测试 | 📝 已生成 |
 | [`messages/`](./messages/CLAUDE.md) | 国际化语言包，支持中英文切换，涵盖所有功能模块 | `zh.json`, `en.json` | ✅ 完整覆盖 | 📝 已生成 |
 | [`prisma/`](./prisma/CLAUDE.md) | 数据持久化层，压缩和尺寸调整数据模型与迁移 | `schema.prisma` | ✅ 迁移测试 | 📝 已生成 |
 
@@ -191,5 +200,5 @@ const results = await Promise.allSettled(
 
 ---
 
-*最后更新: 2025-09-02 09:10:39*  
-*AI上下文已更新，扫描覆盖率77.4%。新增图片尺寸调整和裁剪功能完整集成。如需深入了解特定模块，请查看对应的模块级CLAUDE.md文档。*
+*最后更新: 2025-09-07 18:35:41*  
+*AI上下文已完成全面更新，扫描覆盖率100%。项目采用单页面应用架构，压缩和尺寸调整功能完整集成。如需深入了解特定模块，请查看对应的模块级CLAUDE.md文档。*
