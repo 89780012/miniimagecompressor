@@ -1,9 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /uploads/
-Disallow: /private/
-Disallow: /_next/
-Disallow: /admin/
 
 Sitemap: https://www.mycompressor.org/sitemap.xml
