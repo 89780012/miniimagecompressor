@@ -1,13 +1,17 @@
 import {NextIntlClientProvider} from 'next-intl';
-import {getMessages,getLocale} from 'next-intl/server';
+import {getMessages,getLocale, getTranslations} from 'next-intl/server';
 import { generateSEOMetadata } from '@/lib/seo';
 import "../globals.css";
 
-export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const t = await getTranslations({ locale });
 
   return await generateSEOMetadata({
-    locale: locale || 'en',
+    title: t("metadata.title"),
+    description: t("metadata.description"),
+    keywords: t("metadata.keywords"),
+    locale: locale,
     url: locale === 'en' ? '' : `/${locale}`
   });
 }

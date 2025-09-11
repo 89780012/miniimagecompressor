@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "Image Compressor",
+    "description": "Free online image compression tool. Reduce image file size while maintaining quality. Support JPEG, PNG, WebP formats",
+    "keywords": "image compression, photo compressor, reduce image size, optimize images, 图片压缩, 照片压缩"
+  },
   "common": {
     "title": "Image Compressor",
     "subtitle": "Fast and efficient online image compression service",

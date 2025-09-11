@@ -2,9 +2,9 @@ import { Metadata } from 'next'
 import { getTranslations } from 'next-intl/server'
 
 export interface SEOPageProps {
-  title?: string
-  description?: string
-  keywords?: string[]
+  title: string
+  description: string
+  keywords: string
   image?: string
   url?: string
   locale?: string
@@ -13,53 +13,52 @@ export interface SEOPageProps {
 export async function generateSEOMetadata({
   title,
   description,
-  keywords = [],
+  keywords,
   image,
   url,
-  locale = 'zh'
+  locale = 'en'
 }: SEOPageProps): Promise<Metadata> {
-  const t = await getTranslations()
+  const t = await getTranslations({ locale })
   
-  const defaultKeywords = [
-    'image compression',
-    'photo compressor', 
-    'reduce image size',
-    'optimize images',
-    '图片压缩',
-    '照片压缩',
-    '图片优化',
-    '在线压缩'
-  ]
 
-  const siteTitle = t('common.title')
-  const siteDescription = t('common.subtitle')
-  const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle
-  const fullDescription = description || siteDescription
-  const allKeywords = [...defaultKeywords, ...keywords]
-
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
-  const fullUrl = url ? `${baseUrl}${url}` : baseUrl
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mycompressor.org'
+  
+  // 多语言URL构建逻辑 - en不带前缀，其他语言带前缀
+  let localePrefix = ''
+  if (locale !== 'en') {
+    localePrefix = `/${locale}`
+  }
+  
+  const fullUrl = url ? `${baseUrl}${localePrefix}${url}` : `${baseUrl}${localePrefix}`
   const imageUrl = image ? `${baseUrl}${image}` : `${baseUrl}/og-image.jpg`
 
+  // 根据语言设置正确的locale
+  let ogLocale = 'en_US'
+  if (locale === 'zh') {
+    ogLocale = 'zh_CN'
+  } else if (locale === 'hi') {
+    ogLocale = 'hi_IN'
+  }
+
   return {
-    title: fullTitle,
-    description: fullDescription,
-    keywords: allKeywords.join(', '),
+    title: title,
+    description: description,
+    keywords: keywords,
     
     // Open Graph
     openGraph: {
       type: 'website',
-      locale: locale === 'zh' ? 'zh_CN' : 'en_US',
+      locale: ogLocale,
       url: fullUrl,
-      title: fullTitle,
-      description: fullDescription,
-      siteName: siteTitle,
+      title: title,
+      description: description,
+      siteName: title,
       images: [
         {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: fullTitle,
+          alt: title,
         },
       ],
     },
@@ -67,8 +66,8 @@ export async function generateSEOMetadata({
     // Twitter Card
     twitter: {
       card: 'summary_large_image',
-      title: fullTitle,
-      description: fullDescription,
+      title: title,
+      description: description,
       images: [imageUrl],
     },
     
@@ -79,6 +78,7 @@ export async function generateSEOMetadata({
       languages: {
         'en-US': locale === 'en' ? fullUrl : baseUrl + (url || ''),
         'zh-CN': locale === 'zh' ? fullUrl : baseUrl + '/zh' + (url || ''),
+        'hi-IN': locale === 'hi' ? fullUrl : baseUrl + '/hi' + (url || ''),
         'x-default': baseUrl + (url || '')
       },
     },
@@ -94,9 +94,9 @@ export async function generateSEOMetadata({
     },
     
     // Additional metadata
-    authors: [{ name: 'Image Compressor Team', url: baseUrl }],
-    creator: 'Image Compressor',
-    publisher: 'Image Compressor',
+    authors: [{ name: t('common.title') + ' Team', url: baseUrl }],
+    creator: t('common.title'),
+    publisher: t('common.title'),
     formatDetection: {
       email: false,
       address: false,
@@ -107,7 +107,7 @@ export async function generateSEOMetadata({
 
 // Schema.org JSON-LD structured data
 export function generateWebsiteSchema(locale: string = 'zh') {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mycompressor.org'
   
   return {
     '@context': 'https://schema.org',
@@ -138,7 +138,7 @@ export function generateWebsiteSchema(locale: string = 'zh') {
 }
 
 export function generateBreadcrumbSchema(items: Array<{name: string, url: string}>) {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://mycompressor.org'
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mycompressor.org'
   
   return {
     '@context': 'https://schema.org',

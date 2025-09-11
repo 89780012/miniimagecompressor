@@ -1,4 +1,9 @@
 {
+  "metadata": {
+    "title": "图片压缩工具",
+    "description": "免费在线图片压缩工具，保持图片质量的同时减小文件大小。支持JPEG、PNG、WebP格式",
+    "keywords": "图片压缩, 照片压缩, 减小图片大小, 图片优化, image compression, photo compressor"
+  },
   "common": {
     "title": "图片压缩工具",
     "subtitle": "快速、高效的在线图片压缩服务",
