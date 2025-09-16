@@ -1,7 +1,11 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
+import { useTranslations, useLocale } from 'next-intl'
+import { History } from 'lucide-react'
+import Link from 'next/link'
 import { LanguageSwitcher } from './LanguageSwitcher'
+import { changelogTranslations } from '@/lib/changelog-data'
+import { SupportedLocale } from '@/types/changelog'
 
 // 功能类型定义
 type FeatureType = 'compression' | 'resize'
@@ -11,12 +15,14 @@ interface AppHeaderProps {
   onFeatureChange?: (feature: FeatureType) => void
 }
 
-export function AppHeader({ 
-  currentFeature = 'compression', 
+export function AppHeader({
+  currentFeature = 'compression',
   onFeatureChange
 }: AppHeaderProps) {
   const t = useTranslations()
-  
+  const locale = useLocale() as SupportedLocale
+  const changelogT = changelogTranslations[locale]
+
   return (
     <header className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -25,7 +31,7 @@ export function AppHeader({
             <h1 className="text-2xl font-bold text-gray-900">{t('common.title')}</h1>
             <p className="text-sm text-gray-600">{t('common.subtitle')}</p>
           </div>
-          
+
           {/* 功能切换按钮组 */}
           <div className="flex items-center gap-2">
             {/* 图片压缩按钮 */}
@@ -42,7 +48,7 @@ export function AppHeader({
               </svg>
               {t('compress.title')}
             </button>
-            
+
             {/* 图片尺寸调整按钮 */}
             <button
               onClick={() => onFeatureChange?.('resize')}
@@ -57,9 +63,17 @@ export function AppHeader({
               </svg>
               {t('resize.title')}
             </button>
-            
             {/* 语言切换 */}
             <LanguageSwitcher />
+            {/* Changelog 链接 */}
+            <Link
+              href={locale === 'en' ? '/changelog' : `/${locale}/changelog`}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md h-9 text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 transition-colors"
+            >
+              <History className="w-4 h-4" />
+              {changelogT.title}
+            </Link>
+
           </div>
         </div>
       </div>
