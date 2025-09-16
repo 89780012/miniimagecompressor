@@ -1,151 +1,169 @@
 {
-  "timestamp": "2025-09-07T10:35:41.000Z",
-  "projectName": "imagecompressor",
+  "timestamp": "2025-09-16T15:46:13.000Z",
+  "projectName": "miniimagecompressor",
   "description": "基于Next.js 15的现代化图片压缩应用，集成了Cloudflare R2云存储、多语言支持和批量处理功能",
   "scanCoverage": {
-    "totalFiles": 82,
-    "scannedFiles": 82,
-    "coveragePercentage": 100.0,
+    "totalFiles": 104,
+    "scannedFiles": 97,
+    "coveragePercentage": 93.3,
     "truncated": false,
     "truncationReason": null,
-    "scanStrategy": "根级简明 + 模块级详尽策略：全仓清点 + 模块优先扫描 + 深度补捞（架构验证模式）"
+    "scanStrategy": "自适应架构师模式：阶段A全仓清点 + 阶段B模块优先扫描 + 增量更新验证"
   },
   "modules": [
     {
-      "path": "app/api",
-      "name": "API服务层",
-      "description": "处理图片压缩、尺寸调整、清理、下载等HTTP请求的Next.js App Router API路由",
+      "path": "app",
+      "name": "前端展示层和API服务层",
+      "description": "Next.js 15 App Router架构，集成前端SPA和API路由处理",
       "entryFiles": [
-        "compress/route.ts",
-        "resize/route.ts",
-        "cleanup/route.ts", 
-        "download/route.ts",
-        "init/route.ts"
+        "[locale]/page.tsx",
+        "[locale]/layout.tsx",
+        "layout.tsx",
+        "api/compress/route.ts",
+        "api/resize/route.ts",
+        "api/cleanup/route.ts",
+        "api/download/route.ts",
+        "api/init/route.ts"
       ],
       "interfaces": [
-        "POST /api/compress - 图片压缩核心接口（智能压缩算法）",
-        "POST /api/resize - 图片尺寸调整接口（支持多种模式）",
-        "POST /api/cleanup - 手动清理过期文件", 
+        "SPA主页面 - 压缩和尺寸调整功能集成",
+        "国际化布局 - 多语言SEO元数据生成",
+        "POST /api/compress - 智能压缩处理（质量/大小双模式）",
+        "POST /api/resize - 图片尺寸调整（支持fit/fill/cover模式）",
+        "POST /api/cleanup - 手动清理过期文件",
         "GET /api/download - 文件下载代理",
         "GET /api/init - 系统健康检查和R2连接验证"
       ],
-      "dependencies": ["Sharp", "@aws-sdk/client-s3", "@prisma/client", "Next.js"],
+      "dependencies": ["Next.js 15", "React 19", "Sharp", "@aws-sdk/client-s3", "@prisma/client", "next-intl"],
       "testCoverage": "手动测试 + 生产验证",
       "documentation": "✅ 已生成 ./app/api/CLAUDE.md",
-      "coverage": "完整扫描（架构验证）",
+      "coverage": "完整扫描（架构验证更新）",
       "keyMetrics": {
         "totalRoutes": 5,
-        "linesOfCode": "~700行",
-        "complexityLevel": "中高等（智能压缩算法复杂）"
+        "totalPages": 2,
+        "linesOfCode": "~800行",
+        "complexityLevel": "中高等（智能压缩 + SEO集成）"
       }
     },
     {
       "path": "lib",
-      "name": "核心业务层", 
-      "description": "R2存储、图像压缩算法、数据访问、清理服务、批量下载等核心业务逻辑",
+      "name": "核心业务层",
+      "description": "R2存储、图像压缩算法、数据访问、清理服务、批量下载、SEO优化等核心业务逻辑",
       "entryFiles": [
         "r2.ts",
         "compression.ts",
-        "cleanup.ts", 
+        "cleanup.ts",
         "scheduler.ts",
         "prisma.ts",
         "history.ts",
         "batch-download.ts",
         "seo.ts",
-        "locales.ts"
+        "locales.ts",
+        "init.ts",
+        "utils.ts"
       ],
       "interfaces": [
-        "uploadToR2() - R2文件上传（支持分层存储路径）",
-        "batchDeleteFromR2() - R2批量删除",
+        "uploadToR2() - R2文件上传（分层存储路径）",
+        "batchDeleteFromR2() - R2批量删除（并发控制）",
         "compressImage() - 图像压缩前端接口",
-        "cleanupExpiredImages() - 过期文件清理",
+        "cleanupExpiredImages() - 过期文件自动清理",
         "generateR2Key() - 智能存储路径生成",
-        "saveToHistory() - 本地历史记录管理",
+        "saveToHistory() / getHistory() - 本地历史记录管理",
         "downloadAsZip() - 批量文件压缩包下载",
-        "generateSEOMetadata() - SEO元数据生成"
+        "generateSEOMetadata() - 多语言SEO元数据生成",
+        "generateWebsiteSchema() - Schema.org结构化数据"
       ],
-      "dependencies": ["@aws-sdk/client-s3", "Sharp", "@prisma/client", "node-cron", "JSZip"],
+      "dependencies": ["@aws-sdk/client-s3", "Sharp", "@prisma/client", "node-cron", "JSZip", "next-intl"],
       "testCoverage": "生产验证 + 边界测试",
       "documentation": "✅ 已生成 ./lib/CLAUDE.md",
-      "coverage": "完整扫描（新增SEO和国际化支持）",
+      "coverage": "完整扫描（新增SEO和国际化支持验证）",
       "keyMetrics": {
-        "totalServices": 12,
-        "linesOfCode": "~1000行",
-        "complexityLevel": "高（文件系统 + 云存储双重管理）"
+        "totalServices": 15,
+        "linesOfCode": "~1200行",
+        "complexityLevel": "高（文件系统 + 云存储 + SEO集成）"
       }
     },
     {
       "path": "components",
       "name": "React组件库",
-      "description": "基于Radix UI的React组件库，提供图片上传、压缩控制、结果展示、历史记录、尺寸调整等完整交互界面",
+      "description": "基于Radix UI的React组件库，提供图片上传、压缩控制、结果展示、历史记录、尺寸调整、SEO结构化数据等完整UI",
       "entryFiles": [
         "ImageCompressionPage.tsx",
         "ImageResizePage.tsx",
         "BatchImageUpload.tsx",
         "BatchCompressionControls.tsx",
-        "BatchComparisonView.tsx", 
+        "BatchComparisonView.tsx",
         "BatchProgressDisplay.tsx",
         "ImageResizeUpload.tsx",
         "ResizeControls.tsx",
+        "ResizePreview.tsx",
         "ImageCropper.tsx",
         "HistoryView.tsx",
-        "AppHeader.tsx"
+        "AppHeader.tsx",
+        "StructuredData.tsx",
+        "LanguageSwitcher.tsx",
+        "DownloadProgressModal.tsx"
       ],
       "interfaces": [
         "ImageCompressionPage - 图片压缩主页面（单页面应用架构）",
         "ImageResizePage - 图片尺寸调整页面（集成在SPA中）",
         "BatchImageUpload - 批量文件上传和管理（支持拖拽）",
         "CompressionControls - 压缩参数设置（质量/大小模式）",
-        "ComparisonView - 压缩结果对比展示", 
-        "DownloadProgressModal - 下载进度弹窗",
+        "ComparisonView - 压缩结果对比展示",
+        "DownloadProgressModal - 下载进度弹窗（Hook集成）",
         "ImageCropper - 图片裁剪编辑器（多宽高比）",
-        "ResizeControls - 尺寸调整控制面板",
+        "ResizeControls / ResizePreview - 尺寸调整控制和预览",
         "HistoryView - 历史记录管理界面",
-        "AppHeader - 应用头部导航（功能切换）"
+        "AppHeader - 应用头部导航（功能切换 + 语言切换）",
+        "StructuredData - SEO结构化数据组件",
+        "LanguageSwitcher - 语言切换组件"
       ],
-      "dependencies": ["React", "react-dropzone", "@radix-ui/*", "JSZip", "next-intl", "lucide-react"],
+      "dependencies": ["React 19", "react-dropzone", "@radix-ui/*", "JSZip", "next-intl", "lucide-react", "tailwind-merge"],
       "testCoverage": "用户验收测试 + 交互验证",
       "documentation": "✅ 已生成 ./components/CLAUDE.md",
-      "coverage": "完整扫描（验证单页面架构）",
+      "coverage": "完整扫描（验证单页面架构 + SEO组件）",
       "keyMetrics": {
-        "totalComponents": 25,
-        "linesOfCode": "~3000行",
-        "complexityLevel": "中等（交互逻辑丰富）"
+        "totalComponents": 32,
+        "linesOfCode": "~3500行",
+        "complexityLevel": "中等（交互逻辑丰富 + SEO集成）"
       }
     },
     {
       "path": "messages",
       "name": "国际化语言包",
-      "description": "完整的中英文双语支持，涵盖所有功能模块的UI文案和提示信息",
+      "description": "完整的多语言支持，涵盖中文、英文、印地语三种语言的所有功能模块UI文案",
       "entryFiles": [
         "zh.json",
-        "en.json"
+        "en.json",
+        "hi.json"
       ],
       "interfaces": [
         "zh.json - 中文语言包（简体中文）",
         "en.json - 英文语言包（美式英语）",
-        "完整覆盖：压缩、尺寸调整、裁剪、历史记录、错误提示等"
+        "hi.json - 印地语语言包（印度市场）",
+        "完整覆盖：压缩、尺寸调整、裁剪、历史记录、SEO元数据、错误提示等"
       ],
       "dependencies": ["next-intl"],
       "testCoverage": "完整覆盖验证 + 本地化测试",
       "documentation": "✅ 已生成 ./messages/CLAUDE.md",
-      "coverage": "完整扫描（国际化完整性验证）",
+      "coverage": "完整扫描（新增印地语支持验证）",
       "keyMetrics": {
-        "totalKeys": 456,
-        "languages": 2,
+        "totalKeys": 500,
+        "languages": 3,
         "complexityLevel": "低（纯配置文件）"
       }
     },
     {
       "path": "prisma",
       "name": "数据持久化层",
-      "description": "PostgreSQL数据库模式定义，包含压缩和尺寸调整历史记录的完整数据模型",
+      "description": "PostgreSQL数据库模式定义，包含压缩和尺寸调整历史记录的完整数据模型，支持R2云存储",
       "entryFiles": [
         "schema.prisma"
       ],
       "interfaces": [
-        "ImageCompression - 压缩记录模型（文件信息、压缩参数、R2路径）",
-        "ImageResize - 尺寸调整记录模型（原始尺寸、目标尺寸、调整模式）",
+        "ImageCompression - 压缩记录模型（文件信息、压缩参数、R2路径、过期时间）",
+        "ImageResize - 尺寸调整记录模型（原始尺寸、目标尺寸、调整模式、状态管理）",
+        "CompressionStatus / ResizeMode - 状态和模式枚举",
         "数据库迁移文件（初始化 + R2存储支持）"
       ],
       "dependencies": ["@prisma/client", "PostgreSQL"],
@@ -155,16 +173,43 @@
       "keyMetrics": {
         "totalModels": 2,
         "totalMigrations": 2,
-        "complexityLevel": "中等（关系型数据设计）"
+        "totalEnums": 2,
+        "complexityLevel": "中等（关系型数据设计 + 状态管理）"
+      }
+    },
+    {
+      "path": "i18n",
+      "name": "国际化配置层",
+      "description": "next-intl国际化配置、中间件和语言环境管理",
+      "entryFiles": [
+        "index.ts",
+        "config.ts",
+        "request.ts"
+      ],
+      "interfaces": [
+        "next-intl配置 - 语言检测和路由处理",
+        "middleware.ts - 国际化路由中间件",
+        "lib/locales.ts - 语言环境定义和管理"
+      ],
+      "dependencies": ["next-intl", "Next.js"],
+      "testCoverage": "路由测试 + 语言切换验证",
+      "documentation": "📝 需补充 ./i18n/CLAUDE.md",
+      "coverage": "完整扫描（配置层验证）",
+      "keyMetrics": {
+        "supportedLocales": 3,
+        "defaultLocale": "en",
+        "complexityLevel": "低（配置为主）"
       }
     }
   ],
   "architecture": {
-    "pattern": "单页面应用（SPA）",
-    "routing": "Next.js 15 App Router + 国际化路由",
-    "stateManagement": "本地React State + 数据库持久化",
-    "apiDesign": "RESTful API + 文件上传处理",
-    "storage": "Cloudflare R2（云存储）+ PostgreSQL（元数据）"
+    "pattern": "单页面应用（SPA）+ API服务",
+    "routing": "Next.js 15 App Router + 国际化路由（as-needed前缀）",
+    "stateManagement": "本地React State + 数据库持久化 + 本地存储历史",
+    "apiDesign": "RESTful API + 多部表单文件上传处理",
+    "storage": "Cloudflare R2（云存储）+ PostgreSQL（元数据）",
+    "bundler": "Turbopack（开发和构建加速）",
+    "seo": "next-intl + Schema.org结构化数据 + OpenGraph元数据"
   },
   "ignoreRules": [
     "node_modules/**",
@@ -188,11 +233,16 @@
     "*.gz",
     "/lib/generated/prisma"
   ],
-  "gaps": [],
+  "gaps": [
+    "测试覆盖率不足：缺少单元测试和E2E测试",
+    "监控缺失：需要错误追踪和性能监控",
+    "i18n模块文档缺失"
+  ],
   "nextSteps": [
-    "架构验证完成，所有模块文档已同步",
-    "建议添加单元测试覆盖核心算法",
-    "考虑添加性能监控和错误追踪",
-    "可扩展更多图片格式支持（WEBP、AVIF等）"
+    "增量扫描完成，发现新增SEO模块和印地语支持",
+    "建议补充i18n模块的CLAUDE.md文档",
+    "建议添加单元测试覆盖核心压缩算法",
+    "考虑添加错误追踪和性能监控工具",
+    "可扩展更多图片格式支持（AVIF、HEIF等）"
   ]
 }
