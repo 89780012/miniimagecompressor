@@ -36,5 +36,40 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mycompressor.org" />
   </url>
 
+  <!-- 图片尺寸调整页面 - 英文版本（默认） -->
+  <url>
+    <loc>https://www.mycompressor.org/resizeimage</loc>
+    <lastmod>2025-09-17T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.mycompressor.org/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mycompressor.org/zh/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://www.mycompressor.org/hi/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mycompressor.org/resizeimage" />
+  </url>
+
+  <!-- 图片尺寸调整页面 - 中文版本 -->
+  <url>
+    <loc>https://www.mycompressor.org/zh/resizeimage</loc>
+    <lastmod>2025-09-17T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.mycompressor.org/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mycompressor.org/zh/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://www.mycompressor.org/hi/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mycompressor.org/resizeimage" />
+  </url>
+
+  <!-- 图片尺寸调整页面 - 印度语版本 -->
+  <url>
+    <loc>https://www.mycompressor.org/hi/resizeimage</loc>
+    <lastmod>2025-09-17T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://www.mycompressor.org/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="zh-CN" href="https://www.mycompressor.org/zh/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="hi-IN" href="https://www.mycompressor.org/hi/resizeimage" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://www.mycompressor.org/resizeimage" />
+  </url>
 
 </urlset>

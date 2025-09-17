@@ -4,6 +4,104 @@
     "description": "免费在线图片压缩工具，保持图片质量的同时减小文件大小。支持JPEG、PNG、WebP格式",
     "keywords": "图片压缩, 照片压缩, 减小图片大小, 图片优化, image compression, photo compressor"
   },
+  "resizeMetadata": {
+    "title": "图片尺寸调整工具",
+    "description": "免费在线图片尺寸调整工具，支持自定义尺寸、预设比例和图片裁剪。保持图片质量的同时调整尺寸。",
+    "keywords": "图片尺寸调整, 图片缩放, 图片裁剪, 调整图片大小, 图片编辑, image resize, photo resize"
+  },
+  "resizeHero": {
+    "title": "专业图片尺寸调整工具",
+    "description": "一键调整图片尺寸，支持自定义尺寸、预设比例和智能裁剪。完全免费，操作简单。",
+    "features": {
+      "free": "完全免费",
+      "fast": "极速处理",
+      "secure": "安全私密"
+    }
+  },
+  "resizeFeatures": {
+    "title": "强大的尺寸调整功能",
+    "subtitle": "专业的图片尺寸调整工具，满足各种使用场景",
+    "fast": {
+      "title": "极速处理",
+      "description": "采用先进的图像处理算法，快速完成尺寸调整，节省宝贵时间"
+    },
+    "quality": {
+      "title": "质量保证",
+      "description": "智能算法确保调整后的图片保持最佳画质，细节清晰可见"
+    },
+    "secure": {
+      "title": "安全可靠",
+      "description": "纯客户端处理，图片不上传到服务器，保护您的隐私安全"
+    },
+    "flexible": {
+      "title": "灵活调整",
+      "description": "支持像素精确调整、比例缩放、预设尺寸等多种调整模式"
+    },
+    "precise": {
+      "title": "精确控制",
+      "description": "提供裁剪、拉伸、填充等多种适应方式，满足不同需求"
+    },
+    "batch": {
+      "title": "批量处理",
+      "description": "支持批量调整多张图片，统一设置，大幅提升工作效率"
+    }
+  },
+  "resizeHowItWorks": {
+    "title": "如何使用尺寸调整功能",
+    "subtitle": "三步轻松调整图片尺寸",
+    "step1": {
+      "title": "上传图片",
+      "description": "选择需要调整尺寸的图片，支持多种常见格式"
+    },
+    "step2": {
+      "title": "设置尺寸",
+      "description": "选择目标尺寸，支持自定义、预设比例和百分比缩放"
+    },
+    "step3": {
+      "title": "下载结果",
+      "description": "预览调整效果，满意后即可下载处理后的图片"
+    }
+  },
+  "resizeFAQ": {
+    "title": "尺寸调整常见问题",
+    "subtitle": "解答您在使用过程中可能遇到的问题",
+    "q1": {
+      "question": "支持哪些图片格式的尺寸调整？",
+      "answer": "支持 JPEG、PNG、WebP、BMP、GIF 等主流图片格式，调整后可保持原格式或转换为其他格式。"
+    },
+    "q2": {
+      "question": "调整后的图片质量如何？",
+      "answer": "采用高质量的图像缩放算法，在保持图片清晰度的同时进行尺寸调整，确保最佳视觉效果。"
+    },
+    "q4": {
+      "question": "可以批量调整多张图片吗？",
+      "answer": "是的，支持批量上传和处理多张图片，可以统一设置尺寸参数，一次性完成所有图片的调整。"
+    },
+    "q5": {
+      "question": "图片处理是在本地进行的吗？",
+      "answer": "是的，所有图片处理都在您的浏览器中本地完成，不会上传到服务器，确保您的图片隐私安全。"
+    }
+  },
+  "resizeBenefits": {
+    "title": "尺寸调整的优势",
+    "subtitle": "为什么选择我们的图片尺寸调整工具",
+    "responsive": {
+      "title": "响应式设计",
+      "description": "为不同设备和屏幕尺寸优化图片，提升用户体验和页面加载速度"
+    },
+    "performance": {
+      "title": "性能优化",
+      "description": "适当的图片尺寸能显著减少页面加载时间，提升网站性能"
+    },
+    "compatibility": {
+      "title": "兼容性强",
+      "description": "调整后的图片兼容各种平台和应用，满足不同使用场景需求"
+    },
+    "workflow": {
+      "title": "工作流程",
+      "description": "简化图片处理流程，让您专注于内容创作而非技术细节"
+    }
+  },
   "common": {
     "title": "图片压缩工具",
     "subtitle": "快速、高效的在线图片压缩服务",
@@ -150,9 +248,6 @@
       "title": "安全可靠",
       "description": "所有处理均在本地完成，确保您的图片隐私安全"
     }
-  },
-  "footer": {
-    "copyright": "© 2024 图片压缩工具. 为您提供专业的图片优化服务."
   },
   "progress": {
     "batchProgress": "批量处理进度",

@@ -106,18 +106,33 @@ export async function generateSEOMetadata({
 }
 
 // Schema.org JSON-LD structured data
-export function generateWebsiteSchema(locale: string = 'en') {
+export function generateWebsiteSchema(locale: string = 'en', pageType: 'compression' | 'resize' = 'compression') {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mycompressor.org'
-  
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: locale === 'zh' ? '图片压缩工具' : locale === 'hi' ? 'इमेज कम्प्रेसर' : 'Image Compressor',
-    description: locale === 'zh' 
+
+  // 根据页面类型生成不同的schema
+  let name, description
+
+  if (pageType === 'resize') {
+    name = locale === 'zh' ? '图片尺寸调整工具' : locale === 'hi' ? 'इमेज रीसाइज़ टूल' : 'Image Resize Tool'
+    description = locale === 'zh'
+      ? '免费在线图片尺寸调整工具，支持自定义尺寸、预设比例和图片裁剪。保持图片质量的同时调整尺寸。'
+      : locale === 'hi'
+      ? 'मुफ्त ऑनलाइन इमेज रीसाइज़ टूल। कस्टम डाइमेंशन, प्रीसेट अनुपात और क्रॉपिंग सुविधाओं के साथ इमेज का साइज़ बदलें। गुणवत्ता बनाए रखते हुए साइज़ एडजस्ट करें।'
+      : 'Free online image resizing tool. Resize images with custom dimensions, preset ratios, and cropping features. Maintain quality while adjusting size.'
+  } else {
+    name = locale === 'zh' ? '图片压缩工具' : locale === 'hi' ? 'इमेज कम्प्रेसर' : 'Image Compressor'
+    description = locale === 'zh'
       ? '免费在线图片压缩工具，支持JPEG、PNG、WebP格式，保持图片质量的同时减小文件大小'
       : locale === 'hi'
       ? 'मुफ्त ऑनलाइन इमेज संपीड़न टूल। गुणवत्ता बनाए रखते हुए फ़ाइल का आकार कम करें। JPEG, PNG, WebP प्रारूप समर्थित'
-      : 'Free online image compression tool. Reduce image file size while maintaining quality. Support JPEG, PNG, WebP formats.',
+      : 'Free online image compression tool. Reduce image file size while maintaining quality. Support JPEG, PNG, WebP formats.'
+  }
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: name,
+    description: description,
     url: baseUrl,
     applicationCategory: 'MultimediaApplication',
     operatingSystem: 'Any',
@@ -132,8 +147,8 @@ export function generateWebsiteSchema(locale: string = 'en') {
       url: baseUrl
     },
     publisher: {
-      '@type': 'Organization', 
-      name: 'Image Compressor',
+      '@type': 'Organization',
+      name: pageType === 'resize' ? 'Image Resize Tool' : 'Image Compressor',
       url: baseUrl
     },
     aggregateRating: {
@@ -155,11 +170,17 @@ export function generateWebsiteSchema(locale: string = 'en') {
           ratingValue: '5',
           bestRating: '5'
         },
-        reviewBody: locale === 'zh' 
-          ? '非常好用的图片压缩工具，速度快，质量保持得很好！'
-          : locale === 'hi'
-          ? 'बहुत बेहतरीन इमेज कम्प्रेशन टूल, तेज़ और गुणवत्ता बनी रहती है!'
-          : 'Excellent image compression tool, fast and maintains great quality!',
+        reviewBody: pageType === 'resize'
+          ? (locale === 'zh'
+            ? '图片尺寸调整功能很棒，支持多种比例和裁剪，非常实用！'
+            : locale === 'hi'
+            ? 'इमेज रीसाइज़ फीचर बहुत बेहतरीन है, अलग-अलग अनुपात और क्रॉपिंग सपोर्ट करता है!'
+            : 'Excellent image resizing feature, supports various ratios and cropping options!')
+          : (locale === 'zh'
+            ? '非常好用的图片压缩工具，速度快，质量保持得很好！'
+            : locale === 'hi'
+            ? 'बहुत बेहतरीन इमेज कम्प्रेशन टूल, तेज़ और गुणवत्ता बनी रहती है!'
+            : 'Excellent image compression tool, fast and maintains great quality!'),
         datePublished: '2025-09-11'
       },
       {
@@ -173,11 +194,17 @@ export function generateWebsiteSchema(locale: string = 'en') {
           ratingValue: '5',
           bestRating: '5'
         },
-        reviewBody: locale === 'zh'
-          ? '批量处理功能很棒，节省了大量时间。界面简洁易用。'
-          : locale === 'hi'
-          ? 'बैच प्रोसेसिंग फीचर बहुत अच्छा है, बहुत समय बचाता है। इंटरफ़ेस आसान है।'
-          : 'Batch processing feature is amazing, saves so much time. Clean and easy interface.',
+        reviewBody: pageType === 'resize'
+          ? (locale === 'zh'
+            ? '尺寸调整工具界面简洁，操作简单，效果很好。'
+            : locale === 'hi'
+            ? 'रीसाइज़ टूल का इंटरफ़ेस सरल और उपयोग में आसान है।'
+            : 'Resize tool has a clean interface and is easy to use.')
+          : (locale === 'zh'
+            ? '批量处理功能很棒，节省了大量时间。界面简洁易用。'
+            : locale === 'hi'
+            ? 'बैच प्रोसेसिंग फीचर बहुत अच्छा है, बहुत समय बचाता है। इंटरफ़ेस आसान है।'
+            : 'Batch processing feature is amazing, saves so much time. Clean and easy interface.'),
         datePublished: '2025-09-11'
       }
     ]

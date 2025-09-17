@@ -2,13 +2,14 @@ import { useLocale } from 'next-intl'
 import { generateWebsiteSchema, generateBreadcrumbSchema } from '@/lib/seo'
 
 interface StructuredDataProps {
+  pageType?: 'compression' | 'resize'
   breadcrumbs?: Array<{name: string, url: string}>
 }
 
-export function StructuredData({ breadcrumbs }: StructuredDataProps) {
+export function StructuredData({ pageType = 'compression', breadcrumbs }: StructuredDataProps) {
   const locale = useLocale()
-  
-  const websiteSchema = generateWebsiteSchema(locale)
+
+  const websiteSchema = generateWebsiteSchema(locale, pageType)
   const breadcrumbSchema = breadcrumbs ? generateBreadcrumbSchema(breadcrumbs) : null
 
   return (

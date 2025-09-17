@@ -28,36 +28,65 @@ function BenefitItem({ titleKey, descriptionKey }: BenefitItemProps) {
   )
 }
 
-export function BenefitsSection() {
+export function BenefitsSection({ toolType = 'compression' }: { toolType?: 'compression' | 'resize' | 'watermark' | 'converter' }) {
   const t = useTranslations()
-  
-  const benefits = [
-    {
-      titleKey: 'benefits.webOptimization.title',
-      descriptionKey: 'benefits.webOptimization.description'
-    },
-    {
-      titleKey: 'benefits.storage.title',
-      descriptionKey: 'benefits.storage.description'
-    },
-    {
-      titleKey: 'benefits.bandwidth.title',
-      descriptionKey: 'benefits.bandwidth.description'
-    },
-    {
-      titleKey: 'benefits.seo.title',
-      descriptionKey: 'benefits.seo.description'
+
+  const namespace = toolType === 'compression' ? 'benefits' : `${toolType}Benefits`
+
+  const getBenefitsByToolType = (type: string) => {
+    switch (type) {
+      case 'resize':
+        return [
+          {
+            titleKey: `${namespace}.responsive.title`,
+            descriptionKey: `${namespace}.responsive.description`
+          },
+          {
+            titleKey: `${namespace}.performance.title`,
+            descriptionKey: `${namespace}.performance.description`
+          },
+          {
+            titleKey: `${namespace}.compatibility.title`,
+            descriptionKey: `${namespace}.compatibility.description`
+          },
+          {
+            titleKey: `${namespace}.workflow.title`,
+            descriptionKey: `${namespace}.workflow.description`
+          }
+        ]
+      case 'compression':
+      default:
+        return [
+          {
+            titleKey: `${namespace}.webOptimization.title`,
+            descriptionKey: `${namespace}.webOptimization.description`
+          },
+          {
+            titleKey: `${namespace}.storage.title`,
+            descriptionKey: `${namespace}.storage.description`
+          },
+          {
+            titleKey: `${namespace}.bandwidth.title`,
+            descriptionKey: `${namespace}.bandwidth.description`
+          },
+          {
+            titleKey: `${namespace}.seo.title`,
+            descriptionKey: `${namespace}.seo.description`
+          }
+        ]
     }
-  ]
+  }
+
+  const benefits = getBenefitsByToolType(toolType)
 
   return (
     <section className="mb-16">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          {t('benefits.title')}
+          {t(`${namespace}.title`)}
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          {t('benefits.subtitle')}
+          {t(`${namespace}.subtitle`)}
         </p>
       </div>
 

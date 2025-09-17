@@ -22,29 +22,31 @@ function FAQItem({ questionKey, answerKey }: FAQItemProps) {
   )
 }
 
-export function FAQSection() {
+export function FAQSection({ toolType = 'compression' }: { toolType?: 'compression' | 'resize' | 'watermark' | 'converter' }) {
   const t = useTranslations()
-  
+
+  const namespace = toolType === 'compression' ? 'faq' : `${toolType}FAQ`
+
   const faqs = [
     {
-      questionKey: 'faq.q1.question',
-      answerKey: 'faq.q1.answer'
+      questionKey: `${namespace}.q1.question`,
+      answerKey: `${namespace}.q1.answer`
     },
     {
-      questionKey: 'faq.q2.question',
-      answerKey: 'faq.q2.answer'
+      questionKey: `${namespace}.q2.question`,
+      answerKey: `${namespace}.q2.answer`
     },
     // {
-    //   questionKey: 'faq.q3.question',
-    //   answerKey: 'faq.q3.answer'
+    //   questionKey: `${namespace}.q3.question`,
+    //   answerKey: `${namespace}.q3.answer`
     // },
     {
-      questionKey: 'faq.q4.question',
-      answerKey: 'faq.q4.answer'
+      questionKey: `${namespace}.q4.question`,
+      answerKey: `${namespace}.q4.answer`
     },
     {
-      questionKey: 'faq.q5.question',
-      answerKey: 'faq.q5.answer'
+      questionKey: `${namespace}.q5.question`,
+      answerKey: `${namespace}.q5.answer`
     }
   ]
 
@@ -52,10 +54,10 @@ export function FAQSection() {
     <section className="mb-16">
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          {t('faq.title')}
+          {t(`${namespace}.title`)}
         </h2>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          {t('faq.subtitle')}
+          {t(`${namespace}.subtitle`)}
         </p>
       </div>
 

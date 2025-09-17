@@ -28,28 +28,30 @@ function StepCard({ stepNumber, titleKey, descriptionKey, bgColor, textColor }: 
   )
 }
 
-export function HowItWorksSection() {
+export function HowItWorksSection({ toolType = 'compression' }: { toolType?: 'compression' | 'resize' | 'watermark' | 'converter' }) {
   const t = useTranslations()
-  
+
+  const namespace = toolType === 'compression' ? 'howItWorks' : `${toolType}HowItWorks`
+
   const steps = [
     {
       stepNumber: 1,
-      titleKey: 'howItWorks.step1.title',
-      descriptionKey: 'howItWorks.step1.description',
+      titleKey: `${namespace}.step1.title`,
+      descriptionKey: `${namespace}.step1.description`,
       bgColor: 'bg-blue-100',
       textColor: 'text-blue-600'
     },
     {
       stepNumber: 2,
-      titleKey: 'howItWorks.step2.title',
-      descriptionKey: 'howItWorks.step2.description',
+      titleKey: `${namespace}.step2.title`,
+      descriptionKey: `${namespace}.step2.description`,
       bgColor: 'bg-green-100',
       textColor: 'text-green-600'
     },
     {
       stepNumber: 3,
-      titleKey: 'howItWorks.step3.title',
-      descriptionKey: 'howItWorks.step3.description',
+      titleKey: `${namespace}.step3.title`,
+      descriptionKey: `${namespace}.step3.description`,
       bgColor: 'bg-purple-100',
       textColor: 'text-purple-600'
     }
@@ -60,10 +62,10 @@ export function HowItWorksSection() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            {t('howItWorks.title')}
+            {t(`${namespace}.title`)}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            {t('howItWorks.subtitle')}
+            {t(`${namespace}.subtitle`)}
           </p>
         </div>
 

@@ -4,6 +4,104 @@
     "description": "Free online image compression tool. Reduce image file size while maintaining quality. Support JPEG, PNG, WebP formats",
     "keywords": "image compression, photo compressor, reduce image size, optimize images, 图片压缩, 照片压缩"
   },
+  "resizeMetadata": {
+    "title": "Image Resize Tool",
+    "description": "Free online image resizing tool. Resize images with custom dimensions, preset ratios, and cropping features. Maintain quality while adjusting size.",
+    "keywords": "image resize, photo resize, image scaling, crop image, resize photo, image editor, 图片尺寸调整, 图片编辑"
+  },
+  "resizeHero": {
+    "title": "Professional Image Resize Tool",
+    "description": "Resize images with one click. Support custom dimensions, preset ratios and smart cropping. Completely free and easy to use.",
+    "features": {
+      "free": "Completely Free",
+      "fast": "Lightning Fast",
+      "secure": "Secure & Private"
+    }
+  },
+  "resizeFeatures": {
+    "title": "Powerful Image Resizing Features",
+    "subtitle": "Professional image resizing tool for all your needs",
+    "fast": {
+      "title": "Lightning Fast",
+      "description": "Advanced image processing algorithms ensure quick resizing while saving your valuable time"
+    },
+    "quality": {
+      "title": "Quality Guaranteed",
+      "description": "Smart algorithms ensure resized images maintain optimal quality with clear, sharp details"
+    },
+    "secure": {
+      "title": "Secure & Reliable",
+      "description": "Pure client-side processing, images never uploaded to servers, protecting your privacy"
+    },
+    "flexible": {
+      "title": "Flexible Adjustment",
+      "description": "Support pixel-perfect adjustment, ratio scaling, preset dimensions and more resizing modes"
+    },
+    "precise": {
+      "title": "Precise Control",
+      "description": "Offers cropping, stretching, padding and other fitting methods to meet different needs"
+    },
+    "batch": {
+      "title": "Batch Processing",
+      "description": "Support batch resizing of multiple images with unified settings, dramatically improving efficiency"
+    }
+  },
+  "resizeHowItWorks": {
+    "title": "How to Use Image Resize Tool",
+    "subtitle": "Resize images in three simple steps",
+    "step1": {
+      "title": "Upload Images",
+      "description": "Select images you want to resize, supporting multiple common formats"
+    },
+    "step2": {
+      "title": "Set Dimensions",
+      "description": "Choose target dimensions, support custom, preset ratios and percentage scaling"
+    },
+    "step3": {
+      "title": "Download Results",
+      "description": "Preview the resizing effect, download the processed images when satisfied"
+    }
+  },
+  "resizeFAQ": {
+    "title": "Image Resize FAQ",
+    "subtitle": "Answers to questions you might have during usage",
+    "q1": {
+      "question": "Which image formats are supported for resizing?",
+      "answer": "Support JPEG, PNG, WebP, BMP, GIF and other mainstream image formats. Can maintain original format or convert to other formats after resizing."
+    },
+    "q2": {
+      "question": "How is the quality of resized images?",
+      "answer": "Uses high-quality image scaling algorithms to maintain image clarity while resizing, ensuring optimal visual effects."
+    },
+    "q4": {
+      "question": "Can I batch resize multiple images?",
+      "answer": "Yes, supports batch upload and processing of multiple images. You can set unified dimension parameters and complete all image resizing at once."
+    },
+    "q5": {
+      "question": "Is image processing done locally?",
+      "answer": "Yes, all image processing is completed locally in your browser, never uploaded to servers, ensuring your image privacy and security."
+    }
+  },
+  "resizeBenefits": {
+    "title": "Benefits of Image Resizing",
+    "subtitle": "Why choose our image resizing tool",
+    "responsive": {
+      "title": "Responsive Design",
+      "description": "Optimize images for different devices and screen sizes, improving user experience and page load speed"
+    },
+    "performance": {
+      "title": "Performance Optimization",
+      "description": "Proper image dimensions can significantly reduce page load times and improve website performance"
+    },
+    "compatibility": {
+      "title": "Strong Compatibility",
+      "description": "Resized images are compatible with various platforms and applications, meeting different usage scenarios"
+    },
+    "workflow": {
+      "title": "Streamlined Workflow",
+      "description": "Simplify image processing workflow, let you focus on content creation rather than technical details"
+    }
+  },
   "common": {
     "title": "Image Compressor",
     "subtitle": "Fast and efficient online image compression service",
@@ -150,9 +248,6 @@
       "title": "Safe & Secure",
       "description": "All processing is done locally to ensure your image privacy and security"
     }
-  },
-  "footer": {
-    "copyright": "© 2024 Image Compressor. Professional image optimization service."
   },
   "progress": {
     "batchProgress": "Batch Processing Progress",
