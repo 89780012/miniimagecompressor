@@ -138,7 +138,7 @@
     "status": {
       "pending": "等待中",
       "compressing": "压缩中...",
-      "completed": "已完成", 
+      "completed": "已完成",
       "error": "错误"
     },
     "tips": {
@@ -154,12 +154,12 @@
   "compression": {
     "title": "步骤 2: 设置压缩参数",
     "compressing": "正在压缩...",
-    "targetSizePlaceholder": "输入目标大小",
+    "targetSizePlaceholder": "例如: 500 (表示500KB)",
     "batchTitle": "批量压缩控制",
     "imageCount": "已选择 {count} 张图片",
     "pending": "等待中",
     "processing": "处理中",
-    "completed": "已完成", 
+    "completed": "已完成",
     "errors": "错误",
     "startBatch": "开始批量压缩",
     "resume": "继续",
@@ -181,7 +181,6 @@
     "sizeModeTitle": "大小模式说明",
     "sizeModeDescription": "指定目标文件大小，系统会自动调整质量和尺寸来达到目标。更精确控制文件大小，适合有特定大小要求的场景。",
     "targetSize": "目标文件大小",
-    "targetSizePlaceholder": "例如: 500 (表示500KB)",
     "targetSizeHint": "建议范围: 50-2000KB，取决于图片用途和质量要求",
     "enterTargetSize": "输入目标大小",
     "quality": "压缩质量",
@@ -200,12 +199,11 @@
     "highQuality": "高质量",
     "format": "输出格式",
     "compress": "开始压缩",
-    "compressing": "正在压缩...",
     "quickSelect": "快速选择:",
     "qualityGuide": {
       "title": "质量指南:",
       "high": "• 85-95%: 高质量，文件较大",
-      "balanced": "• 75-85%: 平衡质量和大小", 
+      "balanced": "• 75-85%: 平衡质量和大小",
       "medium": "• 60-75%: 中等质量，文件较小",
       "low": "• 30-60%: 低质量，最小文件"
     },
@@ -234,19 +232,31 @@
     "showCompressed": "显示压缩图"
   },
   "features": {
-    "title": "为什么选择我们的压缩工具？",
-    "subtitle": "专业的图片压缩技术，为您提供最佳的体验",
+    "title": "为什么选择我们的图片压缩工具？",
+    "subtitle": "专业的图片压缩工具，采用先进算法完美优化您的图片。",
     "fast": {
-      "title": "快速压缩",
-      "description": "采用先进的压缩算法，几秒钟内完成图片压缩处理"
+      "title": "闪电般快速处理",
+      "description": "先进的压缩算法确保您的图片在几秒钟内完成处理，而不是几分钟。"
     },
     "quality": {
-      "title": "高质量保证", 
-      "description": "智能压缩算法确保在减小文件大小的同时保持图片质量"
+      "title": "保持高质量",
+      "description": "智能压缩技术在显著减小文件大小的同时保持图片质量。"
     },
     "secure": {
-      "title": "安全可靠",
-      "description": "所有处理均在本地完成，确保您的图片隐私安全"
+      "title": "100% 安全私密",
+      "description": "所有处理都在您的浏览器中进行。您的图片永远不会离开您的设备。"
+    },
+    "formats": {
+      "title": "多种格式支持",
+      "description": "支持JPEG、PNG、WebP、BMP和GIF格式，提供灵活的输出选项。"
+    },
+    "batch": {
+      "title": "批量处理",
+      "description": "一次压缩多张图片，节省时间并提高工作效率。"
+    },
+    "smart": {
+      "title": "智能压缩",
+      "description": "智能算法自动优化压缩设置，获得最佳效果。"
     }
   },
   "progress": {
@@ -305,7 +315,7 @@
   },
   "downloadProgress": {
     "downloading": "正在下载",
-    "completed": "下载完成", 
+    "completed": "下载完成",
     "failed": "下载失败",
     "progress": "进度",
     "generating": "正在生成压缩包...",
@@ -462,34 +472,6 @@
       "secure": "安全私密"
     }
   },
-  "features": {
-    "title": "为什么选择我们的图片压缩工具？",
-    "subtitle": "专业的图片压缩工具，采用先进算法完美优化您的图片。",
-    "fast": {
-      "title": "闪电般快速处理",
-      "description": "先进的压缩算法确保您的图片在几秒钟内完成处理，而不是几分钟。"
-    },
-    "quality": {
-      "title": "保持高质量",
-      "description": "智能压缩技术在显著减小文件大小的同时保持图片质量。"
-    },
-    "secure": {
-      "title": "100% 安全私密",
-      "description": "所有处理都在您的浏览器中进行。您的图片永远不会离开您的设备。"
-    },
-    "formats": {
-      "title": "多种格式支持",
-      "description": "支持JPEG、PNG、WebP、BMP和GIF格式，提供灵活的输出选项。"
-    },
-    "batch": {
-      "title": "批量处理",
-      "description": "一次压缩多张图片，节省时间并提高工作效率。"
-    },
-    "smart": {
-      "title": "智能压缩",
-      "description": "智能算法自动优化压缩设置，获得最佳效果。"
-    }
-  },
   "howItWorks": {
     "title": "使用方法",
     "subtitle": "三个简单步骤压缩您的图片",
@@ -551,6 +533,91 @@
     }
   },
   "footer": {
-    "copyright": "© 2024 图片压缩工具。保留所有权利。"
+    "copyright": "© 2024 图片压缩工具。保留所有权利。",
+    "links": {
+      "privacy": "隐私政策",
+      "terms": "服务条款"
+    }
+  },
+  "legal": {
+    "metadata": {
+      "termsTitle": "服务条款",
+      "termsDescription": "了解使用 Mini Image Compressor 工具需要遵守的条款。",
+      "privacyTitle": "隐私政策",
+      "privacyDescription": "了解 Mini Image Compressor 如何处理上传、元数据和清理流程。"
+    },
+    "common": {
+      "lastUpdated": "最后更新：{date}",
+      "lastUpdatedDate": "2025年9月17日",
+      "contact": "如有疑问，请发送邮件至 {email}。",
+      "contactEmail": "support@mycompressor.org",
+      "backLink": "返回首页"
+    },
+    "terms": {
+      "title": "服务条款",
+      "intro": "本《服务条款》（以下简称“条款”）规范您对 Mini Image Compressor Web 应用的使用。访问或使用本服务即表示您同意本条款。",
+      "sections": {
+        "service": {
+          "title": "服务概述",
+          "body": "Mini Image Compressor 提供基于浏览器的图片压缩、尺寸调整等工具。某些流程依赖我们托管的 Cloudflare R2 存储和 PostgreSQL 数据库，以确保下载可用并保留短期处理记录。"
+        },
+        "acceptableUse": {
+          "title": "合理使用",
+          "items": [
+            "仅上传您拥有处理和分享权限的文件；",
+            "不得通过本服务传播恶意、违法或侵权内容；",
+            "请勿超出公开接口对服务进行扫描、探测或逆向工程。"
+          ]
+        },
+        "processing": {
+          "title": "图片处理与保留",
+          "body": "上传的文件可能暂存在 Cloudflare R2 中，以便顺利完成压缩和尺寸调整。自动清理任务会在处理完成约 24 小时后删除文件及相关元数据。"
+        },
+        "intellectual": {
+          "title": "知识产权",
+          "body": "Mini Image Compressor 的软件、文档和品牌归项目维护者所有。您保留上传图片的全部权利，仅授权我们为提供服务目的对图片进行处理。"
+        },
+        "liability": {
+          "title": "免责声明与责任限制",
+          "body": "本服务按“现状”提供，不附带任何明示或暗示的保证。在法律允许的范围内，我们不对因使用本服务导致的数据丢失、业务中断或任何间接/连带损失承担责任。"
+        },
+        "changes": {
+          "title": "条款变更",
+          "body": "我们可能根据功能或法律要求更新本条款。“最后更新时间”会相应调整，继续使用本服务即表示您接受更新后的条款。"
+        }
+      },
+      "closing": "如果您不同意以上条款，请立即停止使用 Mini Image Compressor。"
+    },
+    "privacy": {
+      "title": "隐私政策",
+      "intro": "本《隐私政策》说明 Mini Image Compressor 如何处理与您使用服务相关的信息。",
+      "sections": {
+        "dataWeCollect": {
+          "title": "我们收集的信息",
+          "body": "我们仅保存与您处理的文件相关的必要元数据，例如文件名、大小、格式和处理参数。本服务无需注册账户。"
+        },
+        "howWeUse": {
+          "title": "信息使用方式",
+          "items": [
+            "提供您请求的压缩、尺寸调整和下载功能；",
+            "监控服务健康状况、排查问题并提升可靠性；",
+            "运行自动清理流程，删除过期文件和数据库记录。"
+          ]
+        },
+        "storage": {
+          "title": "存储与保留",
+          "body": "上传文件存储在您配置区域内的 Cloudflare R2 中。通常会在处理完成约 24 小时后删除文件及相关元数据，如您主动触发清理则会更早删除。"
+        },
+        "thirdParties": {
+          "title": "第三方服务",
+          "body": "Cloudflare R2 提供对象存储，PostgreSQL 用于保存结构化元数据。这些服务商可能在其基础设施所在的司法管辖区处理数据。"
+        },
+        "yourChoices": {
+          "title": "您的选择",
+          "body": "您可通过提供的清理接口或联系我们提前删除文件。如需更高的保密要求，请避免上传敏感个人信息。"
+        }
+      },
+      "closing": "使用本服务即表示您同意本隐私政策。"
+    }
   }
 }

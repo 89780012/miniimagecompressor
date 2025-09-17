@@ -107,7 +107,7 @@
     "subtitle": "Fast and efficient online image compression service",
     "loading": "Loading...",
     "error": "Error",
-    "success": "Success", 
+    "success": "Success",
     "reset": "Reset",
     "download": "Download",
     "close": "Close",
@@ -116,7 +116,7 @@
   },
   "upload": {
     "title": "Step 1: Upload Image",
-    "batchTitle": "Step 1: Upload Images", 
+    "batchTitle": "Step 1: Upload Images",
     "dragText": "Drag image here",
     "clickText": "or click to select file",
     "clickOrDrag": "Click to select files or drag and drop",
@@ -137,7 +137,7 @@
     "batchDownload": "Batch Download",
     "status": {
       "pending": "Pending",
-      "compressing": "Compressing...", 
+      "compressing": "Compressing...",
       "completed": "Completed",
       "error": "Error"
     },
@@ -154,11 +154,11 @@
   "compression": {
     "title": "Step 2: Compression Settings",
     "compressing": "Compressing...",
-    "targetSizePlaceholder": "Enter target size",
+    "targetSizePlaceholder": "e.g: 500 (means 500KB)",
     "batchTitle": "Batch Compression Control",
     "imageCount": "{count} images selected",
     "pending": "Pending",
-    "processing": "Processing", 
+    "processing": "Processing",
     "completed": "Completed",
     "errors": "Errors",
     "startBatch": "Start Batch Compression",
@@ -181,7 +181,6 @@
     "sizeModeTitle": "Size Mode",
     "sizeModeDescription": "Specify target file size, system will automatically adjust quality and dimensions to reach the target. More precise control over file size, suitable for scenarios with specific size requirements.",
     "targetSize": "Target File Size",
-    "targetSizePlaceholder": "e.g: 500 (means 500KB)",
     "targetSizeHint": "Recommended range: 50-2000KB, depending on image usage and quality requirements",
     "enterTargetSize": "Enter target size",
     "quality": "Compression Quality",
@@ -197,16 +196,15 @@
     "compressionStrategy": "Compression Strategy",
     "compressionStrategyDescription": "System will first try quality compression. If target size is not reached, it will automatically reduce dimensions until requirements are met.",
     "lowQuality": "Low Quality",
-    "highQuality": "High Quality", 
+    "highQuality": "High Quality",
     "format": "Output Format",
     "compress": "Start Compression",
-    "compressing": "Compressing...",
     "quickSelect": "Quick Select:",
     "qualityGuide": {
       "title": "Quality Guide:",
       "high": "• 85-95%: High quality, larger files",
       "balanced": "• 75-85%: Balanced quality and size",
-      "medium": "• 60-75%: Medium quality, smaller files", 
+      "medium": "• 60-75%: Medium quality, smaller files",
       "low": "• 30-60%: Low quality, minimum files"
     },
     "formatHints": "JPEG: Smallest file size | PNG: Supports transparency | WebP: Best for modern browsers",
@@ -234,25 +232,37 @@
     "showCompressed": "Show Compressed"
   },
   "features": {
-    "title": "Why Choose Our Compression Tool?",
-    "subtitle": "Professional image compression technology for the best experience",
+    "title": "Why Choose Our Image Compressor?",
+    "subtitle": "Professional image compression tools with advanced algorithms to optimize your images perfectly.",
     "fast": {
-      "title": "Fast Compression",
-      "description": "Advanced compression algorithms complete image processing in seconds"
+      "title": "Lightning Fast Processing",
+      "description": "Advanced compression algorithms ensure your images are processed in seconds, not minutes."
     },
     "quality": {
-      "title": "Quality Assurance",
-      "description": "Smart compression algorithms ensure file size reduction while maintaining image quality"
+      "title": "Maintain High Quality",
+      "description": "Smart compression technology preserves image quality while significantly reducing file size."
     },
     "secure": {
-      "title": "Safe & Secure",
-      "description": "All processing is done locally to ensure your image privacy and security"
+      "title": "100% Secure & Private",
+      "description": "All processing happens in your browser. Your images never leave your device."
+    },
+    "formats": {
+      "title": "Multiple Formats",
+      "description": "Support for JPEG, PNG, WebP, BMP, and GIF formats with flexible output options."
+    },
+    "batch": {
+      "title": "Batch Processing",
+      "description": "Compress multiple images at once to save time and increase productivity."
+    },
+    "smart": {
+      "title": "Smart Compression",
+      "description": "Intelligent algorithms automatically optimize compression settings for best results."
     }
   },
   "progress": {
     "batchProgress": "Batch Processing Progress",
     "showDetails": "Show Details",
-    "hideDetails": "Hide Details", 
+    "hideDetails": "Hide Details",
     "overall": "Overall Progress",
     "imagesProcessed": "images processed",
     "running": "Running",
@@ -306,7 +316,7 @@
   "downloadProgress": {
     "downloading": "Downloading",
     "completed": "Download Completed",
-    "failed": "Download Failed", 
+    "failed": "Download Failed",
     "progress": "Progress",
     "generating": "Generating archive...",
     "successMessage": "Archive has been successfully downloaded to your device",
@@ -315,7 +325,7 @@
   },
   "compressionControls": {
     "title": "Compression Settings",
-    "mode": "Compression Mode", 
+    "mode": "Compression Mode",
     "quality": "Quality",
     "qualityMode": "Quality Mode",
     "sizeMode": "Size Mode",
@@ -336,7 +346,7 @@
     "clickOrDrag": "Click to select files or drag and drop",
     "dropHere": "Drop images here to upload",
     "selectedImages": "Selected {count} images",
-    "featuresTitle": "Powerful Resize Features", 
+    "featuresTitle": "Powerful Resize Features",
     "featuresSubtitle": "Professional image resizing tool for all scenarios",
     "features": {
       "precise": {
@@ -359,7 +369,7 @@
       "completed": "Completed",
       "customSize": "Custom Size (pixels)",
       "width": "Width",
-      "height": "Height", 
+      "height": "Height",
       "linked": "Linked",
       "unlinked": "Unlinked",
       "linkDimensions": "Lock aspect ratio",
@@ -462,34 +472,6 @@
       "secure": "Secure & Private"
     }
   },
-  "features": {
-    "title": "Why Choose Our Image Compressor?",
-    "subtitle": "Professional image compression tools with advanced algorithms to optimize your images perfectly.",
-    "fast": {
-      "title": "Lightning Fast Processing",
-      "description": "Advanced compression algorithms ensure your images are processed in seconds, not minutes."
-    },
-    "quality": {
-      "title": "Maintain High Quality",
-      "description": "Smart compression technology preserves image quality while significantly reducing file size."
-    },
-    "secure": {
-      "title": "100% Secure & Private",
-      "description": "All processing happens in your browser. Your images never leave your device."
-    },
-    "formats": {
-      "title": "Multiple Formats",
-      "description": "Support for JPEG, PNG, WebP, BMP, and GIF formats with flexible output options."
-    },
-    "batch": {
-      "title": "Batch Processing",
-      "description": "Compress multiple images at once to save time and increase productivity."
-    },
-    "smart": {
-      "title": "Smart Compression",
-      "description": "Intelligent algorithms automatically optimize compression settings for best results."
-    }
-  },
   "howItWorks": {
     "title": "How It Works",
     "subtitle": "Compress your images in three simple steps",
@@ -551,6 +533,91 @@
     }
   },
   "footer": {
-    "copyright": "© 2024 Image Compressor. All rights reserved."
+    "copyright": "© 2024 Image Compressor. All rights reserved.",
+    "links": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service"
+    }
+  },
+  "legal": {
+    "metadata": {
+      "termsTitle": "Terms of Service",
+      "termsDescription": "Read the terms that govern how you may use the Mini Image Compressor tools.",
+      "privacyTitle": "Privacy Policy",
+      "privacyDescription": "Understand how Mini Image Compressor handles uploads, metadata, and cleanup."
+    },
+    "common": {
+      "lastUpdated": "Last updated: {date}",
+      "lastUpdatedDate": "September 17, 2025",
+      "contact": "If you have any questions, please contact us at {email}.",
+      "contactEmail": "support@mycompressor.org",
+      "backLink": "Back to home"
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "intro": "These Terms of Service (\"Terms\") govern your use of the Mini Image Compressor web application. By accessing or using the service, you agree to these Terms.",
+      "sections": {
+        "service": {
+          "title": "Service Overview",
+          "body": "Mini Image Compressor provides browser-based tools to compress, resize, and process images. Certain flows rely on our managed Cloudflare R2 storage and PostgreSQL database to deliver downloads and maintain short-lived processing history."
+        },
+        "acceptableUse": {
+          "title": "Acceptable Use",
+          "items": [
+            "Upload only files that you are authorized to process and share.",
+            "Do not distribute malicious, abusive, or unlawful content through the service.",
+            "Avoid probing, scanning, or reverse engineering the service beyond publicly documented capabilities."
+          ]
+        },
+        "processing": {
+          "title": "Image Processing & Retention",
+          "body": "Uploaded files may be stored temporarily in Cloudflare R2 so that compression and resizing can complete successfully. Files and related metadata are scheduled for deletion roughly 24 hours after processing via the automated cleanup tasks."
+        },
+        "intellectual": {
+          "title": "Intellectual Property",
+          "body": "All software, documentation, and branding associated with Mini Image Compressor remain the property of the project maintainers. You retain ownership of your images and grant us a limited license to process them solely for providing the service."
+        },
+        "liability": {
+          "title": "Disclaimer & Liability",
+          "body": "The service is provided \"as is\" without warranties of any kind. To the maximum extent permitted by law, we are not liable for lost data, business interruption, or any indirect or consequential damages resulting from your use of the service."
+        },
+        "changes": {
+          "title": "Changes to These Terms",
+          "body": "We may update these Terms to reflect new features or legal requirements. The 'Last updated' date will change accordingly, and continued use of the service constitutes acceptance of the revised Terms."
+        }
+      },
+      "closing": "If you cannot agree to these Terms, please discontinue use of Mini Image Compressor."
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "intro": "This Privacy Policy describes how Mini Image Compressor handles information related to your use of the service.",
+      "sections": {
+        "dataWeCollect": {
+          "title": "Information We Collect",
+          "body": "We store limited metadata about the files you process, including file name, size, format, and processing preferences. Account registration is not required."
+        },
+        "howWeUse": {
+          "title": "How We Use Information",
+          "items": [
+            "Provide the compression, resizing, and download functionality you request.",
+            "Monitor service health, troubleshoot issues, and improve reliability.",
+            "Run automated cleanup routines that remove expired files and database records."
+          ]
+        },
+        "storage": {
+          "title": "Storage & Retention",
+          "body": "Uploaded files are stored in Cloudflare R2 in the region configured for your bucket. Files and related metadata are typically deleted about 24 hours after processing, or sooner if you invoke manual cleanup."
+        },
+        "thirdParties": {
+          "title": "Third-Party Services",
+          "body": "Cloudflare R2 supplies object storage for uploads and results. PostgreSQL stores structured metadata. These providers may process data in jurisdictions relevant to their infrastructure."
+        },
+        "yourChoices": {
+          "title": "Your Choices",
+          "body": "You can use the provided cleanup interface or contact us to remove stored files sooner. Avoid uploading sensitive personal data if you require stronger confidentiality guarantees."
+        }
+      },
+      "closing": "By using the service you consent to this Privacy Policy."
+    }
   }
 }
