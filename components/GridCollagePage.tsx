@@ -451,7 +451,7 @@ function autoFillGrid(layout: GridLayout, images: UploadedImage[]): GridLayout {
   }
 }
 
-function formatFileSize(size: number, t: (key: string, values?: Record<string, unknown>) => string) {
+function formatFileSize(size: number, t: ReturnType<typeof useTranslations>) {
   if (size >= 1024 * 1024) {
     return t('gridPage.common.sizeMb', { value: (size / (1024 * 1024)).toFixed(1) })
   }
