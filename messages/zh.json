@@ -619,5 +619,116 @@
       },
       "closing": "使用本服务即表示您同意本隐私政策。"
     }
+  },
+  "gridMetadata": {
+    "title": "九宫格拼图生成器",
+    "description": "免费在线九宫格拼图工具，支持拖拽合并格子，导出高清 PNG/JPEG，适合朋友圈、X.com 等社交平台。",
+    "keywords": "九宫格, 拼图, 社交媒体, 图片拼接, nine grid, photo grid"
+  },
+  "gridPage": {
+    "hero": {
+      "title": "九宫格拼图生成器",
+      "description": "上传任意数量的图片，拖拽、合并格子，自定义尺寸，一键导出适用于朋友圈、X.com 的拼图。"
+    },
+    "outputPresets": {
+      "square1080": "正方形 1080 x 1080（推荐）",
+      "square2048": "正方形 2048 x 2048",
+      "story": "竖版 1080 x 1920",
+      "landscape": "横版 1920 x 1080",
+      "custom": "自定义尺寸"
+    },
+    "templates": {
+      "heading": "模板与布局",
+      "subheading": "选择预设模板，或通过合并格子打造专属布局。",
+      "active": "使用中",
+      "reset": "恢复经典 3x3",
+      "classic": {
+        "label": "经典九宫格",
+        "description": "九个等宽方格的经典布局，适合日常分享。"
+      },
+      "focus": {
+        "label": "焦点主图",
+        "description": "放大左上角的大图，其余图片环绕排布，突出主体。"
+      },
+      "stripTop": {
+        "label": "横幅顶栏",
+        "description": "顶部保留全宽横幅，下方六个方格均匀排列。"
+      },
+      "columnLeft": {
+        "label": "侧边长条",
+        "description": "左侧三行竖排展示主图，其余格子保持方形。"
+      }
+    },
+    "stats": {
+      "images": "已上传 {count} 张图片",
+      "imagesHint": "拖拽或点击即可添加任意数量的照片。",
+      "assigned": "已填充 {count}/{total} 个格子",
+      "assignedHint": "随时拖拽重新排布，或再次使用自动填充。",
+      "template": "当前模板：{name}",
+      "templateHint": "切换模板或调整跨度，即可完成个性布局。"
+    },
+    "upload": {
+      "heading": "上传图片",
+      "hint": "文件仅保存在本地，可拖拽或点击添加。",
+      "selectButton": "选择文件",
+      "supported": "支持 JPG、PNG、WebP、HEIC",
+      "autoFill": "自动填充",
+      "clear": "清空上传"
+    },
+    "layout": {
+      "sizeHeading": "导出画布尺寸",
+      "customWidth": "自定义宽度（px）",
+      "customHeight": "自定义高度（px）",
+      "gapLabel": "格子间距：{value}px",
+      "backgroundLabel": "画布背景色"
+    },
+    "grid": {
+      "heading": "拖拽排布九宫格",
+      "subheading": "拖入图片、合并格子，实时预览最终效果。",
+      "resetTemplate": "重新应用当前模板",
+      "removeImage": "移除",
+      "placeholder": "将图片拖到此处",
+      "cellLabel": "格子 {index}"
+    },
+    "cells": {
+      "heading": "格子设置",
+      "subheading": "选中格子后可调整跨度或快速重置。",
+      "position": "位置：第 {row} 行，第 {col} 列",
+      "spanSummary": "跨度：{rows} 行 x {cols} 列",
+      "rowSpanLabel": "行跨度",
+      "colSpanLabel": "列跨度",
+      "mergeHint": "增大行或列跨度即可合并相邻格子，内部格子会自动移除。",
+      "splitHint": "将跨度调回 1 x 1，缺失格子会自动补齐。",
+      "resetCell": "重置为 1 x 1",
+      "noSelection": "请先在拼图中选中一个格子。"
+    },
+    "images": {
+      "heading": "图片素材",
+      "subheading": "点击分配到当前格子，或直接拖拽到九宫格中。",
+      "empty": "上传图片后即可开始拼接九宫格。",
+      "assignedBadge": "已放入",
+      "dragBadge": "拖拽到格子",
+      "unassigned": "还有 {count} 张图片未分配"
+    },
+    "export": {
+      "heading": "导出与分享",
+      "subheading": "导出一张高清大图，直接发布到社交平台。",
+      "exportPng": "导出 PNG",
+      "exportJpeg": "导出 JPEG",
+      "qualityLabel": "JPEG 质量：{value}",
+      "qualityHint": "数值越高画质越好，但文件也会更大。",
+      "tip": "所有处理均在浏览器本地完成，不会上传到服务器。"
+    },
+    "messages": {
+      "overlapError": "此次合并会与其他格子重叠，请先缩小跨度或重置周围格子。"
+    },
+    "common": {
+      "sizeMb": "{value} MB",
+      "sizeKb": "{value} KB",
+      "sizeBytes": "{value} B"
+    }
+  },
+  "grid": {
+    "title": "九宫格"
   }
 }

@@ -2,7 +2,7 @@ import { useLocale } from 'next-intl'
 import { generateWebsiteSchema, generateBreadcrumbSchema } from '@/lib/seo'
 
 interface StructuredDataProps {
-  pageType?: 'compression' | 'resize'
+  pageType?: 'compression' | 'resize' | 'grid'
   breadcrumbs?: Array<{name: string, url: string}>
 }
 

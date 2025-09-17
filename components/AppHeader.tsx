@@ -17,6 +17,7 @@ export function AppHeader() {
   // 判断当前路由
   const isCompressionPage = pathname === `/${locale}` || pathname === '/'
   const isResizePage = pathname.includes('/resizeimage')
+  const isGridPage = pathname.includes('/grid')
 
   return (
     <header className="bg-white shadow-sm border-b">
@@ -45,6 +46,24 @@ export function AppHeader() {
             </Link>
 
             {/* 图片尺寸调整按钮 */}
+            {/* 九宫格拼图按钮 */}
+            <Link
+              href={locale === 'en' ? '/grid' : `/${locale}/grid`}
+              className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md h-9 transition-colors ${
+                isGridPage
+                  ? 'text-white bg-blue-600 border border-blue-600'
+                  : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <rect x="3" y="3" width="6" height="6" rx="1"/>
+                <rect x="3" y="15" width="6" height="6" rx="1"/>
+                <rect x="15" y="3" width="6" height="6" rx="1"/>
+                <rect x="9" y="9" width="6" height="6" rx="1"/>
+              </svg>
+              {t('grid.title')}
+            </Link>
+
             <Link
               href={locale === 'en' ? '/resizeimage' : `/${locale}/resizeimage`}
               className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md h-9 transition-colors ${

@@ -106,7 +106,7 @@ export async function generateSEOMetadata({
 }
 
 // Schema.org JSON-LD structured data
-export function generateWebsiteSchema(locale: string = 'en', pageType: 'compression' | 'resize' = 'compression') {
+export function generateWebsiteSchema(locale: string = 'en', pageType: 'compression' | 'resize' | 'grid' = 'compression') {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.mycompressor.org'
 
   // 根据页面类型生成不同的schema
@@ -119,7 +119,14 @@ export function generateWebsiteSchema(locale: string = 'en', pageType: 'compress
       : locale === 'hi'
       ? 'मुफ्त ऑनलाइन इमेज रीसाइज़ टूल। कस्टम डाइमेंशन, प्रीसेट अनुपात और क्रॉपिंग सुविधाओं के साथ इमेज का साइज़ बदलें। गुणवत्ता बनाए रखते हुए साइज़ एडजस्ट करें।'
       : 'Free online image resizing tool. Resize images with custom dimensions, preset ratios, and cropping features. Maintain quality while adjusting size.'
-  } else {
+    } else if (pageType === 'grid') {
+    name = locale === 'zh' ? '九宫格拼图工具' : locale === 'hi' ? 'नौ-ग्रिड कोलाज टूल' : 'Nine-grid collage maker'
+    description = locale === 'zh'
+      ? '免费九宫格拼图工具，支持拖拽合并格子，自定义尺寸并导出高清拼图。'
+      : locale === 'hi'
+      ? 'नि:शुल्क नौ-ग्रिड कोलाज टूल, ड्रैग-एंड-ड्रॉप मर्जिंग, कस्टम आकार और हाई-रेज़ एक्सपोर्ट के साथ।'
+      : 'Free nine-grid collage maker for social posts. Merge slots, set custom sizes, and export high-resolution collages without uploads.'
+} else {
     name = locale === 'zh' ? '图片压缩工具' : locale === 'hi' ? 'इमेज कम्प्रेसर' : 'Image Compressor'
     description = locale === 'zh'
       ? '免费在线图片压缩工具，支持JPEG、PNG、WebP格式，保持图片质量的同时减小文件大小'
@@ -148,7 +155,7 @@ export function generateWebsiteSchema(locale: string = 'en', pageType: 'compress
     },
     publisher: {
       '@type': 'Organization',
-      name: pageType === 'resize' ? 'Image Resize Tool' : 'Image Compressor',
+      name: pageType === 'resize' ? 'Image Resize Tool' : pageType === 'grid' ? 'Nine-grid Collage Maker' : 'Image Compressor',
       url: baseUrl
     },
     aggregateRating: {

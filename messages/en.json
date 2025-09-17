@@ -619,5 +619,116 @@
       },
       "closing": "By using the service you consent to this Privacy Policy."
     }
+  },
+  "gridMetadata": {
+    "title": "Nine-grid collage generator",
+    "description": "Free browser-based nine-grid collage maker. Upload unlimited photos, merge cells, and export high-resolution layouts for X.com, Instagram, and WeChat Moments without leaving the page.",
+    "keywords": "nine-grid collage, photo grid, instagram grid, collage maker, 拼图, 九宫格"
+  },
+  "gridPage": {
+    "hero": {
+      "title": "Nine-grid collage maker",
+      "description": "Arrange unlimited photos into customizable nine-grid collages. Drag, merge, and export high-resolution layouts for X.com, Instagram, or WeChat Moments."
+    },
+    "outputPresets": {
+      "square1080": "Square 1080 x 1080 (recommended)",
+      "square2048": "Square 2048 x 2048",
+      "story": "Story 1080 x 1920",
+      "landscape": "Landscape 1920 x 1080",
+      "custom": "Custom size"
+    },
+    "templates": {
+      "heading": "Templates & layouts",
+      "subheading": "Start with a preset or merge adjacent cells to craft your own composition.",
+      "active": "Active",
+      "reset": "Reset to classic 3x3",
+      "classic": {
+        "label": "Classic 3x3",
+        "description": "Nine equal squares for a clean, balanced grid."
+      },
+      "focus": {
+        "label": "Hero spotlight",
+        "description": "Make the top-left tile larger and let supporting photos wrap around it."
+      },
+      "stripTop": {
+        "label": "Wide header",
+        "description": "Use a full-width banner on top with six evenly sized tiles below."
+      },
+      "columnLeft": {
+        "label": "Tall sidebar",
+        "description": "Reserve a vertical column for a hero image while keeping the other tiles square."
+      }
+    },
+    "stats": {
+      "images": "{count} images uploaded",
+      "imagesHint": "Drag or click to add as many photos as you need.",
+      "assigned": "{count} / {total} slots filled",
+      "assignedHint": "Drag to rearrange or trigger auto fill at any time.",
+      "template": "Current layout: {name}",
+      "templateHint": "Switch presets or adjust spans to fine-tune the composition."
+    },
+    "upload": {
+      "heading": "Upload photos",
+      "hint": "Files stay on this device—drag or click to add.",
+      "selectButton": "Choose files",
+      "supported": "Supports JPG, PNG, WebP, HEIC",
+      "autoFill": "Auto fill",
+      "clear": "Clear uploads"
+    },
+    "layout": {
+      "sizeHeading": "Canvas size",
+      "customWidth": "Custom width (px)",
+      "customHeight": "Custom height (px)",
+      "gapLabel": "Grid gap: {value}px",
+      "backgroundLabel": "Canvas background"
+    },
+    "grid": {
+      "heading": "Arrange your grid",
+      "subheading": "Drag images, merge cells, and preview your final layout in real time.",
+      "resetTemplate": "Reapply current template",
+      "removeImage": "Remove",
+      "placeholder": "Drop image here",
+      "cellLabel": "Cell {index}"
+    },
+    "cells": {
+      "heading": "Cell controls",
+      "subheading": "Select a cell to adjust spans or reset it.",
+      "position": "Position: row {row}, column {col}",
+      "spanSummary": "Span: {rows} row(s) x {cols} column(s)",
+      "rowSpanLabel": "Row span",
+      "colSpanLabel": "Column span",
+      "mergeHint": "Increase row or column span to merge neighbouring slots; contained cells are removed automatically.",
+      "splitHint": "Return spans to 1 x 1 to split the area and auto-fill missing cells.",
+      "resetCell": "Reset to 1 x 1",
+      "noSelection": "Select a cell on the grid to edit spans."
+    },
+    "images": {
+      "heading": "Image library",
+      "subheading": "Click to assign to the selected cell or drag directly onto the grid.",
+      "empty": "Upload photos to start building your collage.",
+      "assignedBadge": "In use",
+      "dragBadge": "Drag onto grid",
+      "unassigned": "{count} photos unassigned"
+    },
+    "export": {
+      "heading": "Export & share",
+      "subheading": "Download a single high-resolution image that is ready for social sharing.",
+      "exportPng": "Export PNG",
+      "exportJpeg": "Export JPEG",
+      "qualityLabel": "JPEG quality: {value}",
+      "qualityHint": "Higher values keep more detail but increase file size.",
+      "tip": "Everything is rendered locally in your browser—no uploads or servers involved."
+    },
+    "messages": {
+      "overlapError": "That merge overlaps another cell. Reduce the span or reset surrounding cells first."
+    },
+    "common": {
+      "sizeMb": "{value} MB",
+      "sizeKb": "{value} KB",
+      "sizeBytes": "{value} B"
+    }
+  },
+  "grid": {
+    "title": "Collage"
   }
 }
