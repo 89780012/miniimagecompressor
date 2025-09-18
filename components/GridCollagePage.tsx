@@ -6,6 +6,7 @@ import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
 import { MaterialsSidebar } from '@/components/grid-collage/MaterialsSidebar'
 import { GridPreview } from '@/components/grid-collage/GridPreview'
 import { ConfigSidebar } from '@/components/grid-collage/ConfigSidebar'
+import { generateGridComposite, createImageMap } from '@/lib/grid-composite'
 
 interface UploadedImage {
   id: string
@@ -65,18 +66,18 @@ const OUTPUT_PRESETS: OutputPreset[] = [
     height: 2048,
     labelKey: 'gridPage.outputPresets.square2048'
   },
-  {
-    id: 'story1080x1920',
-    width: 1080,
-    height: 1920,
-    labelKey: 'gridPage.outputPresets.story'
-  },
-  {
-    id: 'landscape1920x1080',
-    width: 1920,
-    height: 1080,
-    labelKey: 'gridPage.outputPresets.landscape'
-  },
+  // {
+  //   id: 'story1080x1920',
+  //   width: 1080,
+  //   height: 1920,
+  //   labelKey: 'gridPage.outputPresets.story'
+  // },
+  // {
+  //   id: 'landscape1920x1080',
+  //   width: 1920,
+  //   height: 1080,
+  //   labelKey: 'gridPage.outputPresets.landscape'
+  // },
   {
     id: 'custom',
     width: 1080,
@@ -460,12 +461,16 @@ export function GridCollagePage() {
     width: OUTPUT_PRESETS[0].width,
     height: OUTPUT_PRESETS[0].height
   })
-  const [gap, setGap] = useState<number>(16)
-  const [backgroundColor, setBackgroundColor] = useState<string>('#ffffff')
+  const [gap, setGap] = useState<number>(8)
+  const [backgroundColor, setBackgroundColor] = useState<string>('#d5d5d5')
   const [isExporting, setIsExporting] = useState<boolean>(false)
-  const [exportQuality, setExportQuality] = useState<number>(Math.round(QUALITY_DEFAULT * 100))
   const [draggedImageId, setDraggedImageId] = useState<string | null>(null)
   const [hoveredCellId, setHoveredCellId] = useState<string | null>(null)
+
+  // 预览模式相关状态
+  const [previewMode, setPreviewMode] = useState<boolean>(false)
+  const [isGeneratingPreview, setIsGeneratingPreview] = useState<boolean>(false)
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null)
 
   const imageUrlMap = useRef<Map<string, string>>(new Map())
 
@@ -613,7 +618,7 @@ export function GridCollagePage() {
   const downloadCanvas = useCallback(
     (canvas: HTMLCanvasElement, format: 'png' | 'jpeg') => {
       const mime = format === 'png' ? 'image/png' : 'image/jpeg'
-      const quality = format === 'jpeg' ? Math.min(Math.max(exportQuality / 100, 0.1), 1) : undefined
+      const quality = format === 'jpeg' ? QUALITY_DEFAULT : undefined
       const dataUrl = canvas.toDataURL(mime, quality)
       const link = document.createElement('a')
       link.href = dataUrl
@@ -621,7 +626,7 @@ export function GridCollagePage() {
       link.click()
       link.remove()
     },
-    [exportQuality]
+    []
   )
 
   const handleExport = useCallback(
@@ -787,62 +792,102 @@ export function GridCollagePage() {
     }
   }, [activeCell])
 
+  // 生成预览图片
+  const handleGeneratePreview = useCallback(async () => {
+    if (grid.cells.length === 0) {
+      return
+    }
+
+    setIsGeneratingPreview(true)
+    try {
+      const imageMap = createImageMap(images)
+      const url = await generateGridComposite({
+        grid,
+        images: imageMap,
+        backgroundColor,
+        gap,
+        outputWidth: outputSize.width,
+        outputHeight: outputSize.height
+      })
+      setPreviewImageUrl(url)
+    } catch (error) {
+      console.error('Preview generation failed:', error)
+    } finally {
+      setIsGeneratingPreview(false)
+    }
+  }, [grid, images, backgroundColor, gap, outputSize])
+
+  // 切换预览模式
+  const handleTogglePreview = useCallback((isPreview: boolean) => {
+    setPreviewMode(isPreview)
+    // 如果从预览模式切换到编辑模式，清除预览图片以节省内存
+    if (!isPreview && previewImageUrl) {
+      URL.revokeObjectURL(previewImageUrl)
+      setPreviewImageUrl(null)
+    }
+  }, [previewImageUrl])
+
   return (
     <SidebarProvider>
-      <MaterialsSidebar
-        images={images}
-        onFilesSelected={handleFilesSelected}
-        onClearImages={handleClearImages}
-        onAutoFill={() => setGrid((prev) => autoFillGrid(prev, images))}
-        onImageDragStart={handleDragStart}
-        onImageDragEnd={handleDragEnd}
-        onImageClick={handleImageClick}
-        draggedImageId={draggedImageId}
-        selectedCellId={selectedCellId}
-        assignedImageIds={assignedImageIds}
-      />
-
-      <SidebarInset>
-        <GridPreview
-          grid={grid}
+      <div className="flex h-screen w-full">
+        <MaterialsSidebar
           images={images}
-          selectedCellId={selectedCellId}
-          hoveredCellId={hoveredCellId}
-          backgroundColor={backgroundColor}
-          gap={gap}
-          layoutError={layoutMessage}
-          onCellSelect={setSelectedCellId}
-          onDragOverCell={handleDragOverCell}
-          onDragLeaveCell={handleDragLeaveCell}
-          onDropOnCell={handleDropOnCell}
-          onRemoveImage={handleRemoveImage}
+          onFilesSelected={handleFilesSelected}
+          onClearImages={handleClearImages}
+          onAutoFill={() => setGrid((prev) => autoFillGrid(prev, images))}
+          onImageDragStart={handleDragStart}
+          onImageDragEnd={handleDragEnd}
+          onImageClick={handleImageClick}
           draggedImageId={draggedImageId}
+          selectedCellId={selectedCellId}
+          assignedImageIds={assignedImageIds}
         />
-      </SidebarInset>
 
-      <ConfigSidebar
-        selectedTemplate={selectedTemplate}
-        templates={GRID_TEMPLATES}
-        selectedPresetId={selectedPresetId}
-        customSize={customSize}
-        gap={gap}
-        backgroundColor={backgroundColor}
-        exportQuality={exportQuality}
-        activeCell={activeCell}
-        grid={grid}
-        isExporting={isExporting}
-        outputPresets={OUTPUT_PRESETS}
-        onTemplateChange={handleTemplateChange}
-        onResetTemplate={() => handleTemplateChange(selectedTemplate)}
-        onPresetChange={handlePresetChange}
-        onCustomSizeChange={setCustomSize}
-        onGapChange={setGap}
-        onBackgroundColorChange={setBackgroundColor}
-        onExportQualityChange={setExportQuality}
-        onCellSpanChange={handleCellSpanChange}
-        onExport={handleExport}
-        onResetCell={handleResetCell}
-      />
+        <SidebarInset className="flex-1 min-w-0" style={{ marginLeft: '20rem', marginRight: '20rem' }}>
+          <GridPreview
+            grid={grid}
+            images={images}
+            selectedCellId={selectedCellId}
+            hoveredCellId={hoveredCellId}
+            backgroundColor={backgroundColor}
+            gap={gap}
+            layoutError={layoutMessage}
+            onCellSelect={setSelectedCellId}
+            onDragOverCell={handleDragOverCell}
+            onDragLeaveCell={handleDragLeaveCell}
+            onDropOnCell={handleDropOnCell}
+            onRemoveImage={handleRemoveImage}
+            draggedImageId={draggedImageId}
+            previewMode={previewMode}
+            isGeneratingPreview={isGeneratingPreview}
+            previewImageUrl={previewImageUrl}
+            onTogglePreview={handleTogglePreview}
+            onGeneratePreview={handleGeneratePreview}
+            isExporting={isExporting}
+            onExport={handleExport}
+          />
+        </SidebarInset>
+
+        <ConfigSidebar
+          selectedTemplate={selectedTemplate}
+          templates={GRID_TEMPLATES}
+          selectedPresetId={selectedPresetId}
+          customSize={customSize}
+          gap={gap}
+          backgroundColor={backgroundColor}
+          activeCell={activeCell}
+          grid={grid}
+          outputPresets={OUTPUT_PRESETS}
+          onTemplateChange={handleTemplateChange}
+          onResetTemplate={() => handleTemplateChange(selectedTemplate)}
+          onPresetChange={handlePresetChange}
+          onCustomSizeChange={setCustomSize}
+          onGapChange={setGap}
+          onBackgroundColorChange={setBackgroundColor}
+          onCellSpanChange={handleCellSpanChange}
+          onResetCell={handleResetCell}
+        />
+      </div>
     </SidebarProvider>
   )
 }

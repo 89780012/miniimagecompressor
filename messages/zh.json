@@ -692,6 +692,16 @@
       "placeholder": "将图片拖到此处",
       "cellLabel": "格子 {index}"
     },
+    "preview": {
+      "heading": "预览最终效果",
+      "subheading": "查看合成后的完整拼图效果，点击编辑返回调整。",
+      "editMode": "编辑模式",
+      "previewMode": "预览模式",
+      "generating": "生成中...",
+      "generatedImage": "九宫格拼图预览",
+      "finalResult": "最终效果",
+      "noPreviewGenerated": "暂无预览图片"
+    },
     "cells": {
       "heading": "格子设置",
       "subheading": "选中格子后可调整跨度或快速重置。",
@@ -710,7 +720,8 @@
       "empty": "上传图片后即可开始拼接九宫格。",
       "assignedBadge": "已放入",
       "dragBadge": "拖拽到格子",
-      "unassigned": "还有 {count} 张图片未分配"
+      "unassigned": "还有 {count} 张图片未分配",
+      "dragHint": "拖拽放置"
     },
     "export": {
       "heading": "导出与分享",
@@ -737,27 +748,6 @@
     "config": {
       "title": "设置面板",
       "description": "调整输出和格子配置"
-    },
-    "images": {
-      "heading": "图片素材",
-      "subheading": "点击分配到当前格子，或直接拖拽到九宫格中。",
-      "empty": "上传图片后即可开始拼接九宫格。",
-      "assignedBadge": "已放入",
-      "dragBadge": "拖拽到格子",
-      "unassigned": "还有 {count} 张图片未分配",
-      "dragHint": "拖拽放置"
-    },
-    "export": {
-      "heading": "导出与分享",
-      "subheading": "导出一张高清大图，直接发布到社交平台。",
-      "exportPng": "导出 PNG",
-      "exportJpeg": "导出 JPEG",
-      "qualityLabel": "JPEG 质量：{value}",
-      "qualityHint": "数值越高画质越好，但文件也会更大。",
-      "tip": "所有处理均在浏览器本地完成，不会上传到服务器。"
-    },
-    "messages": {
-      "overlapError": "此次合并会与其他格子重叠，请先缩小跨度或重置周围格子。"
     },
     "common": {
       "sizeMb": "{value} MB",

@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { useTranslations } from 'next-intl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -10,11 +10,7 @@ import { Slider } from '@/components/ui/slider'
 import {
   Sidebar,
   SidebarContent,
-  SidebarHeader,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarSeparator
+  SidebarHeader
 } from '@/components/ui/sidebar'
 
 interface GridCell {
@@ -53,10 +49,8 @@ interface ConfigSidebarProps {
   customSize: { width: number; height: number }
   gap: number
   backgroundColor: string
-  exportQuality: number
   activeCell: GridCell | null
   grid: GridLayout
-  isExporting: boolean
   outputPresets: OutputPreset[]
   onTemplateChange: (templateId: string) => void
   onResetTemplate: () => void
@@ -64,9 +58,7 @@ interface ConfigSidebarProps {
   onCustomSizeChange: (size: { width: number; height: number }) => void
   onGapChange: (gap: number) => void
   onBackgroundColorChange: (color: string) => void
-  onExportQualityChange: (quality: number) => void
   onCellSpanChange: (cellId: string, type: 'row' | 'col', value: number) => void
-  onExport: (format: 'png' | 'jpeg') => void
   onResetCell: () => void
 }
 
@@ -77,10 +69,8 @@ export function ConfigSidebar({
   customSize,
   gap,
   backgroundColor,
-  exportQuality,
   activeCell,
   grid,
-  isExporting,
   outputPresets,
   onTemplateChange,
   onResetTemplate,
@@ -88,12 +78,11 @@ export function ConfigSidebar({
   onCustomSizeChange,
   onGapChange,
   onBackgroundColorChange,
-  onExportQualityChange,
   onCellSpanChange,
-  onExport,
   onResetCell
 }: ConfigSidebarProps) {
   const t = useTranslations()
+  const [activeTab, setActiveTab] = useState('templates')
 
   const handlePresetChange = useCallback((value: string) => {
     onPresetChange(value)
@@ -105,24 +94,17 @@ export function ConfigSidebar({
     }
   }, [onPresetChange, onCustomSizeChange, outputPresets])
 
-  return (
-    <Sidebar side="right" className="w-80">
-      <SidebarHeader className="p-4">
-        <h2 className="text-lg font-semibold text-gray-900">
-          {t('gridPage.config.title')}
-        </h2>
-        <p className="text-sm text-gray-500">
-          {t('gridPage.config.description')}
-        </p>
-      </SidebarHeader>
+  const tabs = [
+    { id: 'templates', label: t('gridPage.templates.heading') },
+    { id: 'layout', label: t('gridPage.layout.sizeHeading') },
+    { id: 'cells', label: t('gridPage.cells.heading') }
+  ]
 
-      <SidebarContent>
-        {/* 模板设置 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {t('gridPage.templates.heading')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="space-y-4">
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'templates':
+        return (
+          <div className="space-y-4">
             <div>
               <Select value={selectedTemplate} onValueChange={onTemplateChange}>
                 <SelectTrigger>
@@ -156,17 +138,11 @@ export function ConfigSidebar({
                 </div>
               )
             })()}
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* 输出设置 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {t('gridPage.layout.sizeHeading')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="space-y-4">
+          </div>
+        )
+      case 'layout':
+        return (
+          <div className="space-y-4">
             <div>
               <Select value={selectedPresetId} onValueChange={handlePresetChange}>
                 <SelectTrigger>
@@ -258,22 +234,18 @@ export function ConfigSidebar({
                 />
               </div>
             </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarSeparator />
-
-        {/* 单元格控制 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {t('gridPage.cells.heading')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent>
+          </div>
+        )
+      case 'cells':
+        return (
+          <div className="space-y-4">
             {activeCell ? (
-              <div className="space-y-4">
+              <>
                 <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>{t('gridPage.cells.position', { row: activeCell.row + 1, col: activeCell.col + 1 })}</span>
-                  <span>{t('gridPage.cells.spanSummary', { rows: activeCell.rowSpan, cols: activeCell.colSpan })}</span>
+                  <div><span>{t('gridPage.cells.position', { row: activeCell.row + 1, col: activeCell.col + 1 })}</span></div>
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-600">
+                  <div><span>{t('gridPage.cells.spanSummary', { rows: activeCell.rowSpan, cols: activeCell.colSpan })}</span></div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
@@ -333,63 +305,61 @@ export function ConfigSidebar({
                 >
                   {t('gridPage.cells.resetCell')}
                 </Button>
-              </div>
+              </>
             ) : (
               <p className="text-sm text-gray-500">
                 {t('gridPage.cells.noSelection')}
               </p>
             )}
-          </SidebarGroupContent>
-        </SidebarGroup>
+          </div>
+        )
+      default:
+        return null
+    }
+  }
 
-        <SidebarSeparator />
+  return (
+    <Sidebar side="right" className="w-80">
+      <SidebarHeader>
+        <h2 className="text-lg font-semibold text-gray-900">
+          {t('gridPage.config.title')}
+        </h2>
+        <p className="text-sm text-gray-500">
+          {t('gridPage.config.description')}
+        </p>
+      </SidebarHeader>
+      <SidebarContent>
+        <div className="flex h-full">
+          {/* 内容区域 - 左侧主要区域 */}
+          <div className="flex-1 p-2 overflow-y-auto">
+            {renderTabContent()}
+          </div>
 
-        {/* 导出设置 */}
-        <SidebarGroup>
-          <SidebarGroupLabel>
-            {t('gridPage.export.heading')}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                onClick={() => onExport('png')}
-                disabled={isExporting}
+          {/* 垂直标签区域 - 右侧固定区域 */}
+          <div className="flex flex-col border-l border-gray-200">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`
+                  min-w-[28px] px-2 py-6 text-xs border-b border-gray-200 last:border-b-0
+                  hover:bg-gray-50 transition-colors duration-200
+                  ${activeTab === tab.id
+                    ? 'bg-blue-50 text-blue-600 border-l-2 border-l-blue-500'
+                    : 'text-gray-600 hover:text-gray-900'
+                  }
+                `}
+                style={{
+                  writingMode: 'vertical-rl',
+                  textOrientation: 'mixed'
+                }}
+                onClick={() => setActiveTab(tab.id)}
+                title={tab.label}
               >
-                {t('gridPage.export.exportPng')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => onExport('jpeg')}
-                disabled={isExporting}
-              >
-                {t('gridPage.export.exportJpeg')}
-              </Button>
-            </div>
-
-            <div>
-              <Label className="text-xs font-medium text-gray-600">
-                {t('gridPage.export.qualityLabel', { value: exportQuality })}
-              </Label>
-              <Slider
-                value={[exportQuality]}
-                onValueChange={([value]) => onExportQualityChange(value)}
-                min={60}
-                max={100}
-                step={2}
-                className="mt-2"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t('gridPage.export.qualityHint')}
-              </p>
-            </div>
-
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700">
-              {t('gridPage.export.tip')}
-            </div>
-          </SidebarGroupContent>
-        </SidebarGroup>
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
       </SidebarContent>
     </Sidebar>
   )

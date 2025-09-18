@@ -692,6 +692,16 @@
       "placeholder": "Drop image here",
       "cellLabel": "Cell {index}"
     },
+    "preview": {
+      "heading": "Preview Final Result",
+      "subheading": "View the complete composed image, click edit to return to adjustment.",
+      "editMode": "Edit Mode",
+      "previewMode": "Preview Mode",
+      "generating": "Generating...",
+      "generatedImage": "Grid Collage Preview",
+      "finalResult": "Final Result",
+      "noPreviewGenerated": "No preview generated"
+    },
     "cells": {
       "heading": "Cell controls",
       "subheading": "Select a cell to adjust spans or reset it.",
