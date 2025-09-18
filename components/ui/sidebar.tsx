@@ -443,10 +443,12 @@ const SidebarGroupLabel = React.forwardRef<
     asChild?: boolean
   }
 >(({ className, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? React.Fragment : "div"
+  if (asChild) {
+    return <React.Fragment {...props} />
+  }
 
   return (
-    <Comp
+    <div
       ref={ref}
       data-sidebar="group-label"
       className={cn(
@@ -466,10 +468,12 @@ const SidebarGroupAction = React.forwardRef<
     asChild?: boolean
   }
 >(({ className, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? React.Fragment : "button"
+  if (asChild) {
+    return <React.Fragment {...props} />
+  }
 
   return (
-    <Comp
+    <button
       ref={ref}
       data-sidebar="group-action"
       className={cn(
@@ -572,10 +576,10 @@ const SidebarMenuButton = React.forwardRef<
     },
     ref
   ) => {
-    const Comp = asChild ? React.Fragment : "button"
-
-    const button = (
-      <Comp
+    const button = asChild ? (
+      <React.Fragment {...props} />
+    ) : (
+      <button
         ref={ref}
         data-sidebar="menu-button"
         data-size={size}
@@ -605,10 +609,12 @@ const SidebarMenuAction = React.forwardRef<
     showOnHover?: boolean
   }
 >(({ className, asChild = false, showOnHover = false, ...props }, ref) => {
-  const Comp = asChild ? React.Fragment : "button"
+  if (asChild) {
+    return <React.Fragment {...props} />
+  }
 
   return (
-    <Comp
+    <button
       ref={ref}
       data-sidebar="menu-action"
       className={cn(
@@ -719,10 +725,12 @@ const SidebarMenuSubButton = React.forwardRef<
     isActive?: boolean
   }
 >(({ asChild = false, size = "md", isActive, className, ...props }, ref) => {
-  const Comp = asChild ? React.Fragment : "a"
+  if (asChild) {
+    return <React.Fragment {...props} />
+  }
 
   return (
-    <Comp
+    <a
       ref={ref}
       data-sidebar="menu-sub-button"
       data-size={size}
