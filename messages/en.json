@@ -664,6 +664,8 @@
       "imagesHint": "Drag or click to add as many photos as you need.",
       "assigned": "{count} / {total} slots filled",
       "assignedHint": "Drag to rearrange or trigger auto fill at any time.",
+      "grid": "Grid {rows}×{cols}",
+      "gridHint": "Merge cells or switch templates to adjust the layout.",
       "template": "Current layout: {name}",
       "templateHint": "Switch presets or adjust spans to fine-tune the composition."
     },
@@ -702,13 +704,28 @@
       "resetCell": "Reset to 1 x 1",
       "noSelection": "Select a cell on the grid to edit spans."
     },
+    "materials": {
+      "title": "Image Assets",
+      "description": "Manage uploaded image files",
+      "tips": {
+        "title": "Usage Tips",
+        "dragDrop": "Drag images to cells to assign",
+        "multiSelect": "Support batch file selection",
+        "autoFill": "Use auto-fill for quick arrangement"
+      }
+    },
+    "config": {
+      "title": "Settings Panel",
+      "description": "Adjust output and cell configuration"
+    },
     "images": {
       "heading": "Image library",
       "subheading": "Click to assign to the selected cell or drag directly onto the grid.",
       "empty": "Upload photos to start building your collage.",
       "assignedBadge": "In use",
       "dragBadge": "Drag onto grid",
-      "unassigned": "{count} photos unassigned"
+      "unassigned": "{count} photos unassigned",
+      "dragHint": "Drag & Drop"
     },
     "export": {
       "heading": "Export & share",

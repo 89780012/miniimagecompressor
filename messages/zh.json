@@ -664,6 +664,8 @@
       "imagesHint": "拖拽或点击即可添加任意数量的照片。",
       "assigned": "已填充 {count}/{total} 个格子",
       "assignedHint": "随时拖拽重新排布，或再次使用自动填充。",
+      "grid": "九宫格 {rows}×{cols}",
+      "gridHint": "通过合并格子或切换模板调整布局。",
       "template": "当前模板：{name}",
       "templateHint": "切换模板或调整跨度，即可完成个性布局。"
     },
@@ -709,6 +711,41 @@
       "assignedBadge": "已放入",
       "dragBadge": "拖拽到格子",
       "unassigned": "还有 {count} 张图片未分配"
+    },
+    "export": {
+      "heading": "导出与分享",
+      "subheading": "导出一张高清大图，直接发布到社交平台。",
+      "exportPng": "导出 PNG",
+      "exportJpeg": "导出 JPEG",
+      "qualityLabel": "JPEG 质量：{value}",
+      "qualityHint": "数值越高画质越好，但文件也会更大。",
+      "tip": "所有处理均在浏览器本地完成，不会上传到服务器。"
+    },
+    "messages": {
+      "overlapError": "此次合并会与其他格子重叠，请先缩小跨度或重置周围格子。"
+    },
+    "materials": {
+      "title": "图片素材",
+      "description": "管理上传的图片文件",
+      "tips": {
+        "title": "使用技巧",
+        "dragDrop": "拖拽图片到格子中分配",
+        "multiSelect": "支持批量选择文件上传",
+        "autoFill": "使用自动填充快速排布"
+      }
+    },
+    "config": {
+      "title": "设置面板",
+      "description": "调整输出和格子配置"
+    },
+    "images": {
+      "heading": "图片素材",
+      "subheading": "点击分配到当前格子，或直接拖拽到九宫格中。",
+      "empty": "上传图片后即可开始拼接九宫格。",
+      "assignedBadge": "已放入",
+      "dragBadge": "拖拽到格子",
+      "unassigned": "还有 {count} 张图片未分配",
+      "dragHint": "拖拽放置"
     },
     "export": {
       "heading": "导出与分享",

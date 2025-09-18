@@ -1,15 +1,11 @@
 "use client"
-/* eslint-disable @next/next/no-img-element */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslations } from 'next-intl'
-import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Slider } from '@/components/ui/slider'
-import { cn } from '@/lib/utils'
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar'
+import { MaterialsSidebar } from '@/components/grid-collage/MaterialsSidebar'
+import { GridPreview } from '@/components/grid-collage/GridPreview'
+import { ConfigSidebar } from '@/components/grid-collage/ConfigSidebar'
 
 interface UploadedImage {
   id: string
@@ -305,6 +301,7 @@ function calculateCellRectangle(
 
   return { x, y, width, height }
 }
+
 function tryUpdateCellSpan(
   layout: GridLayout,
   cellId: string,
@@ -451,15 +448,6 @@ function autoFillGrid(layout: GridLayout, images: UploadedImage[]): GridLayout {
   }
 }
 
-function formatFileSize(size: number, t: ReturnType<typeof useTranslations>) {
-  if (size >= 1024 * 1024) {
-    return t('gridPage.common.sizeMb', { value: (size / (1024 * 1024)).toFixed(1) })
-  }
-  if (size >= 1024) {
-    return t('gridPage.common.sizeKb', { value: (size / 1024).toFixed(1) })
-  }
-  return t('gridPage.common.sizeBytes', { value: size })
-}
 export function GridCollagePage() {
   const t = useTranslations()
   const [images, setImages] = useState<UploadedImage[]>([])
@@ -480,7 +468,6 @@ export function GridCollagePage() {
   const [hoveredCellId, setHoveredCellId] = useState<string | null>(null)
 
   const imageUrlMap = useRef<Map<string, string>>(new Map())
-
 
   useEffect(() => {
     if (selectedCellId) {
@@ -530,13 +517,6 @@ export function GridCollagePage() {
       height: activePreset?.height ?? OUTPUT_PRESETS[0].height
     }
   }, [selectedPresetId, customSize, activePreset])
-
-  const appliedTemplate = useMemo(
-    () => GRID_TEMPLATES.find((template) => template.id === selectedTemplate),
-    [selectedTemplate]
-  )
-
-  const templateName = appliedTemplate ? t(appliedTemplate.labelKey) : ''
 
   const handleFilesSelected = useCallback(
     (files: FileList | null) => {
@@ -606,6 +586,7 @@ export function GridCollagePage() {
     },
     [handleAssignImageToCell]
   )
+
   const handleClearImages = useCallback(() => {
     imageUrlMap.current.forEach((url) => URL.revokeObjectURL(url))
     imageUrlMap.current.clear()
@@ -772,589 +753,96 @@ export function GridCollagePage() {
     return layoutError
   }, [layoutError, t])
 
-  const unassignedImages = useMemo(() => {
-    const assignedIds = new Set(
+  const assignedImageIds = useMemo(() => {
+    return new Set(
       grid.cells
         .map((cell) => cell.imageId)
         .filter((value): value is string => Boolean(value))
     )
-    return images.filter((image) => !assignedIds.has(image.id))
-  }, [grid.cells, images])
+  }, [grid.cells])
 
-  const assignedCount = grid.cells.filter((cell) => cell.imageId).length
+  const handleImageClick = useCallback(
+    (imageId: string) => {
+      if (selectedCellId) {
+        handleAssignImageToCell(selectedCellId, imageId)
+      }
+    },
+    [selectedCellId, handleAssignImageToCell]
+  )
+
+  const handleResetCell = useCallback(() => {
+    if (activeCell) {
+      setGrid((prev) => ({
+        ...prev,
+        cells: prev.cells.map((cell) =>
+          cell.id === activeCell.id
+            ? {
+                ...cell,
+                rowSpan: 1,
+                colSpan: 1
+              }
+            : cell
+        )
+      }))
+    }
+  }, [activeCell])
+
   return (
-    <div className="space-y-10">
-      <section className="bg-white rounded-xl border border-gray-200 shadow-sm p-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-2/3 space-y-6">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {t('gridPage.hero.title')}
-              </h1>
-              <p className="text-gray-600">
-                {t('gridPage.hero.description')}
-              </p>
-            </div>
+    <SidebarProvider>
+      <MaterialsSidebar
+        images={images}
+        onFilesSelected={handleFilesSelected}
+        onClearImages={handleClearImages}
+        onAutoFill={() => setGrid((prev) => autoFillGrid(prev, images))}
+        onImageDragStart={handleDragStart}
+        onImageDragEnd={handleDragEnd}
+        onImageClick={handleImageClick}
+        draggedImageId={draggedImageId}
+        selectedCellId={selectedCellId}
+        assignedImageIds={assignedImageIds}
+      />
 
-            {appliedTemplate && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700">
-                <p className="font-medium text-blue-800 mb-1">{t(appliedTemplate.labelKey)}</p>
-                <p>{t(appliedTemplate.descriptionKey)}</p>
-              </div>
-            )}
+      <SidebarInset>
+        <GridPreview
+          grid={grid}
+          images={images}
+          selectedCellId={selectedCellId}
+          hoveredCellId={hoveredCellId}
+          backgroundColor={backgroundColor}
+          gap={gap}
+          layoutError={layoutMessage}
+          onCellSelect={setSelectedCellId}
+          onDragOverCell={handleDragOverCell}
+          onDragLeaveCell={handleDragLeaveCell}
+          onDropOnCell={handleDropOnCell}
+          onRemoveImage={handleRemoveImage}
+          draggedImageId={draggedImageId}
+        />
+      </SidebarInset>
 
-            <div className="grid md:grid-cols-3 gap-4">
-              <Card className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('gridPage.stats.images', { count: images.length })}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('gridPage.stats.imagesHint')}
-                </p>
-              </Card>
-              <Card className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('gridPage.stats.assigned', { count: assignedCount, total: grid.cells.length })}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('gridPage.stats.assignedHint')}
-                </p>
-              </Card>
-              <Card className="p-4">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  {t('gridPage.stats.template', { name: templateName })}
-                </h3>
-                <p className="text-xs text-gray-500 mt-1">
-                  {t('gridPage.stats.templateHint')}
-                </p>
-              </Card>
-            </div>
-          </div>
-
-          <div className="md:w-1/3 space-y-4">
-            <Card className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-900">
-                    {t('gridPage.upload.heading')}
-                  </h3>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t('gridPage.upload.hint')}
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-col gap-3">
-                <label className="flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-8 text-center text-sm text-gray-600 cursor-pointer hover:border-blue-400 hover:bg-blue-50 transition-all">
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(event) => handleFilesSelected(event.target.files)}
-                  />
-                  <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 16v-8m0 0l-4 4m4-4l4 4m2 8H6a2 2 0 01-2-2V8a2 2 0 012-2h3l2-2h2l2 2h3a2 2 0 012 2v10a2 2 0 01-2 2z" />
-                  </svg>
-                  <span className="font-medium text-gray-700">{t('gridPage.upload.selectButton')}</span>
-                  <span className="text-xs text-gray-500">{t('gridPage.upload.supported')}</span>
-                </label>
-
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => setGrid((prev) => autoFillGrid(prev, images))}
-                    disabled={images.length === 0}
-                  >
-                    {t('gridPage.upload.autoFill')}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="flex-1"
-                    onClick={handleClearImages}
-                    disabled={images.length === 0}
-                  >
-                    {t('gridPage.upload.clear')}
-                  </Button>
-                </div>
-              </div>
-            </Card>
-
-            <Card className="p-4 space-y-4">
-              <div>
-                <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  {t('gridPage.layout.sizeHeading')}
-                </Label>
-                <Select value={selectedPresetId} onValueChange={handlePresetChange}>
-                  <SelectTrigger className="mt-2">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {OUTPUT_PRESETS.map((preset) => (
-                      <SelectItem key={preset.id} value={preset.id}>
-                        {t(preset.labelKey)}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {selectedPresetId === 'custom' && (
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label htmlFor="custom-width" className="text-xs font-medium text-gray-600">
-                      {t('gridPage.layout.customWidth')}
-                    </Label>
-                    <Input
-                      id="custom-width"
-                      type="number"
-                      min={300}
-                      max={4096}
-                      value={customSize.width}
-                      onChange={(event) =>
-                        setCustomSize((prev) => ({
-                          ...prev,
-                          width: Number(event.target.value) || prev.width
-                        }))
-                      }
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="custom-height" className="text-xs font-medium text-gray-600">
-                      {t('gridPage.layout.customHeight')}
-                    </Label>
-                    <Input
-                      id="custom-height"
-                      type="number"
-                      min={300}
-                      max={4096}
-                      value={customSize.height}
-                      onChange={(event) =>
-                        setCustomSize((prev) => ({
-                          ...prev,
-                          height: Number(event.target.value) || prev.height
-                        }))
-                      }
-                    />
-                  </div>
-                </div>
-              )}
-
-              <div>
-                <Label className="text-xs font-semibold uppercase tracking-wide text-gray-500">
-                  {t('gridPage.layout.gapLabel', { value: gap })}
-                </Label>
-                <Slider
-                  value={[gap]}
-                  onValueChange={([value]) => setGap(value)}
-                  min={0}
-                  max={48}
-                  step={2}
-                  className="mt-3"
-                />
-              </div>
-
-              <div>
-                <Label
-                  htmlFor="background-color"
-                  className="text-xs font-semibold uppercase tracking-wide text-gray-500"
-                >
-                  {t('gridPage.layout.backgroundLabel')}
-                </Label>
-                <div className="flex items-center gap-3 mt-2">
-                  <input
-                    id="background-color"
-                    type="color"
-                    value={backgroundColor}
-                    onChange={(event) => setBackgroundColor(event.target.value)}
-                    className="h-10 w-16 rounded border border-gray-200"
-                  />
-                  <Input
-                    value={backgroundColor}
-                    onChange={(event) => setBackgroundColor(event.target.value)}
-                  />
-                </div>
-              </div>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      <section className="grid lg:grid-cols-[2fr,1fr] gap-6">
-        <Card className="p-5 overflow-hidden">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h2 className="text-lg font-semibold text-gray-900">
-                {t('gridPage.grid.heading')}
-              </h2>
-              <p className="text-sm text-gray-500">
-                {t('gridPage.grid.subheading')}
-              </p>
-            </div>
-            <Button type="button" variant="outline" onClick={() => handleTemplateChange(selectedTemplate)}>
-              {t('gridPage.grid.resetTemplate')}
-            </Button>
-          </div>
-
-          {layoutMessage && (
-            <div className="mb-4 rounded-md bg-amber-50 border border-amber-200 p-3 text-sm text-amber-800">
-              {layoutMessage}
-            </div>
-          )}
-
-          <div
-            className="relative bg-[length:20px_20px] rounded-xl border border-gray-200 p-4"
-            style={{ backgroundColor }}
-          >
-            <div
-              className="grid w-full aspect-square"
-              style={{
-                gridTemplateColumns: `repeat(${grid.cols}, minmax(0, 1fr))`,
-                gridTemplateRows: `repeat(${grid.rows}, minmax(0, 1fr))`,
-                gap: `${gap}px`
-              }}
-            >
-              {grid.cells.map((cell, index) => {
-                const image = cell.imageId ? imageMap.get(cell.imageId) : undefined
-                const isSelected = selectedCellId === cell.id
-                const isDropTarget = hoveredCellId === cell.id && draggedImageId
-
-                return (
-                  <div
-                    key={cell.id}
-                    className={cn(
-                      'relative rounded-lg transition-all border-2 overflow-hidden group bg-white flex items-center justify-center text-sm text-gray-400',
-                      isSelected ? 'border-blue-500 shadow-inner shadow-blue-200/40' : 'border-transparent',
-                      isDropTarget ? 'ring-2 ring-blue-400 ring-offset-2 ring-offset-transparent' : ''
-                    )}
-                    style={{
-                      gridColumn: `span ${cell.colSpan} / span ${cell.colSpan}`,
-                      gridRow: `span ${cell.rowSpan} / span ${cell.rowSpan}`
-                    }}
-                    onClick={() => setSelectedCellId(cell.id)}
-                    onDragOver={(event) => {
-                      event.preventDefault()
-                      handleDragOverCell(cell.id)
-                    }}
-                    onDragLeave={handleDragLeaveCell}
-                    onDrop={(event) => {
-                      event.preventDefault()
-                      handleDropOnCell(cell.id)
-                    }}
-                  >
-                    {image ? (
-                      <>
-                        <img
-                          src={image.url}
-                          alt={image.name}
-                          className="absolute inset-0 w-full h-full object-cover"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
-                        <button
-                          type="button"
-                          className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-800 text-xs font-medium px-2 py-1 rounded-md shadow"
-                          onClick={(event) => {
-                            event.stopPropagation()
-                            handleRemoveImage(cell.id)
-                          }}
-                        >
-                          {t('gridPage.grid.removeImage')}
-                        </button>
-                      </>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center text-center px-4">
-                        <svg className="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7M16 3H8a2 2 0 00-2 2v0a2 2 0 002 2h8a2 2 0 002-2v0a2 2 0 00-2-2z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 11v4m-2-2h4" />
-                        </svg>
-                        <span className="text-xs text-gray-400 font-medium">
-                          {t('gridPage.grid.placeholder')}
-                        </span>
-                      </div>
-                    )}
-
-                    <div className="absolute bottom-2 left-2 flex items-center gap-2">
-                      <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[11px] font-medium text-gray-600 shadow">
-                        {t('gridPage.grid.cellLabel', { index: index + 1 })}
-                      </span>
-                      {image && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2 py-1 text-[11px] text-gray-700 shadow">
-                          {image.name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        </Card>
-
-        <div className="space-y-6">
-          <Card className="p-5 space-y-4">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">
-                {t('gridPage.templates.heading')}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {t('gridPage.templates.subheading')}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {GRID_TEMPLATES.map((template) => (
-                <button
-                  key={template.id}
-                  type="button"
-                  onClick={() => handleTemplateChange(template.id)}
-                  className={cn(
-                    'w-full border rounded-lg p-3 text-left transition hover:border-blue-400 hover:bg-blue-50',
-                    selectedTemplate === template.id
-                      ? 'border-blue-500 bg-blue-50/70'
-                      : 'border-gray-200'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900">
-                      {t(template.labelKey)}
-                    </span>
-                    {selectedTemplate === template.id && (
-                      <span className="text-xs font-semibold text-blue-600">
-                        {t('gridPage.templates.active')}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {t(template.descriptionKey)}
-                  </p>
-                </button>
-              ))}
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                const defaultLayout = createDefaultGridLayout(DEFAULT_ROWS, DEFAULT_COLS)
-                setGrid(autoFillGrid(defaultLayout, images))
-                setSelectedTemplate('classic')
-              }}
-            >
-              {t('gridPage.templates.reset')}
-            </Button>
-          </Card>
-
-          <Card className="p-5 space-y-4">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">
-                {t('gridPage.cells.heading')}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {t('gridPage.cells.subheading')}
-              </p>
-            </div>
-
-            {activeCell ? (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between text-sm text-gray-600">
-                  <span>{t('gridPage.cells.position', { row: activeCell.row + 1, col: activeCell.col + 1 })}</span>
-                  <span>{t('gridPage.cells.spanSummary', { rows: activeCell.rowSpan, cols: activeCell.colSpan })}</span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs font-medium text-gray-600">
-                      {t('gridPage.cells.rowSpanLabel')}
-                    </Label>
-                    <Select
-                      value={activeCell.rowSpan.toString()}
-                      onValueChange={(value) => handleCellSpanChange(activeCell.id, 'row', Number(value))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: grid.rows - activeCell.row }, (_, index) => index + 1).map((value) => (
-                          <SelectItem key={value} value={value.toString()}>
-                            {value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Label className="text-xs font-medium text-gray-600">
-                      {t('gridPage.cells.colSpanLabel')}
-                    </Label>
-                    <Select
-                      value={activeCell.colSpan.toString()}
-                      onValueChange={(value) => handleCellSpanChange(activeCell.id, 'col', Number(value))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.from({ length: grid.cols - activeCell.col }, (_, index) => index + 1).map((value) => (
-                          <SelectItem key={value} value={value.toString()}>
-                            {value}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="rounded-md bg-gray-50 border border-gray-200 p-3 text-xs text-gray-600 space-y-1">
-                  <p>{t('gridPage.cells.mergeHint')}</p>
-                  <p>{t('gridPage.cells.splitHint')}</p>
-                </div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setGrid((prev) => ({
-                    ...prev,
-                    cells: prev.cells.map((cell) =>
-                      cell.id === activeCell.id
-                        ? {
-                            ...cell,
-                            rowSpan: 1,
-                            colSpan: 1
-                          }
-                        : cell
-                    )
-                  }))}
-                >
-                  {t('gridPage.cells.resetCell')}
-                </Button>
-              </div>
-            ) : (
-              <p className="text-sm text-gray-500">
-                {t('gridPage.cells.noSelection')}
-              </p>
-            )}
-          </Card>
-
-          <Card className="p-5 space-y-4">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">
-                {t('gridPage.images.heading')}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {t('gridPage.images.subheading')}
-              </p>
-            </div>
-
-            <div className="space-y-3 max-h-[320px] overflow-y-auto pr-1">
-              {images.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-sm text-gray-500">
-                  {t('gridPage.images.empty')}
-                </div>
-              ) : (
-                images.map((image) => {
-                  const isAssigned = grid.cells.some((cell) => cell.imageId === image.id)
-
-                  return (
-                    <div
-                      key={image.id}
-                      className={cn(
-                        'flex items-center gap-3 rounded-lg border px-3 py-2 text-sm transition bg-white',
-                        isAssigned ? 'border-blue-200 bg-blue-50/60' : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50/60'
-                      )}
-                      draggable
-                      onDragStart={() => handleDragStart(image.id)}
-                      onDragEnd={handleDragEnd}
-                      onClick={() => {
-                        if (selectedCellId) {
-                          handleAssignImageToCell(selectedCellId, image.id)
-                        }
-                      }}
-                    >
-                      <img
-                        src={image.url}
-                        alt={image.name}
-                        className="h-14 w-14 rounded object-cover border border-gray-200 flex-shrink-0"
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="truncate font-medium text-gray-800">{image.name}</p>
-                        <p className="text-xs text-gray-500">{formatFileSize(image.size, t)}</p>
-                      </div>
-                      {isAssigned ? (
-                        <span className="text-xs font-semibold text-blue-600">
-                          {t('gridPage.images.assignedBadge')}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-gray-400">
-                          {t('gridPage.images.dragBadge')}
-                        </span>
-                      )}
-                    </div>
-                  )
-                })
-              )}
-            </div>
-
-            {unassignedImages.length > 0 && (
-              <div className="text-xs text-gray-500">
-                {t('gridPage.images.unassigned', { count: unassignedImages.length })}
-              </div>
-            )}
-          </Card>
-
-          <Card className="p-5 space-y-4">
-            <div>
-              <h3 className="text-base font-semibold text-gray-900">
-                {t('gridPage.export.heading')}
-              </h3>
-              <p className="text-sm text-gray-500">
-                {t('gridPage.export.subheading')}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Button
-                type="button"
-                onClick={() => handleExport('png')}
-                disabled={isExporting}
-              >
-                {t('gridPage.export.exportPng')}
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => handleExport('jpeg')}
-                disabled={isExporting}
-              >
-                {t('gridPage.export.exportJpeg')}
-              </Button>
-            </div>
-
-            <div>
-              <Label className="text-xs font-medium text-gray-600">
-                {t('gridPage.export.qualityLabel', { value: exportQuality })}
-              </Label>
-              <Slider
-                value={[exportQuality]}
-                onValueChange={([value]) => setExportQuality(value)}
-                min={60}
-                max={100}
-                step={2}
-                className="mt-2"
-              />
-              <p className="text-xs text-gray-500 mt-1">
-                {t('gridPage.export.qualityHint')}
-              </p>
-            </div>
-
-            <div className="rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-700">
-              {t('gridPage.export.tip')}
-            </div>
-          </Card>
-        </div>
-      </section>
-    </div>
+      <ConfigSidebar
+        selectedTemplate={selectedTemplate}
+        templates={GRID_TEMPLATES}
+        selectedPresetId={selectedPresetId}
+        customSize={customSize}
+        gap={gap}
+        backgroundColor={backgroundColor}
+        exportQuality={exportQuality}
+        activeCell={activeCell}
+        grid={grid}
+        isExporting={isExporting}
+        outputPresets={OUTPUT_PRESETS}
+        onTemplateChange={handleTemplateChange}
+        onResetTemplate={() => handleTemplateChange(selectedTemplate)}
+        onPresetChange={handlePresetChange}
+        onCustomSizeChange={setCustomSize}
+        onGapChange={setGap}
+        onBackgroundColorChange={setBackgroundColor}
+        onExportQualityChange={setExportQuality}
+        onCellSpanChange={handleCellSpanChange}
+        onExport={handleExport}
+        onResetCell={handleResetCell}
+      />
+    </SidebarProvider>
   )
 }

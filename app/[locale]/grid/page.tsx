@@ -1,8 +1,6 @@
 import { getLocale, getTranslations } from 'next-intl/server'
-import { AppHeader } from '@/components/AppHeader'
 import { StructuredData } from '@/components/StructuredData'
 import { GridCollagePage } from '@/components/GridCollagePage'
-import { Footer } from '@/components/Footer'
 import { generateSEOMetadata } from '@/lib/seo'
 
 export async function generateMetadata() {
@@ -39,13 +37,13 @@ export default async function GridPage() {
     <>
       <StructuredData pageType="grid" breadcrumbs={breadcrumbs} />
       <div className="min-h-screen bg-gray-50">
-        <AppHeader />
+        {/* <AppHeader /> */}
 
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <GridCollagePage />
         </main>
 
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   )
