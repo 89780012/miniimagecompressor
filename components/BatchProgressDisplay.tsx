@@ -4,7 +4,7 @@ import { useTranslations } from 'next-intl'
 import { Card } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { Button } from '@/components/ui/button'
-import { CheckCircle, XCircle, Download, Eye, Loader2 } from 'lucide-react'
+import { CheckCircle, XCircle, Download, Eye, Loader2, RotateCcw } from 'lucide-react'
 import { useState } from 'react'
 import { CompressionResult } from '@/lib/compression'
 import { downloadAsZip, DownloadableItem } from '@/lib/batch-download'
@@ -36,6 +36,8 @@ interface BatchProgressDisplayProps {
   onDownloadAll?: () => void // 保持向后兼容，但改为可选
   onDownloadSingle: (imageId: string) => void
   onPreview: (imageId: string) => void
+  onRetrySingle?: (imageId: string) => void // 重试单个图片
+  onRetryAllFailed?: () => void // 重试所有失败图片
 }
 
 export function BatchProgressDisplay({
@@ -43,7 +45,9 @@ export function BatchProgressDisplay({
   batchProgress,
   onDownloadAll,
   onDownloadSingle,
-  onPreview
+  onPreview,
+  onRetrySingle,
+  onRetryAllFailed
 }: BatchProgressDisplayProps) {
   const t = useTranslations()
   const [showDetails, setShowDetails] = useState(true)
@@ -200,11 +204,25 @@ export function BatchProgressDisplay({
         {/* 错误信息 */}
         {errorImages.length > 0 && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <XCircle className="h-4 w-4 text-red-500" />
-              <span className="text-sm font-medium text-red-600">
-                {t('progress.errorsOccurred', { count: errorImages.length })}
-              </span>
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2">
+                <XCircle className="h-4 w-4 text-red-500" />
+                <span className="text-sm font-medium text-red-600">
+                  {t('progress.errorsOccurred', { count: errorImages.length })}
+                </span>
+              </div>
+              {onRetryAllFailed && errorImages.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={onRetryAllFailed}
+                  disabled={batchProgress.isRunning}
+                  className="text-red-600 border-red-300 hover:bg-red-50"
+                >
+                  <RotateCcw className="h-3 w-3 mr-1" />
+                  {t('progress.retryAll')}
+                </Button>
+              )}
             </div>
             {showDetails && (
               <div className="space-y-1">
@@ -261,6 +279,18 @@ export function BatchProgressDisplay({
                             <Download className="h-3 w-3" />
                           </Button>
                         </>
+                      )}
+                      {image.status === 'error' && onRetrySingle && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => onRetrySingle(image.id)}
+                          disabled={batchProgress.isRunning}
+                          className="h-6 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+                          title={t('progress.retrySingle')}
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                        </Button>
                       )}
                     </div>
                   </div>

@@ -273,7 +273,9 @@
     "downloadAll": "Download All",
     "errorsOccurred": "{count} error(s) occurred",
     "unknownError": "Unknown error",
-    "currentlyProcessing": "Currently processing"
+    "currentlyProcessing": "Currently processing",
+    "retryAll": "Retry All",
+    "retrySingle": "Retry this image"
   },
   "errors": {
     "compressionFailed": "Compression failed",

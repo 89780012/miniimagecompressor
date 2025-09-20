@@ -273,7 +273,9 @@
     "downloadAll": "सभी डाउनलोड करें",
     "errorsOccurred": "{count} त्रुटियां हुईं",
     "unknownError": "अज्ञात त्रुटि",
-    "currentlyProcessing": "वर्तमान में प्रोसेसिंग"
+    "currentlyProcessing": "वर्तमान में प्रोसेसिंग",
+    "retryAll": "सभी को फिर से करें",
+    "retrySingle": "इस इमेज को फिर से करें"
   },
   "errors": {
     "compressionFailed": "संपीड़न असफल",

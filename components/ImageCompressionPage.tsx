@@ -243,6 +243,154 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
     }
   }, [images])
 
+  // 重试单个失败的图片
+  const handleRetrySingle = useCallback(async (imageId: string) => {
+    const image = images.find(img => img.id === imageId)
+    if (!image || image.status !== 'error') return
+
+    const settings = image.settings || defaultSettings
+
+    // 重置图片状态
+    setImages(prev => prev.map(img =>
+      img.id === imageId
+        ? { ...img, status: 'compressing' as const, progress: 0, error: undefined, result: undefined }
+        : img
+    ))
+
+    try {
+      // 模拟进度更新
+      const progressInterval = setInterval(() => {
+        setImages(prev => prev.map(img =>
+          img.id === imageId
+            ? { ...img, progress: Math.min(img.progress + 10, 90) }
+            : img
+        ))
+      }, 200)
+
+      const result = await compressImage(image.file, settings)
+
+      clearInterval(progressInterval)
+
+      // 更新为完成状态
+      setImages(prev => prev.map(img =>
+        img.id === imageId ? {
+          ...img,
+          status: 'completed' as const,
+          progress: 100,
+          result: {
+            ...result,
+            url: result.compressed.url || result.compressed.path
+          }
+        } : img
+      ))
+
+      // 保存到历史记录
+      try {
+        saveToHistory(result, settings)
+        const updatedHistory = getHistory()
+        setHistoryItems(updatedHistory)
+      } catch (error) {
+        console.error('Failed to save to history:', error)
+      }
+    } catch (error) {
+      // 更新为错误状态
+      const errorMessage = error instanceof Error ? error.message : t('errors.unknownError')
+      setImages(prev => prev.map(img =>
+        img.id === imageId ? {
+          ...img,
+          status: 'error' as const,
+          progress: 0,
+          error: errorMessage
+        } : img
+      ))
+    }
+  }, [images, defaultSettings, t])
+
+  // 批量重试所有失败的图片
+  const handleRetryAllFailed = useCallback(async () => {
+    const failedImages = images.filter(img => img.status === 'error')
+    if (failedImages.length === 0) return
+
+    // 重置所有失败图片的状态
+    setImages(prev => prev.map(img =>
+      img.status === 'error'
+        ? { ...img, status: 'pending' as const, progress: 0, error: undefined, result: undefined }
+        : img
+    ))
+
+    // 更新批量进度状态
+    setBatchProgress(prev => ({
+      ...prev,
+      isRunning: true,
+      completed: Math.max(0, prev.completed - failedImages.length),
+      total: prev.total
+    }))
+
+    for (const image of failedImages) {
+      const settings = image.settings || defaultSettings
+
+      // 更新状态为压缩中
+      setImages(prev => prev.map(img =>
+        img.id === image.id
+          ? { ...img, status: 'compressing' as const, progress: 0 }
+          : img
+      ))
+
+      try {
+        // 模拟进度更新
+        const progressInterval = setInterval(() => {
+          setImages(prev => prev.map(img =>
+            img.id === image.id
+              ? { ...img, progress: Math.min(img.progress + 10, 90) }
+              : img
+          ))
+        }, 200)
+
+        const result = await compressImage(image.file, settings)
+
+        clearInterval(progressInterval)
+
+        // 更新为完成状态
+        setImages(prev => prev.map(img =>
+          img.id === image.id ? {
+            ...img,
+            status: 'completed' as const,
+            progress: 100,
+            result: {
+              ...result,
+              url: result.compressed.url || result.compressed.path
+            }
+          } : img
+        ))
+
+        // 保存到历史记录
+        try {
+          saveToHistory(result, settings)
+          const updatedHistory = getHistory()
+          setHistoryItems(updatedHistory)
+        } catch (error) {
+          console.error('Failed to save to history:', error)
+        }
+      } catch (error) {
+        // 更新为错误状态
+        const errorMessage = error instanceof Error ? error.message : t('errors.unknownError')
+        setImages(prev => prev.map(img =>
+          img.id === image.id ? {
+            ...img,
+            status: 'error' as const,
+            progress: 0,
+            error: errorMessage
+          } : img
+        ))
+      }
+
+      // 更新批量进度
+      setBatchProgress(prev => ({ ...prev, completed: prev.completed + 1 }))
+    }
+
+    setBatchProgress(prev => ({ ...prev, isRunning: false }))
+  }, [images, defaultSettings, t])
+
   // 回到上传界面
   const handleBackToUpload = useCallback(() => {
     setCurrentView('upload')
@@ -307,6 +455,8 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
                 onDownloadAll={handleDownloadAll}
                 onDownloadSingle={handleDownloadSingle}
                 onPreview={handlePreview}
+                onRetrySingle={handleRetrySingle}
+                onRetryAllFailed={handleRetryAllFailed}
               />
             )}
 

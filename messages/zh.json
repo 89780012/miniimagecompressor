@@ -273,7 +273,9 @@
     "downloadAll": "下载全部",
     "errorsOccurred": "发生了 {count} 个错误",
     "unknownError": "未知错误",
-    "currentlyProcessing": "正在处理"
+    "currentlyProcessing": "正在处理",
+    "retryAll": "重试全部",
+    "retrySingle": "重试此图片"
   },
   "errors": {
     "compressionFailed": "压缩失败",
