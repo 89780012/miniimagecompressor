@@ -7,7 +7,7 @@ import { BatchCompressionControls } from '@/components/BatchCompressionControls'
 import { BatchProgressDisplay } from '@/components/BatchProgressDisplay'
 import { BatchComparisonView } from '@/components/BatchComparisonView'
 import { HistoryView } from '@/components/HistoryView'
-import { compressImage } from '@/lib/compression'
+import { compressImage } from '@/lib/smart-compression'
 import { CompressionSettings } from '@/types/image'
 import { 
   saveToHistory, 
@@ -92,52 +92,47 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
   const handleStartBatch = useCallback(async () => {
     const pendingImages = images.filter(img => img.status === 'pending')
     if (pendingImages.length === 0) return
-    
+
     setBatchProgress(prev => ({ ...prev, isRunning: true, total: pendingImages.length }))
-    
+
     let completed = 0
     for (const image of pendingImages) {
-      // 内联压缩逻辑以避免依赖问题
       const settings = image.settings || defaultSettings
-      
+
       // 更新状态为压缩中
-      setImages(prev => prev.map(img => 
-        img.id === image.id 
-          ? { ...img, status: 'compressing' as const, progress: 0 } 
+      setImages(prev => prev.map(img =>
+        img.id === image.id
+          ? { ...img, status: 'compressing' as const, progress: 0 }
           : img
       ))
-      
+
       try {
-        // 模拟进度更新
-        const progressInterval = setInterval(() => {
-          setImages(prev => prev.map(img => 
-            img.id === image.id 
-              ? { ...img, progress: Math.min(img.progress + 10, 90) } 
+        // 使用智能压缩函数，自动选择上传方式
+        const result = await compressImage(image.file, settings, (progress) => {
+          // 更新单个图片的进度
+          setImages(prev => prev.map(img =>
+            img.id === image.id
+              ? { ...img, progress: Math.round(progress) }
               : img
           ))
-        }, 200)
-        
-        const result = await compressImage(image.file, settings)
-        
-        clearInterval(progressInterval)
-        
+        })
+
         // 更新为完成状态
-        setImages(prev => prev.map(img => 
+        setImages(prev => prev.map(img =>
           img.id === image.id ? {
             ...img,
             status: 'completed' as const,
             progress: 100,
             result: {
               ...result,
-              url: result.compressed.url || result.compressed.path // 设置下载URL，优先使用R2 URL
+              url: result.compressed.url || result.compressed.path
             }
           } : img
         ))
-        
+
         // 保存到历史记录
         try {
           saveToHistory(result, settings)
-          // 更新历史记录状态
           const updatedHistory = getHistory()
           setHistoryItems(updatedHistory)
         } catch (error) {
@@ -146,7 +141,7 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
       } catch (error) {
         // 更新为错误状态
         const errorMessage = error instanceof Error ? error.message : t('errors.unknownError')
-        setImages(prev => prev.map(img => 
+        setImages(prev => prev.map(img =>
           img.id === image.id ? {
             ...img,
             status: 'error' as const,
@@ -155,19 +150,12 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
           } : img
         ))
       }
-      
+
       completed++
       setBatchProgress(prev => ({ ...prev, completed }))
     }
-    
+
     setBatchProgress(prev => ({ ...prev, isRunning: false }))
-    
-    // // 如果有成功压缩的图片，自动切换到对比视图
-    // const hasCompletedImages = pendingImages.length > 0 && completed === pendingImages.length
-    // if (hasCompletedImages) {
-    //   // 延迟一下让用户看到完成状态
-    //   setTimeout(() => setCurrentView('comparison'), 1000)
-    // }
   }, [images, defaultSettings, t])
   
   // 暂停批量压缩
@@ -258,18 +246,14 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
     ))
 
     try {
-      // 模拟进度更新
-      const progressInterval = setInterval(() => {
+      // 使用智能压缩函数
+      const result = await compressImage(image.file, settings, (progress) => {
         setImages(prev => prev.map(img =>
           img.id === imageId
-            ? { ...img, progress: Math.min(img.progress + 10, 90) }
+            ? { ...img, progress: Math.round(progress) }
             : img
         ))
-      }, 200)
-
-      const result = await compressImage(image.file, settings)
-
-      clearInterval(progressInterval)
+      })
 
       // 更新为完成状态
       setImages(prev => prev.map(img =>
@@ -337,18 +321,14 @@ export function ImageCompressionPage({ initialView = 'upload' }: ImageCompressio
       ))
 
       try {
-        // 模拟进度更新
-        const progressInterval = setInterval(() => {
+        // 使用智能压缩函数
+        const result = await compressImage(image.file, settings, (progress) => {
           setImages(prev => prev.map(img =>
             img.id === image.id
-              ? { ...img, progress: Math.min(img.progress + 10, 90) }
+              ? { ...img, progress: Math.round(progress) }
               : img
           ))
-        }, 200)
-
-        const result = await compressImage(image.file, settings)
-
-        clearInterval(progressInterval)
+        })
 
         // 更新为完成状态
         setImages(prev => prev.map(img =>
