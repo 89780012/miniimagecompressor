@@ -27,6 +27,11 @@ export default async function LocaleLayout({
             gtag('config', 'G-1NJ19DYV9J');
           `}
         </Script>
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key="zOHYo+ryE2iyizJQfn7pPQ"
+          strategy="afterInteractive"
+        />
       </head>
       <body
         className="antialiased"
